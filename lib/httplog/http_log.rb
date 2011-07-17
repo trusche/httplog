@@ -3,24 +3,19 @@ require "logger"
 
 module HttpLog
   
-  @@logger = nil
-  @@severity = nil
-  
-  def self.logger=(logger)
-    @@logger = logger
+  def self.options
+    @@options ||= {
+      :logger       => Logger.new($stdout),
+      :severity     => Logger::Severity::DEBUG,
+      :log_connect  => true,
+      :log_request  => true,
+      :log_data     => true
+    }
   end
   
-  def self.severity=(severity)
-    @@severity = severity
+  def self.log(msg)
+    @@options[:logger].add(@@options[:severity]) { msg }
   end
-  
-  def self.logger
-    @@logger ||=  Logger.new($stdout)
-  end
-  
-  def self.severity
-    @@severity ||= Logger::Severity::DEBUG
-  end  
   
 end
 
@@ -31,13 +26,20 @@ module Net
     alias_method(:orig_connect, :connect) unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
-      HttpLog.logger.add(HttpLog.severity) { "Sending: #{req.method} http://#{@address}:#{@port}#{req.path}" }
-      HttpLog.logger.add(HttpLog.severity) { "Body: #{req.body}" unless req.body.nil? }
+
+      if HttpLog.options[:log_request]
+        HttpLog::log("Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
+      end
+      
+      if req.request_body_permitted? && HttpLog.options[:log_data] 
+        HttpLog::log("Data: #{req.body}") 
+      end
+      
       orig_request(req, body, &block)
     end
 
     def connect
-      HttpLog.logger.add(HttpLog.severity) { "Connecting: #{@address}" }
+      HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
       orig_connect
     end
   end

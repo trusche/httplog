@@ -10,7 +10,7 @@ RSpec.configure do |config|
     @log = StringIO.new
     @logger = Logger.new @log
 
-    HttpLog.class_variable_set :@@logger, @logger
+    HttpLog.options[:logger] = @logger
   end
 
   def log

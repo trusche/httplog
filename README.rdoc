@@ -14,13 +14,13 @@ Yup, that's it. By default, this will log all Net::HTTP.request calls to $stdout
 
 == Configuration
 
-You can set a different logger:
+You can override the following default options:
 
-  HttpLog.logger = Rails.logger
-    
-And change the severity at which requests are logged
+  HttpLog.options[:logger]       = Logger.new($stdout)
+  HttpLog.options[:severity]     = Logger::Severity::DEBUG
+  HttpLog.options[:log_connect]  = true
+  HttpLog.options[:log_request]  = true
+  HttpLog.options[:log_data]     = true
 
-  HttpLog.severity = Logger::Severity::INFO
-    
 
 
