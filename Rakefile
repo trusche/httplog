@@ -11,7 +11,12 @@ rescue LoadError
   require 'rake/rdoctask'
   RDoc::Task = Rake::RDocTask
 end
+require 'rspec/core/rake_task'
 
+desc "Run specs"
+RSpec::Core::RakeTask.new(:spec)
+
+desc "Generate documentation"
 RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'HttpLog'
@@ -19,7 +24,6 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
-
 
 require 'rake/testtask'
 
@@ -30,5 +34,11 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = false
 end
 
+# ----- Packaging -----
+task :build do
+  sh "gem build httplog.gemspec"
+  mkdir_p 'pkg'
+  sh "mv *.gem pkg/ "
+end
 
-task :default => :test
+task :default => :spec
