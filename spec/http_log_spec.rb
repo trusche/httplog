@@ -48,15 +48,6 @@ describe HttpLog do
       send_post_request
       log.should include("Data: q=ruby&max=50")
     end
-    
-    it "should log data with http.post" do
-      uri = URI.parse("http://sms.4rnd.com/mgf/service2.php")
-      http = Net::HTTP.new(uri.host, uri.port)
-#      http.use_ssl = uri.scheme == "https"
-      resp = http.post(uri.path, "foo=bar")
-      log.should include("Data: foo=bar")
-    end
-    
   
   end
   
