@@ -24,7 +24,8 @@ You can override the following default options:
 
 So if you want to use this in a Rails app:
 
-  # config/initializers/httplog.rb
+  # file: config/initializers/httplog.rb
+  
   HttpLog.options[:logger] = Rails.logger
 
 
