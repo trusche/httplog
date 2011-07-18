@@ -1,11 +1,11 @@
-= HttpLog
+= httplog
 
 Log outgoing HTTP requests made from your application.
 
 == Installation
 
-Not yet on rubygems, so get if from here please.
-
+  gem install httplog
+  
 == Usage
 
   require 'httplog'
