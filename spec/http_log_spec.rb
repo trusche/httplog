@@ -6,7 +6,9 @@ describe HttpLog do
     @host = 'localhost'
     @port = 80
     @path = "/foo"
-    @data = {'q' => 'ruby', 'max' => '50'}
+    @params = {'foo' => 'bar', 'bar' => 'foo'}
+    @data = "foo=bar&bar=foo"
+    @uri = URI.parse("http://#{@host}#{@path}")
   }
   
   def send_get_request
@@ -14,7 +16,12 @@ describe HttpLog do
   end
   
   def send_post_request
-    res = Net::HTTP.post_form(URI.parse("http://#{@host}#{@path}"), @data)
+    http = Net::HTTP.new(@uri.host, @uri.port)
+    resp = http.post(@uri.path, @data)
+  end
+
+  def send_post_form_request
+    res = Net::HTTP.post_form(@uri, @params)
   end
 
   context "with default config" do
@@ -46,7 +53,19 @@ describe HttpLog do
 
     it "should log POST data" do
       send_post_request
-      log.should include("Data: q=ruby&max=50")
+      log.should include("Data: #{@data}")
+    end
+    
+    it "should log only once" do
+      send_post_request
+      log.lines.count.should == 3
+    end
+
+    it "should work with post_form" do
+      send_post_form_request
+      log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("Data: #{@data}")
+      log.lines.count.should == 3
     end
   
   end

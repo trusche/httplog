@@ -27,12 +27,17 @@ module Net
 
     def request(req, body = nil, &block)
 
-      if HttpLog.options[:log_request]
-        HttpLog::log("Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
-      end
-      
-      if req.request_body_permitted? && HttpLog.options[:log_data] 
-        HttpLog::log("Data: #{body}") 
+      if started?
+        if HttpLog.options[:log_request]
+          HttpLog::log("Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
+        end
+    
+        if req.method == "POST" && HttpLog.options[:log_data] 
+          # a bit convoluted becase post_form uses form_data= to assign the data, so 
+          # in that case req.body will be empty
+          data = req.body.nil? || req.body.size == 0 ? body : req.body
+          HttpLog::log("Data: #{data}") 
+        end
       end
       
       orig_request(req, body, &block)
