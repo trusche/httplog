@@ -22,5 +22,10 @@ You can override the following default options:
   HttpLog.options[:log_request]  = true
   HttpLog.options[:log_data]     = true
 
+So if you want to use this in a Rails app:
+
+  # config/initializers/httplog.rb
+  HttpLog.options[:logger] = Rails.logger
+
 
 
