@@ -1,6 +1,6 @@
 = HttpLog
 
-Log outgoing Net::HTTP requests in your favorite ruby logger.
+Log outgoing HTTP requests made from your application.
 
 == Installation
 
