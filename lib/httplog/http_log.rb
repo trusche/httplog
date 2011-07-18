@@ -32,7 +32,7 @@ module Net
       end
       
       if req.request_body_permitted? && HttpLog.options[:log_data] 
-        HttpLog::log("Data: #{req.body}") 
+        HttpLog::log("Data: #{body}") 
       end
       
       orig_request(req, body, &block)
