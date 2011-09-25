@@ -17,5 +17,4 @@ Gem::Specification.new do |s|
   s.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   
   s.add_development_dependency "rspec"
-  s.add_development_dependency "fakeweb"
 end
