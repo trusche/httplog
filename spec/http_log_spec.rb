@@ -1,14 +1,17 @@
 require 'spec_helper'
 
+# We're not using FakeWeb for testing, since that overrides some of the same Net::HTTP methods as
+# httplog, and doesn't call the connect method at all. Instead, change the URL
+# parameters to some suitable local or remote destination.
 describe HttpLog do
 
   before {
     @host = 'localhost'
-    @port = 80
+    @port = 3000
     @path = "/foo"
     @params = {'foo' => 'bar', 'bar' => 'foo'}
     @data = "foo=bar&bar=foo"
-    @uri = URI.parse("http://#{@host}#{@path}")
+    @uri = URI.parse("http://#{@host}:#{@port}#{@path}")
   }
   
   def send_get_request
@@ -26,46 +29,33 @@ describe HttpLog do
 
   context "with default config" do
   
-    it "should log at DEBUG by default" do
+    it "should log at DEBUG level" do
       send_get_request
       log.should include("DEBUG")
     end
   
-    it "should log the connection by default" do
+    it "should log GET requests without data" do
       send_get_request
       log.should include("Connecting: #{@host}")
-    end
-
-    it "should log GET requests" do
-      send_get_request
       log.should include("Sending: GET http://#{@host}:#{@port}#{@path}")
-    end
-
-    it "should not log data for GET requests" do
-      send_get_request
       log.should_not include("Data:")
-    end
-    
-    it "should log POST requests" do
-      send_post_request
-      log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("Response:")
     end
 
-    it "should log POST data" do
+    it "should log POST requests with data" do
       send_post_request
+      log.should include("Connecting: #{@host}")
+      log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("Response:")
       log.should include("Data: #{@data}")
-    end
-    
-    it "should log only once" do
-      send_post_request
-      log.lines.count.should == 3
     end
 
     it "should work with post_form" do
       send_post_form_request
+      log.should include("Connecting: #{@host}")
       log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("Response:")
       log.should include("Data: #{@data}")
-      log.lines.count.should == 3
     end
   
   end
@@ -95,7 +85,12 @@ describe HttpLog do
       send_post_request
       log.should_not include("Data:")
     end
-  
+    
+    it "should not log the response if disabled" do
+      HttpLog.options[:log_response] = false
+      send_post_request
+      log.should_not include("Reponse:")
+    end
   end
   
 end

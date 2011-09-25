@@ -10,7 +10,7 @@ Log outgoing HTTP requests made from your application.
 
   require 'httplog'
 
-Yup, that's it. By default, this will log all Net::HTTP.request calls to $stdout on DEBUG level.
+Yup, that's it. By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
 == Configuration
 
@@ -21,6 +21,7 @@ You can override the following default options:
   HttpLog.options[:log_connect]  = true
   HttpLog.options[:log_request]  = true
   HttpLog.options[:log_data]     = true
+  HttpLog.options[:log_response] = true
 
 So if you want to use this in a Rails app:
 

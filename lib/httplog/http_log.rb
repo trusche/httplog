@@ -9,7 +9,8 @@ module HttpLog
       :severity     => Logger::Severity::DEBUG,
       :log_connect  => true,
       :log_request  => true,
-      :log_data     => true
+      :log_data     => true,
+      :log_response => true
     }
   end
   
@@ -40,11 +41,15 @@ module Net
         end
       end
       
-      orig_request(req, body, &block)
+      response = orig_request(req, body, &block)
+      HttpLog::log("Response: #{response}") if HttpLog.options[:log_response]
+      response
     end
 
     def connect
-      HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
+      unless started?
+        HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
+      end
       orig_connect
     end
   end
