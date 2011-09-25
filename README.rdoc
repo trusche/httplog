@@ -21,6 +21,7 @@ You can override the following default options:
   HttpLog.options[:log_connect]  = true
   HttpLog.options[:log_request]  = true
   HttpLog.options[:log_data]     = true
+  HttpLog.options[:log_status]   = true
   HttpLog.options[:log_response] = true
 
 So if you want to use this in a Rails app:

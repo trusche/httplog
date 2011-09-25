@@ -36,26 +36,26 @@ describe HttpLog do
   
     it "should log GET requests without data" do
       send_get_request
-      log.should include("Connecting: #{@host}")
-      log.should include("Sending: GET http://#{@host}:#{@port}#{@path}")
-      log.should_not include("Data:")
-      log.should include("Response:")
+      log.should include("[httplog] Connecting: #{@host}")
+      log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+      log.should include("[httplog] Response:")
+      log.should_not include("[httplog] Data:")
     end
 
     it "should log POST requests with data" do
       send_post_request
-      log.should include("Connecting: #{@host}")
-      log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
-      log.should include("Response:")
-      log.should include("Data: #{@data}")
+      log.should include("[httplog] Connecting: #{@host}")
+      log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("[httplog] Response:")
+      log.should include("[httplog] Data: #{@data}")
     end
 
     it "should work with post_form" do
       send_post_form_request
-      log.should include("Connecting: #{@host}")
-      log.should include("Sending: POST http://#{@host}:#{@port}#{@path}")
-      log.should include("Response:")
-      log.should include("Data: #{@data}")
+      log.should include("[httplog] Connecting: #{@host}")
+      log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+      log.should include("[httplog] Response:")
+      log.should include("[httplog] Data: #{@data}")
     end
   
   end
@@ -71,25 +71,25 @@ describe HttpLog do
     it "should not log the request if disabled" do
       HttpLog.options[:log_request] = false
       send_get_request
-      log.should_not include("Sending: GET")
+      log.should_not include("[httplog] Sending: GET")
     end
 
     it "should not log the connection if disabled" do
       HttpLog.options[:log_connect] = false
       send_get_request
-      log.should_not include("Connecting: #{@host}")
+      log.should_not include("[httplog] Connecting: #{@host}")
     end
 
     it "should not log POST data if disabled" do
       HttpLog.options[:log_data] = false
       send_post_request
-      log.should_not include("Data:")
+      log.should_not include("[httplog] Data:")
     end
     
     it "should not log the response if disabled" do
       HttpLog.options[:log_response] = false
       send_post_request
-      log.should_not include("Reponse:")
+      log.should_not include("[httplog] Reponse:")
     end
   end
   

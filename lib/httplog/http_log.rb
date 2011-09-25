@@ -10,6 +10,7 @@ module HttpLog
       :log_connect  => true,
       :log_request  => true,
       :log_data     => true,
+      :log_status   => true,
       :log_response => true
     }
   end
@@ -30,25 +31,30 @@ module Net
 
       if started?
         if HttpLog.options[:log_request]
-          HttpLog::log("Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
+          HttpLog::log("[httplog] Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
         end
     
         if req.method == "POST" && HttpLog.options[:log_data] 
           # a bit convoluted becase post_form uses form_data= to assign the data, so 
           # in that case req.body will be empty
           data = req.body.nil? || req.body.size == 0 ? body : req.body
-          HttpLog::log("Data: #{data}") 
+          HttpLog::log("[httplog] Data: #{data}") 
         end
       end
       
       response = orig_request(req, body, &block)
-      HttpLog::log("Response: #{response}") if HttpLog.options[:log_response]
+      
+      if started?
+        HttpLog::log("[httplog] Status: #{response.code}") if HttpLog.options[:log_status]
+        HttpLog::log("[httplog] Response: #{response.body}") if HttpLog.options[:log_response]
+      end
+      
       response
     end
 
     def connect
       unless started?
-        HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
+        HttpLog::log("[httplog] Connecting: #{@address}") if HttpLog.options[:log_connect]
       end
       orig_connect
     end
