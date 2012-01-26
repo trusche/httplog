@@ -5,13 +5,14 @@ module HttpLog
   
   def self.options
     @@options ||= {
-      :logger       => Logger.new($stdout),
-      :severity     => Logger::Severity::DEBUG,
-      :log_connect  => true,
-      :log_request  => true,
-      :log_data     => true,
-      :log_status   => true,
-      :log_response => true
+      :logger        => Logger.new($stdout),
+      :severity      => Logger::Severity::DEBUG,
+      :log_connect   => true,
+      :log_request   => true,
+      :log_data      => true,
+      :log_status    => true,
+      :log_response  => true,
+      :log_benchmark => true
     }
   end
   
@@ -42,9 +43,12 @@ module Net
         end
       end
       
+      r0 = Time.now
       response = orig_request(req, body, &block)
       
+      benchmark = Time.now - r0
       if started?
+        HttpLog::log("[httplog] Benchmark: #{benchmark}") if HttpLog.options[:log_benchmark]
         HttpLog::log("[httplog] Status: #{response.code}") if HttpLog.options[:log_status]
         HttpLog::log("[httplog] Response: #{response.body}") if HttpLog.options[:log_response]
       end
