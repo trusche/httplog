@@ -40,6 +40,7 @@ describe HttpLog do
       log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
       log.should include("[httplog] Response:")
       log.should_not include("[httplog] Data:")
+      log.should include("[httplog] Benchmark: ")
     end
 
     it "should log POST requests with data" do
@@ -48,6 +49,7 @@ describe HttpLog do
       log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
       log.should include("[httplog] Response:")
       log.should include("[httplog] Data: #{@data}")
+      log.should include("[httplog] Benchmark: ")
     end
 
     it "should work with post_form" do
@@ -56,6 +58,7 @@ describe HttpLog do
       log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
       log.should include("[httplog] Response:")
       log.should include("[httplog] Data: #{@data}")
+      log.should include("[httplog] Benchmark: ")
     end
   
   end
@@ -90,6 +93,12 @@ describe HttpLog do
       HttpLog.options[:log_response] = false
       send_post_request
       log.should_not include("[httplog] Reponse:")
+    end
+
+    it "should not log the benchmark if disabled" do
+      HttpLog.options[:log_benchmark] = false
+      send_post_request
+      log.should_not include("[httplog] Benchmark:")
     end
   end
   
