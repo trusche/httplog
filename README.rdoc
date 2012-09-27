@@ -31,5 +31,7 @@ So if you want to use this in a Rails app:
   
   HttpLog.options[:logger] = Rails.logger
 
+== Development
 
-
+To run the tests install bundler and start a server on the localhost.
+Then simply run `bundle exec rake`
