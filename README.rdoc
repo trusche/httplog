@@ -24,6 +24,7 @@ You can override the following default options:
   HttpLog.options[:log_status]    = true
   HttpLog.options[:log_response]  = true
   HttpLog.options[:log_benchmark] = true
+  HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
 
 So if you want to use this in a Rails app:
 
@@ -34,6 +35,7 @@ So if you want to use this in a Rails app:
 == Development
 
 To run the tests, a web server must be listening on localhost port 3000. Then simply
-run `bundle exec rake`.
+run `bundle exec rake`. The tests will make GET and POST requests to `http://localhost:3000/foo` by
+default.
 
 TODO: Make tests self-contained.
