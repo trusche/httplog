@@ -2,7 +2,7 @@ require "net/http"
 require "logger"
 
 module HttpLog
-  
+
   def self.options
     @@options ||= {
       :logger        => Logger.new($stdout),
@@ -12,14 +12,15 @@ module HttpLog
       :log_data      => true,
       :log_status    => true,
       :log_response  => true,
-      :log_benchmark => true
+      :log_benchmark => true,
+      :log_compact   => false
     }
   end
-  
+
   def self.log(msg)
     @@options[:logger].add(@@options[:severity]) { msg }
   end
-  
+
 end
 
 module Net
@@ -34,18 +35,18 @@ module Net
         if HttpLog.options[:log_request]
           HttpLog::log("[httplog] Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
         end
-    
-        if req.method == "POST" && HttpLog.options[:log_data] 
-          # a bit convoluted becase post_form uses form_data= to assign the data, so 
+
+        if req.method == "POST" && HttpLog.options[:log_data]
+          # a bit convoluted becase post_form uses form_data= to assign the data, so
           # in that case req.body will be empty
           data = req.body.nil? || req.body.size == 0 ? body : req.body
-          HttpLog::log("[httplog] Data: #{data}") 
+          HttpLog::log("[httplog] Data: #{data}")
         end
       end
-      
+
       r0 = Time.now
       response = orig_request(req, body, &block)
-      
+
       benchmark = Time.now - r0
       if started?
         if HttpLog.options[:compact_log]
@@ -56,7 +57,7 @@ module Net
           HttpLog::log("[httplog] Response: #{response.body}") if HttpLog.options[:log_response]
         end
       end
-      
+
       response
     end
 
