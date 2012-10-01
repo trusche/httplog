@@ -101,5 +101,18 @@ describe HttpLog do
       log.should_not include("[httplog] Benchmark:")
     end
   end
+
+  context "with compact config" do
+    it "should log a signle line with status and benchmark" do
+      HttpLog.options[:compact_log] = true
+      send_get_request
+      log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
+
+      log.should_not include("[httplog] Connecting: #{@host}")
+      log.should_not include("[httplog] Response:")
+      log.should_not include("[httplog] Data:")
+      log.should_not include("[httplog] Benchmark: ")
+    end
+  end
   
 end
