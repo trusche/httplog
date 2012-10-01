@@ -5,7 +5,7 @@ Log outgoing HTTP requests made from your application.
 == Installation
 
   gem install httplog
-  
+
 == Usage
 
   require 'httplog'
@@ -28,10 +28,12 @@ You can override the following default options:
 So if you want to use this in a Rails app:
 
   # file: config/initializers/httplog.rb
-  
+
   HttpLog.options[:logger] = Rails.logger
 
 == Development
 
-To run the tests install bundler and start a server on the localhost.
-Then simply run `bundle exec rake`
+To run the tests, a web server must be listening on localhost port 3000. Then simply
+run `bundle exec rake`.
+
+TODO: Make tests self-contained.
