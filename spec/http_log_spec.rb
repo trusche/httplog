@@ -13,11 +13,11 @@ describe HttpLog do
     @data = "foo=bar&bar=foo"
     @uri = URI.parse("http://#{@host}:#{@port}#{@path}")
   }
-  
+
   def send_get_request
     Net::HTTP.get_response(@host, @path, @port)
   end
-  
+
   def send_post_request
     http = Net::HTTP.new(@uri.host, @uri.port)
     resp = http.post(@uri.path, @data)
@@ -28,12 +28,12 @@ describe HttpLog do
   end
 
   context "with default config" do
-  
+
     it "should log at DEBUG level" do
       send_get_request
       log.should include("DEBUG")
     end
-  
+
     it "should log GET requests without data" do
       send_get_request
       log.should include("[httplog] Connecting: #{@host}")
@@ -60,9 +60,9 @@ describe HttpLog do
       log.should include("[httplog] Data: #{@data}")
       log.should include("[httplog] Benchmark: ")
     end
-  
+
   end
-  
+
   context "with custom config" do
 
     it "should log at other levels" do
@@ -88,7 +88,7 @@ describe HttpLog do
       send_post_request
       log.should_not include("[httplog] Data:")
     end
-    
+
     it "should not log the response if disabled" do
       HttpLog.options[:log_response] = false
       send_post_request
@@ -103,7 +103,7 @@ describe HttpLog do
   end
 
   context "with compact config" do
-    it "should log a signle line with status and benchmark" do
+    it "should log a single line with status and benchmark" do
       HttpLog.options[:compact_log] = true
       send_get_request
       log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
@@ -114,5 +114,5 @@ describe HttpLog do
       log.should_not include("[httplog] Benchmark: ")
     end
   end
-  
+
 end
