@@ -1,18 +1,18 @@
-= httplog
+## httplog
 
 Log outgoing HTTP requests made from your application.
 
-== Installation
+### Installation
 
   gem install httplog
 
-== Usage
+### Usage
 
   require 'httplog'
 
-Yup, that's it. By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
+By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
-== Configuration
+### Configuration
 
 You can override the following default options:
 
@@ -32,10 +32,15 @@ So if you want to use this in a Rails app:
 
   HttpLog.options[:logger] = Rails.logger
 
-== Development
+### Running the specs
 
-To run the tests, a web server must be listening on localhost port 3000. Then simply
-run `bundle exec rake`. The tests will make GET and POST requests to `http://localhost:3000/foo` by
-default.
+Make sure you have the necessary dependencies installed by running `bundle install`.
+Then simple run `bundle exec rspec spec`.
+This will launch a simple rack server on port 9292 and run all tests locally against that server.
 
-TODO: Make tests self-contained.
+### Contributing
+
+If you have any issues with httplog,
+or feature requests,
+please [add an issue](https://github.com/trusche/httplog/issues) on GitHub
+or fork the project and send a pull request.

@@ -7,8 +7,8 @@ describe HttpLog do
 
   before {
     @host = 'localhost'
-    @port = 3000
-    @path = "/foo"
+    @port = 9292
+    @path = "/index.html"
     @params = {'foo' => 'bar', 'bar' => 'foo'}
     @data = "foo=bar&bar=foo"
     @uri = URI.parse("http://#{@host}:#{@port}#{@path}")
