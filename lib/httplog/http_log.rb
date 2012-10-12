@@ -36,6 +36,12 @@ module Net
           HttpLog::log("[httplog] Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
         end
 
+        if HttpLog.options[:log_headers]
+          req.each_header do |key,value|
+            HttpLog::log("[httplog] Header: #{key} -> #{value}")
+          end
+        end
+
         if req.method == "POST" && HttpLog.options[:log_data]
           # a bit convoluted becase post_form uses form_data= to assign the data, so
           # in that case req.body will be empty
@@ -46,15 +52,15 @@ module Net
 
       r0 = Time.now
       response = orig_request(req, body, &block)
-
       benchmark = Time.now - r0
+
       if started?
         if HttpLog.options[:compact_log]
           HttpLog::log("[httplog] #{req.method} http://#{@address}:#{@port}#{req.path} completed with status code #{response.code} in #{benchmark}")
         else
-          HttpLog::log("[httplog] Benchmark: #{benchmark}") if HttpLog.options[:log_benchmark]
           HttpLog::log("[httplog] Status: #{response.code}") if HttpLog.options[:log_status]
-          HttpLog::log("[httplog] Response: #{response.body}") if HttpLog.options[:log_response]
+          HttpLog::log("[httplog] Response:\n#{response.body}") if HttpLog.options[:log_response]
+          HttpLog::log("[httplog] Benchmark: #{benchmark}") if HttpLog.options[:log_benchmark]
         end
       end
 

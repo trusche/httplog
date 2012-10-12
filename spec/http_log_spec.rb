@@ -39,8 +39,9 @@ describe HttpLog do
       log.should include("[httplog] Connecting: #{@host}")
       log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
       log.should include("[httplog] Response:")
-      log.should_not include("[httplog] Data:")
       log.should include("[httplog] Benchmark: ")
+      log.should_not include("[httplog] Data:")
+      log.should_not include("[httplog] Header:")
     end
 
     it "should log POST requests with data" do
@@ -70,6 +71,14 @@ describe HttpLog do
       send_get_request
       log.should include("INFO")
     end
+
+    it "should log headers if enabled" do
+      HttpLog.options[:log_headers] = true
+      send_get_request
+      log.should include("[httplog] Header: accept -> */*")
+      log.should include("[httplog] Header: user-agent -> Ruby")
+    end
+
 
     it "should not log the request if disabled" do
       HttpLog.options[:log_request] = false

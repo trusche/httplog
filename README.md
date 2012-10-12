@@ -16,15 +16,16 @@ By default, this will log all outgoing HTTP requests and their responses to $std
 
 You can override the following default options:
 
-  HttpLog.options[:logger]        = Logger.new($stdout)
-  HttpLog.options[:severity]      = Logger::Severity::DEBUG
-  HttpLog.options[:log_connect]   = true
-  HttpLog.options[:log_request]   = true
-  HttpLog.options[:log_data]      = true
-  HttpLog.options[:log_status]    = true
-  HttpLog.options[:log_response]  = true
-  HttpLog.options[:log_benchmark] = true
-  HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
+    HttpLog.options[:logger]        = Logger.new($stdout)
+    HttpLog.options[:severity]      = Logger::Severity::DEBUG
+    HttpLog.options[:log_connect]   = true
+    HttpLog.options[:log_request]   = true
+    HttpLog.options[:log_headers]   = false
+    HttpLog.options[:log_data]      = true
+    HttpLog.options[:log_status]    = true
+    HttpLog.options[:log_response]  = true
+    HttpLog.options[:log_benchmark] = true
+    HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
 
 So if you want to use this in a Rails app:
 
