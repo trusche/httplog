@@ -75,8 +75,9 @@ describe HttpLog do
     it "should log headers if enabled" do
       HttpLog.options[:log_headers] = true
       send_get_request
-      log.should include("[httplog] Header: accept -> */*")
-      log.should include("[httplog] Header: user-agent -> Ruby")
+      log.should include("[httplog] Header: accept: */*")
+      log.should include("[httplog] Header: user-agent: Ruby")
+      puts log
     end
 
 
@@ -115,13 +116,12 @@ describe HttpLog do
     it "should log a single line with status and benchmark" do
       HttpLog.options[:compact_log] = true
       send_get_request
-      log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
 
+      log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
       log.should_not include("[httplog] Connecting: #{@host}")
       log.should_not include("[httplog] Response:")
       log.should_not include("[httplog] Data:")
       log.should_not include("[httplog] Benchmark: ")
     end
   end
-
 end

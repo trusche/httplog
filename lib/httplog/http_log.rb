@@ -9,6 +9,7 @@ module HttpLog
       :severity      => Logger::Severity::DEBUG,
       :log_connect   => true,
       :log_request   => true,
+      :log_headers   => false,
       :log_data      => true,
       :log_status    => true,
       :log_response  => true,
@@ -18,7 +19,7 @@ module HttpLog
   end
 
   def self.log(msg)
-    @@options[:logger].add(@@options[:severity]) { msg }
+    @@options[:logger].add(@@options[:severity]) { "[httplog] #{msg}" }
   end
 
 end
@@ -33,12 +34,12 @@ module Net
 
       if started? && !HttpLog.options[:compact_log]
         if HttpLog.options[:log_request]
-          HttpLog::log("[httplog] Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
+          HttpLog::log("Sending: #{req.method} http://#{@address}:#{@port}#{req.path}")
         end
 
         if HttpLog.options[:log_headers]
           req.each_header do |key,value|
-            HttpLog::log("[httplog] Header: #{key} -> #{value}")
+            HttpLog::log("Header: #{key}: #{value}")
           end
         end
 
@@ -46,7 +47,7 @@ module Net
           # a bit convoluted becase post_form uses form_data= to assign the data, so
           # in that case req.body will be empty
           data = req.body.nil? || req.body.size == 0 ? body : req.body
-          HttpLog::log("[httplog] Data: #{data}")
+          HttpLog::log("Data: #{data}")
         end
       end
 
@@ -56,11 +57,11 @@ module Net
 
       if started?
         if HttpLog.options[:compact_log]
-          HttpLog::log("[httplog] #{req.method} http://#{@address}:#{@port}#{req.path} completed with status code #{response.code} in #{benchmark}")
+          HttpLog::log("#{req.method} http://#{@address}:#{@port}#{req.path} completed with status code #{response.code} in #{benchmark} seconds")
         else
-          HttpLog::log("[httplog] Status: #{response.code}") if HttpLog.options[:log_status]
-          HttpLog::log("[httplog] Response:\n#{response.body}") if HttpLog.options[:log_response]
-          HttpLog::log("[httplog] Benchmark: #{benchmark}") if HttpLog.options[:log_benchmark]
+          HttpLog::log("Status: #{response.code}") if HttpLog.options[:log_status]
+          HttpLog::log("Benchmark: #{benchmark} seconds") if HttpLog.options[:log_benchmark]
+          HttpLog::log("Response:\n#{response.body}") if HttpLog.options[:log_response]
         end
       end
 
@@ -69,7 +70,7 @@ module Net
 
     def connect
       unless started? || HttpLog.options[:compact_log]
-        HttpLog::log("[httplog] Connecting: #{@address}") if HttpLog.options[:log_connect]
+        HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
       end
       orig_connect
     end
