@@ -44,24 +44,24 @@ module Net
         end
 
         if req.method == "POST" && HttpLog.options[:log_data]
-          # a bit convoluted becase post_form uses form_data= to assign the data, so
-          # in that case req.body will be empty
+          # A bit convoluted becase post_form uses form_data= to assign the data, so
+          # in that case req.body will be empty.
           data = req.body.nil? || req.body.size == 0 ? body : req.body
           HttpLog::log("Data: #{data}")
         end
       end
 
-      r0 = Time.now
-      response = orig_request(req, body, &block)
-      benchmark = Time.now - r0
+      ts_start  = Time.now
+      response  = orig_request(req, body, &block)
+      benchmark = Time.now - ts_start
 
       if started?
         if HttpLog.options[:compact_log]
           HttpLog::log("#{req.method} http://#{@address}:#{@port}#{req.path} completed with status code #{response.code} in #{benchmark} seconds")
         else
-          HttpLog::log("Status: #{response.code}") if HttpLog.options[:log_status]
+          HttpLog::log("Status: #{response.code}")        if HttpLog.options[:log_status]
           HttpLog::log("Benchmark: #{benchmark} seconds") if HttpLog.options[:log_benchmark]
-          HttpLog::log("Response:\n#{response.body}") if HttpLog.options[:log_response]
+          HttpLog::log("Response:\n#{response.body}")     if HttpLog.options[:log_response]
         end
       end
 
