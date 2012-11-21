@@ -135,14 +135,22 @@ describe HttpLog do
     require 'adapters/httpclient_adapter'
     let(:adapter) { HTTPClientAdapter.new(@host, @port, @path) }
 
-    context "with default config" do
+    context "with all options" do
 
-      it "should log GET requests without data" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
         res = adapter.send_get_request
         res.should be_a HTTP::Message
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Response:")
+        log.should include("<html>")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
@@ -150,6 +158,7 @@ describe HttpLog do
         res.should be_a HTTP::Message
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
         log.should include("[httplog] Benchmark: ")
       end
     end

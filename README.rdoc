@@ -64,6 +64,7 @@ so it is not available for logging. This will be noted in the logging statement:
   D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
   D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
 
+When using HTTPClient, the `log_connect` options has no effect.
 
 === Running the specs
 

@@ -1,6 +1,6 @@
 class HTTPClientAdapter < HTTPBaseAdapter
   def send_get_request
-    ::HTTPClient.get(parse_uri)
+    ::HTTPClient.get(parse_uri, header: { accept: "*/*", foo: "bar" })
   end
 
   def send_post_request(data)
