@@ -4,6 +4,18 @@ Log outgoing HTTP requests made from your application.
 See the {blog post}[http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/]
 for more details.
 
+So far this gem works with the following HTTP libraries:
+
+* Net::HTTP
+* OpenURI
+* HTTPClient
+
+In theory, it should also work with any library built on top of these. But since
+the difference between theory and practice is bigger in practice than in theory, YMMV.
+
+**PLEASE NOTE** that this is very much a development tool; it is **not recommended** to
+use this in a production environment.
+
 === Installation
 
   gem install httplog
@@ -27,7 +39,7 @@ You can override the following default options:
   HttpLog.options[:log_status]    = true
   HttpLog.options[:log_response]  = true
   HttpLog.options[:log_benchmark] = true
-  HttpLog.options[:compact_log]   = false = setting this to true will make all "log_*" options redundant
+  HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
 
 So if you want to use this in a Rails app:
 
@@ -79,3 +91,11 @@ or feature requests,
 please {add an issue}[https://github.com/trusche/httplog/issues] on GitHub
 or fork the project and send a pull request.
 Please include passing specs with all pull requests.
+
+=== Contributors
+
+Thanks to these fine folks for contributing pull requests:
+
+* {Eric Cohen}[https://github.com/eirc]
+* {Nikos Dimitrakopoulos}[https://github.com/nikosd]
+* {Marcos Hack}[https://github.com/marcoshack]
