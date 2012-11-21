@@ -76,12 +76,12 @@ With the default configuration, the log output might look like this:
   D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
   D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
 
-*    When using HTTPClient, the `log_connect` options has no effect.
+*    When using HTTPClient, the +:log_connect+ option has no effect.
 
 === Running the specs
 
-Make sure you have the necessary dependencies installed by running `bundle install`.
-Then simple run `bundle exec rspec spec`.
+Make sure you have the necessary dependencies installed by running +bundle install+.
+Then simple run +bundle exec rspec spec+.
 This will launch a simple rack server on port 9292 and run all tests locally against that server.
 
 === Contributing
