@@ -124,14 +124,16 @@ describe HttpLog do
     context "with default config" do
 
       it "should log GET requests without data" do
-        adapter.send_get_request
+        res = adapter.send_get_request
+        res.should be_a HTTP::Message
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("[httplog] Benchmark: ")
       end
 
       it "should log POST requests" do
-        adapter.send_post_request(@data)
+        res = adapter.send_post_request(@data)
+        res.should be_a HTTP::Message
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("[httplog] Benchmark: ")

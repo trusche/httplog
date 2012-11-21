@@ -104,6 +104,8 @@ if defined?(::HTTPClient)
         HttpLog::log("Benchmark: #{benchmark} seconds") if HttpLog.options[:log_benchmark]
         HttpLog::log("Response:\n#{response.body}")     if HttpLog.options[:log_response]
       end
+      
+      response
     end
   end
 end
