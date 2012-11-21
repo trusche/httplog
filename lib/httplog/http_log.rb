@@ -2,20 +2,26 @@ require "net/http"
 require "logger"
 
 module HttpLog
+  DEFAULT_LOGGER  = Logger.new($stdout)
+  DEFAULT_OPTIONS = {
+    :logger        => DEFAULT_LOGGER,
+    :severity      => Logger::Severity::DEBUG,
+    :log_connect   => true,
+    :log_request   => true,
+    :log_headers   => false,
+    :log_data      => true,
+    :log_status    => true,
+    :log_response  => true,
+    :log_benchmark => true,
+    :log_compact   => false
+  }
 
   def self.options
-    @@options ||= {
-      :logger        => Logger.new($stdout),
-      :severity      => Logger::Severity::DEBUG,
-      :log_connect   => true,
-      :log_request   => true,
-      :log_headers   => false,
-      :log_data      => true,
-      :log_status    => true,
-      :log_response  => true,
-      :log_benchmark => true,
-      :log_compact   => false
-    }
+    @@options ||= DEFAULT_OPTIONS.clone
+  end
+
+  def self.reset_options!
+    @@options = DEFAULT_OPTIONS.clone
   end
 
   def self.log(msg)
@@ -85,4 +91,30 @@ module Net
     end
   end
 
+end
+
+if defined?(::HTTPClient)
+  class HTTPClient
+    alias_method :orig_request, :request
+
+    def request(method, uri, *args, &block)
+      if HttpLog.options[:log_request]
+        HttpLog::log("Sending: #{method.to_s.upcase} #{uri}")
+      end
+
+      ts_start  = Time.now
+      response  = orig_request(method, uri, args, block)
+      benchmark = Time.now - ts_start
+
+      if HttpLog.options[:compact_log]
+        HttpLog::log("#{method.to_s.upcase} #{uri} completed with status code #{response.status} in #{benchmark} seconds")
+      else
+        HttpLog::log("Status: #{response.status}")        if HttpLog.options[:log_status]
+        HttpLog::log("Benchmark: #{benchmark} seconds") if HttpLog.options[:log_benchmark]
+        HttpLog::log("Response:\n#{response.body}")     if HttpLog.options[:log_response]
+      end
+
+      response
+    end
+  end
 end
