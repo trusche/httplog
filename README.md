@@ -13,7 +13,7 @@ So far this gem works with the following HTTP libraries:
 In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.
 
-*PLEASE NOTE* that this is very much a development tool; it is *not recommended* to
+This is very much a development and debugging tool; it is **not recommended** to
 use this in a production environment.
 
 ### Installation
@@ -67,7 +67,7 @@ With the default configuration, the log output might look like this:
 
 ### Known Issues
 
-*   When using open-uri, the reading of the HTTP response body is deferred,
+*   When using OpenURI, the reading of the HTTP response body is deferred,
     so it is not available for logging. This will be noted in the logging statement:
 
         D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
