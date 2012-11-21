@@ -88,7 +88,7 @@ This will launch a simple rack server on port 9292 and run all tests locally aga
 
 If you have any issues with httplog,
 or feature requests,
-please {add an issue}[https://github.com/trusche/httplog/issues] on GitHub
+please [add an issue](https://github.com/trusche/httplog/issues) on GitHub
 or fork the project and send a pull request.
 Please include passing specs with all pull requests.
 
