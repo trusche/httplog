@@ -1,7 +1,7 @@
-== httplog
+## httplog
 
 Log outgoing HTTP requests made from your application.
-See the {blog post}[http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/]
+See the [blog post](http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/)
 for more details.
 
 So far this gem works with the following HTTP libraries:
@@ -16,17 +16,17 @@ the difference between theory and practice is bigger in practice than in theory,
 *PLEASE NOTE* that this is very much a development tool; it is *not recommended* to
 use this in a production environment.
 
-=== Installation
+### Installation
 
   gem install httplog
 
-=== Usage
+### Usage
 
   require 'httplog'
 
 By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
-=== Configuration
+### Configuration
 
 You can override the following default options:
 
@@ -46,7 +46,7 @@ So if you want to use this in a Rails app:
   # config/initializers/httplog.rb
   HttpLog.options[:logger] = Rails.logger
 
-=== Example
+### Example
 
 With the default configuration, the log output might look like this:
 
@@ -65,26 +65,26 @@ With the default configuration, the log output might look like this:
     </html>
 
 
-=== Known Issues
+### Known Issues
 
 *   When using open-uri, the reading of the HTTP response body is deferred,
     so it is not available for logging. This will be noted in the logging statement:
 
-  D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
-  D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
-  D, [2012-11-21T15:09:03.548615 #6857] DEBUG -- : [httplog] Status: 200
-  D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
-  D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
+    D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
+    D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
+    D, [2012-11-21T15:09:03.548615 #6857] DEBUG -- : [httplog] Status: 200
+    D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
+    D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
 
-*    When using HTTPClient, the +:log_connect+ option has no effect.
+*    When using HTTPClient, the `:log_connect` option has no effect.
 
-=== Running the specs
+### Running the specs
 
-Make sure you have the necessary dependencies installed by running +bundle install+.
-Then simply run +bundle exec rspec spec+.
+Make sure you have the necessary dependencies installed by running `bundle install`.
+Then simply run `bundle exec rspec spec`.
 This will launch a simple rack server on port 9292 and run all tests locally against that server.
 
-=== Contributing
+### Contributing
 
 If you have any issues with httplog,
 or feature requests,
@@ -92,10 +92,10 @@ please {add an issue}[https://github.com/trusche/httplog/issues] on GitHub
 or fork the project and send a pull request.
 Please include passing specs with all pull requests.
 
-=== Contributors
+### Contributors
 
 Thanks to these fine folks for contributing pull requests:
 
-* {Eric Cohen}[https://github.com/eirc]
-* {Nikos Dimitrakopoulos}[https://github.com/nikosd]
-* {Marcos Hack}[https://github.com/marcoshack]
+* [Eric Cohen](https://github.com/eirc)
+* [Nikos Dimitrakopoulos](https://github.com/nikosd)
+* [Marcos Hack](https://github.com/marcoshack)
