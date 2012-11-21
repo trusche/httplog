@@ -39,9 +39,12 @@ describe HttpLog do
       log.should include("[httplog] Connecting: #{@host}")
       log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
       log.should include("[httplog] Response:")
+      log.should include("<html>") # the beginning of the response data
       log.should include("[httplog] Benchmark: ")
       log.should_not include("[httplog] Data:")
       log.should_not include("[httplog] Header:")
+
+      puts log
     end
 
     it "should log POST requests with data" do
@@ -62,6 +65,19 @@ describe HttpLog do
       log.should include("[httplog] Benchmark: ")
     end
 
+    context "with open-uri" do
+      it "should work but not render the response body" do
+        require 'open-uri'
+        open(@uri)
+        log.should include("[httplog] Connecting: #{@host}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response: (not available yet)")
+        log.should_not include("<html>")
+        log.should include("[httplog] Benchmark: ")
+
+        puts log
+      end
+    end
   end
 
   context "with custom config" do
@@ -77,7 +93,6 @@ describe HttpLog do
       send_get_request
       log.should include("[httplog] Header: accept: */*")
       log.should include("[httplog] Header: user-agent: Ruby")
-      puts log
     end
 
 

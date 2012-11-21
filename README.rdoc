@@ -1,6 +1,8 @@
 == httplog
 
 Log outgoing HTTP requests made from your application.
+See the {blog post}[http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/]
+for more details.
 
 === Installation
 
@@ -31,6 +33,37 @@ So if you want to use this in a Rails app:
 
   # config/initializers/httplog.rb
   HttpLog.options[:logger] = Rails.logger
+
+=== Example
+
+With the default configuration, the log output might look like this:
+
+	D, [2012-11-21T15:09:03.532970 #6857] DEBUG -- : [httplog] Connecting: localhost
+	D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
+	D, [2012-11-21T15:09:03.534499 #6857] DEBUG -- : [httplog] Status: 200
+	D, [2012-11-21T15:09:03.534544 #6857] DEBUG -- : [httplog] Benchmark: 0.00057 seconds
+	D, [2012-11-21T15:09:03.534578 #6857] DEBUG -- : [httplog] Response:
+	<html>
+	  <head>
+	    <title>Test Page</title>
+	  </head>
+	  <body>
+	    <h1>This is the test page.</h1>
+	  </body>
+	</html>
+
+
+=== Known Issues
+
+* When using open-uri, the reading of the HTTP response body is deferred,
+  so it is not available for logging. This will be noted in the logging statement:
+
+	D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
+	D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
+	D, [2012-11-21T15:09:03.548615 #6857] DEBUG -- : [httplog] Status: 200
+	D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
+	D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
+
 
 === Running the specs
 

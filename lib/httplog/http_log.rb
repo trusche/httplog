@@ -61,7 +61,16 @@ module Net
         else
           HttpLog::log("Status: #{response.code}")        if HttpLog.options[:log_status]
           HttpLog::log("Benchmark: #{benchmark} seconds") if HttpLog.options[:log_benchmark]
-          HttpLog::log("Response:\n#{response.body}")     if HttpLog.options[:log_response]
+
+          if HttpLog.options[:log_response]
+            if response.body.is_a?(Net::ReadAdapter)
+              # open-uri wraps the response in a Net::ReadAdapter that defers reading
+              # the contrent, so the reponse body is not available here.
+              HttpLog::log("Response: (not available yet)")
+            else
+              HttpLog::log("Response:\n#{response.body.to_s}")
+            end
+          end
         end
       end
 
