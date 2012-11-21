@@ -38,6 +38,7 @@ GEM
     erubis (2.7.0)
     eventmachine (0.12.10)
     hike (1.2.1)
+    httpclient (2.3.0.1)
     i18n (0.6.0)
     mail (2.3.0)
       i18n (>= 0.4.0)
@@ -99,6 +100,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  httpclient
   rack
   rails (= 3.1.0)
   rspec

@@ -1,8 +1,10 @@
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(File.dirname(__FILE__))
 require 'rspec'
+require 'httpclient'
 require 'httplog'
 require 'rack'
+require 'adapters/http_base_adapter'
 
 
 # Include all files under spec/support
@@ -22,6 +24,7 @@ RSpec.configure do |config|
     @log = StringIO.new
     @logger = Logger.new @log
 
+    HttpLog.reset_options!
     HttpLog.options[:logger] = @logger
   end
 
