@@ -13,7 +13,7 @@ So far this gem works with the following HTTP libraries:
 In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.
 
-**PLEASE NOTE** that this is very much a development tool; it is **not recommended** to
+*PLEASE NOTE* that this is very much a development tool; it is *not recommended* to
 use this in a production environment.
 
 === Installation
@@ -67,8 +67,8 @@ With the default configuration, the log output might look like this:
 
 === Known Issues
 
-When using open-uri, the reading of the HTTP response body is deferred,
-so it is not available for logging. This will be noted in the logging statement:
+*   When using open-uri, the reading of the HTTP response body is deferred,
+    so it is not available for logging. This will be noted in the logging statement:
 
   D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
   D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
@@ -76,7 +76,7 @@ so it is not available for logging. This will be noted in the logging statement:
   D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
   D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
 
-When using HTTPClient, the `log_connect` options has no effect.
+*    When using HTTPClient, the `log_connect` options has no effect.
 
 === Running the specs
 
