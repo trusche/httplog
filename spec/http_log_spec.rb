@@ -152,6 +152,8 @@ describe HttpLog do
         log.should include("<html>")
         log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Header:")
+
+        puts log
       end
 
       it "should log POST requests" do
