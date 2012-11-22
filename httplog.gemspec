@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
                      of third party gems that don't provide their own log output.}
   s.email       = %q{thilorusche@gmail.com}
 
-  s.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "rack"
