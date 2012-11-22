@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.name        = "httplog"
   s.version     = HttpLog::VERSION
   s.authors     = ["Thilo Rusche"]
-  s.summary     = %q{Logs outgoing Net::HTTP requests.}
+  s.summary     = %q{Logs outgoing HTTP requests.}
   s.homepage    = %q{http://github.com/trusche/httplog}
   s.description = %q{Log outgoing HTTP requests made from your application. Helpful for tracking API calls
                      of third party gems that don't provide their own log output.}
