@@ -4,11 +4,12 @@ Log outgoing HTTP requests made from your application.
 See the [blog post](http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/)
 for more details.
 
-So far this gem works with the following HTTP libraries:
+So far this gem works with the following ruby modules and libraries:
 
-* Net::HTTP
-* OpenURI
-* HTTPClient
+* [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
+* [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
+* [HTTPClient](https://github.com/nahi/httpclient)
+* [HTTParty](https://github.com/jnunemaker/httparty)
 
 In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.

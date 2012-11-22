@@ -1,8 +1,12 @@
-require 'spec_helper'
-
 # We're not using FakeWeb for testing, since that overrides some of the same Net::HTTP methods as
 # httplog, and doesn't call the connect method at all. Instead, change the URL
 # parameters to some suitable local or remote destination.
+require 'spec_helper'
+require 'adapters/httpclient_adapter'
+require 'adapters/net_http_adapter'
+require 'adapters/open_uri_adapter'
+require 'adapters/httparty_adapter'
+
 describe HttpLog do
 
   before {
@@ -15,7 +19,6 @@ describe HttpLog do
   }
 
   context "Net::HTTP" do
-    require 'adapters/net_http_adapter'
     let(:adapter) { NetHTTPAdapter.new(@host, @port, @path) }
 
     context "with default config" do
@@ -116,7 +119,6 @@ describe HttpLog do
   end
 
   context "OpenURI" do
-    require 'adapters/open_uri_adapter'
     let(:adapter) { OpenUriAdapter.new(@host, @port, @path) }
 
     context "with default config" do
@@ -132,11 +134,9 @@ describe HttpLog do
   end
 
   context "HTTPClient" do
-    require 'adapters/httpclient_adapter'
     let(:adapter) { HTTPClientAdapter.new(@host, @port, @path) }
 
     context "with all options" do
-
       before do
         HttpLog.options[:log_headers] = true
       end
@@ -152,13 +152,41 @@ describe HttpLog do
         log.should include("<html>")
         log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Header:")
-
-        puts log
       end
 
       it "should log POST requests" do
         res = adapter.send_post_request(@data)
         res.should be_a HTTP::Message
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Benchmark: ")
+      end
+    end
+  end
+
+  context "HTTParty" do
+    let(:adapter) { HTTPartyAdapter.new(@host, @port, @path) }
+
+    context "with all options" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
+        res = adapter.send_get_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
+      end
+
+      it "should log POST requests" do
+        res = adapter.send_post_request(@data)
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("[httplog] Data: #{@data}")
