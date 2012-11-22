@@ -9,6 +9,8 @@ gem 'httpclient'
 gem 'rspec'
 gem 'rack'
 gem 'thin'
+gem 'pry'
+gem 'pry-nav'
 
 if RUBY_VERSION < '1.9'
   gem "ruby-debug", ">= 0.10.3"
