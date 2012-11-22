@@ -70,7 +70,7 @@ module HttpLog
 
     def log_compact(method, uri, status, seconds)
       return unless options[:compact_log]
-      log("#{method} #{uri} completed with status code #{status} in #{seconds} seconds")
+      log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
   end
 end
