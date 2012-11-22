@@ -30,6 +30,11 @@ module HttpLog
       @@options[:logger].add(@@options[:severity]) { "[httplog] #{msg}" }
     end
 
+    def log_connection(host, port = nil)
+      return if options[:compact_log] || !options[:log_connect]
+      log("Connecting: #{[host, port].compact.join(":")}")
+    end
+
     def log_request(method, uri)
       return if options[:compact_log] || !options[:log_request]
       log("Sending: #{method.to_s.upcase} #{uri}")

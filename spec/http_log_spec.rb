@@ -27,7 +27,7 @@ describe HttpLog do
 
       it "should log GET requests without data" do
         adapter.send_get_request
-        log.should include("[httplog] Connecting: #{@host}")
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("<html>")
@@ -38,7 +38,7 @@ describe HttpLog do
 
       it "should log POST requests with data" do
         adapter.send_post_request(@data)
-        log.should include("[httplog] Connecting: #{@host}")
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("[httplog] Data: #{@data}")
@@ -47,7 +47,7 @@ describe HttpLog do
 
       it "should work with post_form" do
         adapter.send_post_form_request(@params)
-        log.should include("[httplog] Connecting: #{@host}")
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response:")
         log.should include("[httplog] Data: #{@data}")
@@ -79,7 +79,7 @@ describe HttpLog do
       it "should not log the connection if disabled" do
         HttpLog.options[:log_connect] = false
         adapter.send_get_request
-        log.should_not include("[httplog] Connecting: #{@host}")
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
       end
 
       it "should not log POST data if disabled" do
@@ -107,7 +107,7 @@ describe HttpLog do
         adapter.send_get_request
 
         log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
-        log.should_not include("[httplog] Connecting: #{@host}")
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should_not include("[httplog] Response:")
         log.should_not include("[httplog] Data:")
         log.should_not include("[httplog] Benchmark: ")
@@ -122,7 +122,7 @@ describe HttpLog do
     context "with default config" do
       it "should log GET requests without data and response body" do
         res = adapter.send_get_request
-        log.should include("[httplog] Connecting: #{@host}")
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Response: (not available yet)")
         log.should_not include("<html>")
@@ -144,6 +144,7 @@ describe HttpLog do
       it "should log GET requests" do
         res = adapter.send_get_request
         res.should be_a HTTP::Message
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")

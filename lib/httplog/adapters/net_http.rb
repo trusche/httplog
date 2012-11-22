@@ -30,9 +30,7 @@ module Net
     end
 
     def connect
-      unless started? || HttpLog.options[:compact_log]
-        HttpLog::log("Connecting: #{@address}") if HttpLog.options[:log_connect]
-      end
+      HttpLog.log_connection(@address, @port) unless started?
       orig_connect
     end
   end

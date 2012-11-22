@@ -67,8 +67,8 @@ With the default configuration, the log output might look like this:
 
 ### Known Issues
 
-*   When using OpenURI, the reading of the HTTP response body is deferred,
-    so it is not available for logging. This will be noted in the logging statement:
+* When using OpenURI, the reading of the HTTP response body is deferred,
+  so it is not available for logging. This will be noted in the logging statement:
 
         D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost
         D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
@@ -76,7 +76,8 @@ With the default configuration, the log output might look like this:
         D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
         D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
 
-*    When using HTTPClient, the `:log_connect` option has no effect.
+*  When using HTTPClient, the TCP connection establishment will be logged
+   *after* the HTTP request and headers, due to the way HTTPClient is organized.
 
 ### Running the specs
 
