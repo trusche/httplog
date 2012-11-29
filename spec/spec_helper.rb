@@ -5,13 +5,10 @@ require 'httpclient'
 require 'excon'
 require 'typhoeus'
 require 'ethon'
-
 require 'httplog'
-require 'rack'
+
 require 'adapters/http_base_adapter'
-
-
-# Include all files under spec/support
+Dir[File.dirname(__FILE__) + '/adapters/*.rb'].each { |f| require f }
 Dir["./spec/support/**/*.rb"].each {|f| require f}
 
 # Start a local rack server to serve up test pages.

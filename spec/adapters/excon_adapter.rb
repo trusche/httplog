@@ -4,7 +4,7 @@ class ExconAdapter < HTTPBaseAdapter
     Excon.get(parse_uri.to_s, headers: @headers )
   end
 
-  def send_post_request(data)
-    Excon.post(parse_uri.to_s, body: data)
+  def send_post_request
+    Excon.post(parse_uri.to_s, body: @data, headers: @headers)
   end
 end

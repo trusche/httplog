@@ -5,7 +5,8 @@ class HTTPBaseAdapter
     @path = path
     @protocol = protocol
     @headers = { "accept" => "*/*", "foo" => "bar" }
-    @data = "foo"
+    @data = "foo=bar&bar=foo"
+    @params = {'foo' => 'bar', 'bar' => 'foo'}
   end
 
   def parse_uri

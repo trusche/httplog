@@ -6,12 +6,12 @@ class FaradayAdapter < HTTPBaseAdapter
     end
 
     conn.get do |req|
-      req.headers['foo'] = 'bar'
+      req.headers = @headers
       req.url parse_uri.to_s
     end
   end
 
-  def send_post_request(data)
-    HTTParty.post(parse_uri.to_s, body: data)
+  def send_post_request
+    HTTParty.post(parse_uri.to_s, body: @data, headers: @headers)
   end
 end

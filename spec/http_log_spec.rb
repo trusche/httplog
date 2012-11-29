@@ -1,32 +1,17 @@
-# We're not using FakeWeb for testing, since that overrides some of the same Net::HTTP methods as
-# httplog, and doesn't call the connect method at all. Instead, change the URL
-# parameters to some suitable local or remote destination.
 require 'spec_helper'
-require 'adapters/httpclient_adapter'
-require 'adapters/net_http_adapter'
-require 'adapters/open_uri_adapter'
-require 'adapters/httparty_adapter'
-require 'adapters/excon_adapter'
-require 'adapters/faraday_adapter'
-require 'adapters/typhoeus_adapter'
-require 'adapters/ethon_adapter'
 
 describe HttpLog do
 
-  before {
+  before do
     @host = 'localhost'
     @port = 9292
     @path = "/index.html"
-    @params = {'foo' => 'bar', 'bar' => 'foo'}
-    @data = "foo=bar&bar=foo"
-    @uri = URI.parse("http://#{@host}:#{@port}#{@path}")
-  }
+  end
 
   context "Net::HTTP" do
     let(:adapter) { NetHTTPAdapter.new(@host, @port, @path) }
 
     context "with default config" do
-
       it "should log at DEBUG level" do
         adapter.send_get_request
         log.should include("DEBUG")
@@ -36,29 +21,34 @@ describe HttpLog do
         adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should_not include("[httplog] Header:")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should_not include("[httplog] Data:")
-        log.should_not include("[httplog] Header:")
       end
 
       it "should log POST requests with data" do
-        adapter.send_post_request(@data)
+        adapter.send_post_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
 
       it "should work with post_form" do
-        adapter.send_post_form_request(@params)
+        adapter.send_post_form_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
 
@@ -91,19 +81,19 @@ describe HttpLog do
 
       it "should not log POST data if disabled" do
         HttpLog.options[:log_data] = false
-        adapter.send_post_request(@data)
+        adapter.send_post_request
         log.should_not include("[httplog] Data:")
       end
 
       it "should not log the response if disabled" do
         HttpLog.options[:log_response] = false
-        adapter.send_post_request(@data)
+        adapter.send_post_request
         log.should_not include("[httplog] Reponse:")
       end
 
       it "should not log the benchmark if disabled" do
         HttpLog.options[:log_benchmark] = false
-        adapter.send_post_request(@data)
+        adapter.send_post_request
         log.should_not include("[httplog] Benchmark:")
       end
     end
@@ -130,9 +120,11 @@ describe HttpLog do
         res = adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response: (not available yet)")
-        log.should_not include("<html>")
+        log.should_not include("[httplog] Header:")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response: (not available yet)")
       end
     end
   end
@@ -141,9 +133,7 @@ describe HttpLog do
     let(:adapter) { HTTPClientAdapter.new(@host, @port, @path) }
 
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
         res = adapter.send_get_request
@@ -152,19 +142,25 @@ describe HttpLog do
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        res = adapter.send_post_request
         res.should be_a HTTP::Message
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
@@ -173,28 +169,32 @@ describe HttpLog do
     let(:adapter) { HTTPartyAdapter.new(@host, @port, @path) }
 
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
-        res = adapter.send_get_request
+        adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        adapter.send_post_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
@@ -203,28 +203,32 @@ describe HttpLog do
     let(:adapter) { FaradayAdapter.new(@host, @port, @path) }
 
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
-        res = adapter.send_get_request
+        adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        adapter.send_post_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
@@ -232,28 +236,32 @@ describe HttpLog do
   context "Excon" do
     let(:adapter) { ExconAdapter.new(@host, @port, @path) }
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
-        res = adapter.send_get_request
+        adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        adapter.send_post_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
@@ -261,30 +269,34 @@ describe HttpLog do
   context "Ethon" do
     let(:adapter) { EthonAdapter.new(@host, @port, @path) }
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
-        res = adapter.send_get_request
+        adapter.send_get_request
         # Ethon uses libcurl to connect, so we can't log the
         # actual TCP connection
         log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        adapter.send_post_request
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
@@ -292,30 +304,34 @@ describe HttpLog do
   context "Typhoeus" do
     let(:adapter) { TyphoeusAdapter.new(@host, @port, @path) }
     context "with all options" do
-      before do
-        HttpLog.options[:log_headers] = true
-      end
+      before { HttpLog.options[:log_headers] = true }
 
       it "should log GET requests" do
-        res = adapter.send_get_request
-        # Typhoeus uses Ethon, which uses libcurl to connect, so we can't log the
+        adapter.send_get_request
+        # Typhoeus uses ethon, which uses libcurl to connect, so we can't log the
         # actual TCP connection
         log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
         log.should include("[httplog] Response:")
         log.should include("<html>")
-        log.should include("[httplog] Benchmark: ")
-        log.should include("[httplog] Header:")
       end
 
       it "should log POST requests" do
-        res = adapter.send_post_request(@data)
+        adapter.send_post_request
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
-        log.should include("[httplog] Response:")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
         log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
         log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
       end
     end
   end
