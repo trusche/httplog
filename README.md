@@ -75,6 +75,10 @@ With the default configuration, the log output might look like this:
 
 ### Known Issues
 
+* Requests types other than GET and POST have not been explicitly tested.
+  They may or may not be logged, depending on the implementation details of the underlying library.
+  If they are not for a particular library, please feel free to open an issue with the details.
+
 * When using OpenURI, the reading of the HTTP response body is deferred,
   so it is not available for logging. This will be noted in the logging statement:
 
