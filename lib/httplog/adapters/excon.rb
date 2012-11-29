@@ -1,8 +1,5 @@
-puts "FOO"
 if defined?(Excon)
-  puts "Overriding Excon"
   module Excon
-
     class Socket
       alias_method :orig_connect, :connect
       def connect

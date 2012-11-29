@@ -3,6 +3,8 @@ $:.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'httpclient'
 require 'excon'
+require 'typhoeus'
+require 'ethon'
 
 require 'httplog'
 require 'rack'

@@ -88,6 +88,8 @@ With the default configuration, the log output might look like this:
         D, [2012-11-22T18:39:46.033409 #12800] DEBUG -- : [httplog] Status: 200
         D, [2012-11-22T18:39:46.033483 #12800] DEBUG -- : [httplog] Benchmark: 0.001562 seconds
 
+* When using Ethon, the TCP connection is not logged (since it's established by libcurl).
+
 ### Running the specs
 
 Make sure you have the necessary dependencies installed by running `bundle install`.

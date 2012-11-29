@@ -8,6 +8,8 @@ require 'adapters/open_uri_adapter'
 require 'adapters/httparty_adapter'
 require 'adapters/excon_adapter'
 require 'adapters/faraday_adapter'
+require 'adapters/typhoeus_adapter'
+require 'adapters/ethon_adapter'
 
 describe HttpLog do
 
@@ -227,7 +229,6 @@ describe HttpLog do
     end
   end
 
-
   context "Excon" do
     let(:adapter) { ExconAdapter.new(@host, @port, @path) }
     context "with all options" do
@@ -238,6 +239,68 @@ describe HttpLog do
       it "should log GET requests" do
         res = adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
+      end
+
+      it "should log POST requests" do
+        res = adapter.send_post_request(@data)
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Benchmark: ")
+      end
+    end
+  end
+
+  context "Ethon" do
+    let(:adapter) { EthonAdapter.new(@host, @port, @path) }
+    context "with all options" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
+        res = adapter.send_get_request
+        # Ethon uses libcurl to connect, so we can't log the
+        # actual TCP connection
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
+      end
+
+      it "should log POST requests" do
+        res = adapter.send_post_request(@data)
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Benchmark: ")
+      end
+    end
+  end
+
+  context "Typhoeus" do
+    let(:adapter) { TyphoeusAdapter.new(@host, @port, @path) }
+    context "with all options" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
+        res = adapter.send_get_request
+        # Typhoeus uses Ethon, which uses libcurl to connect, so we can't log the
+        # actual TCP connection
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
         log.should include("[httplog] Header: accept: */*")
         log.should include("[httplog] Header: foo: bar")

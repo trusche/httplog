@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "httparty"
   s.add_development_dependency "faraday"
   s.add_development_dependency "excon"
+  s.add_development_dependency "typhoeus"
+  s.add_development_dependency "ethon"
 end
