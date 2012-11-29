@@ -21,4 +21,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "thin"
   s.add_development_dependency "httpclient"
   s.add_development_dependency "httparty"
+  s.add_development_dependency "faraday"
+  s.add_development_dependency "excon"
 end

@@ -2,6 +2,8 @@ $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'httpclient'
+require 'excon'
+
 require 'httplog'
 require 'rack'
 require 'adapters/http_base_adapter'

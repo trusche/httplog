@@ -1,4 +1,3 @@
-
 if defined?(::HTTPClient)
   class HTTPClient
     private

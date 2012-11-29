@@ -6,6 +6,8 @@ require 'adapters/httpclient_adapter'
 require 'adapters/net_http_adapter'
 require 'adapters/open_uri_adapter'
 require 'adapters/httparty_adapter'
+require 'adapters/excon_adapter'
+require 'adapters/faraday_adapter'
 
 describe HttpLog do
 
@@ -168,6 +170,66 @@ describe HttpLog do
   context "HTTParty" do
     let(:adapter) { HTTPartyAdapter.new(@host, @port, @path) }
 
+    context "with all options" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
+        res = adapter.send_get_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
+      end
+
+      it "should log POST requests" do
+        res = adapter.send_post_request(@data)
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Benchmark: ")
+      end
+    end
+  end
+
+  context "Faraday" do
+    let(:adapter) { FaradayAdapter.new(@host, @port, @path) }
+
+    context "with all options" do
+      before do
+        HttpLog.options[:log_headers] = true
+      end
+
+      it "should log GET requests" do
+        res = adapter.send_get_request
+        log.should include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Header:")
+      end
+
+      it "should log POST requests" do
+        res = adapter.send_post_request(@data)
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Response:")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Benchmark: ")
+      end
+    end
+  end
+
+
+  context "Excon" do
+    let(:adapter) { ExconAdapter.new(@host, @port, @path) }
     context "with all options" do
       before do
         HttpLog.options[:log_headers] = true

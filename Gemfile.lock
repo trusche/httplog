@@ -9,12 +9,16 @@ GEM
     daemons (1.1.8)
     diff-lcs (1.1.3)
     eventmachine (0.12.10)
+    excon (0.16.10)
+    faraday (0.8.4)
+      multipart-post (~> 1.1)
     httparty (0.9.0)
       multi_json (~> 1.0)
       multi_xml
     httpclient (2.3.0.1)
     multi_json (1.3.7)
     multi_xml (0.5.1)
+    multipart-post (1.1.5)
     rack (1.3.3)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
@@ -33,6 +37,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  excon
+  faraday
   httparty
   httpclient
   httplog!
