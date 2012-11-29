@@ -7,10 +7,16 @@ for more details.
 So far this gem works with the following ruby modules and libraries:
 
 * [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
-* [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
+* [Ethon](https://github.com/typhoeus/ethon)
 * [Excon](https://github.com/geemus/excon)
+* [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
+
+These libraries are at least partially supported, where they use one of the above as adapters:
+
+* [Faraday](https://github.com/technoweenie/faraday)
+* [Typhoeus](https://github.com/typhoeus/typhoeus)
 
 In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.
@@ -88,7 +94,8 @@ With the default configuration, the log output might look like this:
         D, [2012-11-22T18:39:46.033409 #12800] DEBUG -- : [httplog] Status: 200
         D, [2012-11-22T18:39:46.033483 #12800] DEBUG -- : [httplog] Benchmark: 0.001562 seconds
 
-* When using Ethon, the TCP connection is not logged (since it's established by libcurl).
+* When using Ethon and any library based on it (such as Typhoeus),
+  the TCP connection is not logged (since it's established by libcurl).
 
 ### Running the specs
 
