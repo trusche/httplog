@@ -335,4 +335,37 @@ describe HttpLog do
       end
     end
   end
+
+  context "Patron" do
+    let(:adapter) { PatronAdapter.new(@host, @port, @path) }
+    context "with all options" do
+      before { HttpLog.options[:log_headers] = true }
+
+      it "should log GET requests" do
+        adapter.send_get_request
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should_not include("[httplog] Data:")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+      end
+
+      it "should log POST requests" do
+        adapter.send_post_request
+        log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
+        log.should include("[httplog] Sending: POST http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Header: accept: */*")
+        log.should include("[httplog] Header: foo: bar")
+        log.should include("[httplog] Data: #{@data}")
+        log.should include("[httplog] Status: 200")
+        log.should include("[httplog] Benchmark: ")
+        log.should include("[httplog] Response:")
+        log.should include("<html>")
+      end
+    end
+  end
 end

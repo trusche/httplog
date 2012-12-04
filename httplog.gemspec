@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "excon"
   s.add_development_dependency "typhoeus"
   s.add_development_dependency "ethon"
+  s.add_development_dependency "patron"
 end
