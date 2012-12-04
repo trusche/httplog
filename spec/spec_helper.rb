@@ -5,6 +5,7 @@ require 'httpclient'
 require 'excon'
 require 'typhoeus'
 require 'ethon'
+require 'patron'
 require 'httplog'
 
 require 'adapters/http_base_adapter'
