@@ -10,6 +10,7 @@ So far this gem works with the following ruby modules and libraries:
 * [Ethon](https://github.com/typhoeus/ethon)
 * [Excon](https://github.com/geemus/excon)
 * [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
+* [Patron](https://github.com/toland/patron)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
 
@@ -98,7 +99,7 @@ With the default configuration, the log output might look like this:
         D, [2012-11-22T18:39:46.033409 #12800] DEBUG -- : [httplog] Status: 200
         D, [2012-11-22T18:39:46.033483 #12800] DEBUG -- : [httplog] Benchmark: 0.001562 seconds
 
-* When using Ethon and any library based on it (such as Typhoeus),
+* When using Ethon or Patron, and any library based on them (such as Typhoeus),
   the TCP connection is not logged (since it's established by libcurl).
 
 ### Running the specs
@@ -119,6 +120,7 @@ Please include passing specs with all pull requests.
 
 Thanks to these fine folks for contributing pull requests:
 
+* [Doug Johnston](https://github.com/dougjohnston)
 * [Eric Cohen](https://github.com/eirc)
 * [Nikos Dimitrakopoulos](https://github.com/nikosd)
 * [Marcos Hack](https://github.com/marcoshack)
