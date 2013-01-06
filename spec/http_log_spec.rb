@@ -6,6 +6,7 @@ describe HttpLog do
     @host = 'localhost'
     @port = 9292
     @path = "/index.html"
+    @data = "foo=bar&bar=foo"
   end
 
   context "Net::HTTP" do
@@ -20,7 +21,7 @@ describe HttpLog do
       it "should log GET requests without data" do
         adapter.send_get_request
         log.should include("[httplog] Connecting: #{@host}:#{@port}")
-        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}")
+        log.should include("[httplog] Sending: GET http://#{@host}:#{@port}#{@path}?#{@data}")
         log.should_not include("[httplog] Header:")
         log.should_not include("[httplog] Data:")
         log.should include("[httplog] Status: 200")
@@ -103,7 +104,7 @@ describe HttpLog do
         HttpLog.options[:compact_log] = true
         adapter.send_get_request
 
-        log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path} completed with status code \d{3} in (\d|\.)*/
+        log.should match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path}\?#{@data} completed with status code \d{3} in (\d|\.)+/
         log.should_not include("[httplog] Connecting: #{@host}:#{@port}")
         log.should_not include("[httplog] Response:")
         log.should_not include("[httplog] Data:")

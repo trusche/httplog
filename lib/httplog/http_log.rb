@@ -57,14 +57,20 @@ module HttpLog
       log("Benchmark: #{seconds} seconds")
     end
 
-    def log_body(body)
+    def log_body(body, encoding = nil)
       return if options[:compact_log] || !options[:log_response]
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
         log("Response: (not available yet)")
       else
-        log("Response:\n#{body.to_s}")
+        if encoding =~ /gzip/
+          sio = StringIO.new( body.to_s )
+          gz = Zlib::GzipReader.new( sio )
+          log("Response: (deflated)\n#{gz.read}")
+        else
+          log("Response:\n#{body.to_s}")
+        end
       end
     end
 

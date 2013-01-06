@@ -1,6 +1,6 @@
 class NetHTTPAdapter < HTTPBaseAdapter
   def send_get_request
-    Net::HTTP.get_response(@host, @path, @port)
+    Net::HTTP.get_response(@host, "#{@path}?#{@data}", @port)
   end
 
   def send_post_request
