@@ -26,6 +26,7 @@ GEM
     multipart-post (1.1.5)
     patron (0.4.18)
     rack (1.3.3)
+    rake (10.0.3)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
       rspec-expectations (~> 2.6.0)
@@ -53,6 +54,7 @@ DEPENDENCIES
   httplog!
   patron
   rack
+  rake
   rspec
   thin
   typhoeus

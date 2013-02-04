@@ -26,4 +26,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "typhoeus"
   s.add_development_dependency "ethon"
   s.add_development_dependency "patron"
+  s.add_development_dependency "rake"
 end
