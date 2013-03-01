@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "httpclient"
   s.add_development_dependency "httparty"
   s.add_development_dependency "faraday"
-  s.add_development_dependency "excon"
+  s.add_development_dependency "excon", [">= 0.18.0"]
   s.add_development_dependency "typhoeus"
   s.add_development_dependency "ethon"
   s.add_development_dependency "patron"

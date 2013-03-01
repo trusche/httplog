@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    httplog (0.2.3)
+    httplog (0.2.4)
 
 GEM
   remote: http://rubygems.org/
@@ -12,7 +12,7 @@ GEM
       ffi (~> 1.2.0)
       mime-types (~> 1.18)
     eventmachine (0.12.10)
-    excon (0.16.10)
+    excon (0.19.2)
     faraday (0.8.4)
       multipart-post (~> 1.1)
     ffi (1.2.0)
@@ -46,7 +46,7 @@ PLATFORMS
 
 DEPENDENCIES
   ethon
-  excon
+  excon (>= 0.18.0)
   faraday
   httparty
   httpclient
