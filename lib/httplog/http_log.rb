@@ -5,16 +5,18 @@ require "benchmark"
 module HttpLog
   DEFAULT_LOGGER  = Logger.new($stdout)
   DEFAULT_OPTIONS = {
-    :logger        => DEFAULT_LOGGER,
-    :severity      => Logger::Severity::DEBUG,
-    :log_connect   => true,
-    :log_request   => true,
-    :log_headers   => false,
-    :log_data      => true,
-    :log_status    => true,
-    :log_response  => true,
-    :log_benchmark => true,
-    :compact_log   => false
+    :logger                => DEFAULT_LOGGER,
+    :severity              => Logger::Severity::DEBUG,
+    :log_connect           => true,
+    :log_request           => true,
+    :log_headers           => false,
+    :log_data              => true,
+    :log_status            => true,
+    :log_response          => true,
+    :log_benchmark         => true,
+    :compact_log           => false,
+    :url_whitelist_pattern => /.*/,
+    :url_blacklist_pattern => nil
   }
 
   class << self
@@ -24,6 +26,14 @@ module HttpLog
 
     def reset_options!
       @@options = DEFAULT_OPTIONS.clone
+    end
+
+    def url_approved?(url)
+      unless @@options[:url_blacklist_pattern].nil?
+        return false if url.match(@@options[:url_blacklist_pattern])
+      end
+
+      url.match(@@options[:url_whitelist_pattern])
     end
 
     def log(msg)

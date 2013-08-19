@@ -7,6 +7,8 @@ module Net
 
       url = "http://#{@address}:#{@port}#{req.path}"
 
+      return @response unless HttpLog.url_approved?(url)
+
       if started? && !HttpLog.options[:compact_log]
         HttpLog.log_request(req.method, url)
         HttpLog.log_headers(req.each_header.collect)

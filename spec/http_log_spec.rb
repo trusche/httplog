@@ -67,6 +67,37 @@ describe HttpLog do
         log.should include("[httplog] Header: user-agent: Ruby")
       end
 
+      it "should log the request if url does not match blacklist pattern" do
+        HttpLog.options[:url_blacklist_pattern] = /example.com/
+        adapter.send_get_request
+        log.should include("[httplog] Sending: GET")
+      end
+
+      it "should log the request if url matches whitelist pattern and not the blacklist pattern" do
+        HttpLog.options[:url_blacklist_pattern] = /example.com/
+        HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+        adapter.send_get_request
+        log.should include("[httplog] Sending: GET")
+      end
+
+      it "should not log the request if url matches blacklist pattern" do
+        HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
+        adapter.send_get_request
+        log.should_not include("[httplog] Sending: GET")
+      end
+
+      it "should not log the request if url does not match whitelist pattern" do
+        HttpLog.options[:url_whitelist_pattern] = /example.com/
+        adapter.send_get_request
+        log.should_not include("[httplog] Sending: GET")
+      end
+
+      it "should not log the request if url matches blacklist pattern and the whitelist pattern" do
+        HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
+        HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+        adapter.send_get_request
+        log.should_not include("[httplog] Sending: GET")
+      end
 
       it "should not log the request if disabled" do
         HttpLog.options[:log_request] = false
