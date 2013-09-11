@@ -30,10 +30,10 @@ module HttpLog
 
     def url_approved?(url)
       unless @@options[:url_blacklist_pattern].nil?
-        return false if url.match(@@options[:url_blacklist_pattern])
+        return false if url.to_s.match(@@options[:url_blacklist_pattern])
       end
 
-      url.match(@@options[:url_whitelist_pattern])
+      url.to_s.match(@@options[:url_whitelist_pattern])
     end
 
     def log(msg)
