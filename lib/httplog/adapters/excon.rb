@@ -23,21 +23,32 @@ if defined?(Excon)
         bm = Benchmark.realtime do
           datum = orig_request(params, &block)
         end
-        HttpLog.log_compact(datum[:method], _httplog_url(datum), datum[:status], bm)
-        HttpLog.log_benchmark(bm)
+
+        url = _httplog_url(datum)
+
+        if HttpLog.url_approved?(url)
+          HttpLog.log_compact(datum[:method], _httplog_url(datum), datum[:status], bm)
+          HttpLog.log_benchmark(bm)
+        end
         datum
       end
 
       alias_method :orig_request_call, :request_call
       def request_call(datum)
-        HttpLog.log_request(datum[:method], _httplog_url(datum))
-        HttpLog.log_headers(datum[:headers])
-        HttpLog.log_data(datum[:body]) if datum[:method] == :post
+        url = _httplog_url(datum)
+
+        if HttpLog.url_approved?(url)
+          HttpLog.log_request(datum[:method], _httplog_url(datum))
+          HttpLog.log_headers(datum[:headers])
+          HttpLog.log_data(datum[:body]) if datum[:method] == :post
+        end
         orig_request_call(datum)
       end
 
       alias_method :orig_response, :response
       def response(datum={})
+        return orig_response(datum) unless HttpLog.url_approved?(_httplog_url(datum))
+
         bm = Benchmark.realtime do
           datum = orig_response(datum)
         end
