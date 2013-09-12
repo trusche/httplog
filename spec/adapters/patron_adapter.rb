@@ -9,4 +9,8 @@ class PatronAdapter < HTTPBaseAdapter
     session = Patron::Session.new
     session.post(parse_uri.to_s, @data, @headers)
   end
+
+  def self.is_libcurl?
+    true
+  end
 end

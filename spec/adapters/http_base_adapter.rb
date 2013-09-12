@@ -13,12 +13,18 @@ class HTTPBaseAdapter
     URI.parse("#{@protocol}://#{@host}:#{@port}#{@path}")
   end
 
-  def send_get_request
-  end
-
-  def send_post_request
-  end
-
   def send_post_form_request
+  end
+
+  def expected_response_body
+    "\n<html>"
+  end
+
+  def self.is_libcurl?
+    false
+  end
+
+  def self.should_log_headers?
+    true
   end
 end
