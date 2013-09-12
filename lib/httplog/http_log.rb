@@ -91,6 +91,7 @@ module HttpLog
 
     def log_compact(method, uri, status, seconds)
       return unless options[:compact_log]
+      status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
   end
