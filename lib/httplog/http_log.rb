@@ -19,6 +19,8 @@ module HttpLog
     :url_blacklist_pattern => nil
   }
 
+  LOG_PREFIX = "[httplog] ".freeze
+
   class << self
     def options
       @@options ||= DEFAULT_OPTIONS.clone
@@ -37,7 +39,7 @@ module HttpLog
     end
 
     def log(msg)
-      @@options[:logger].add(@@options[:severity]) { "[httplog] #{msg}" }
+      @@options[:logger].add(@@options[:severity]) { LOG_PREFIX + msg }
     end
 
     def log_connection(host, port = nil)
