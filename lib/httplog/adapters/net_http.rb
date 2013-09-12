@@ -7,9 +7,9 @@ module Net
 
       url = "http://#{@address}:#{@port}#{req.path}"
 
-      return @response unless HttpLog.url_approved?(url)
+      log_enabled = HttpLog.url_approved?(url)
 
-      if started? && !HttpLog.options[:compact_log]
+      if log_enabled && started?
         HttpLog.log_request(req.method, url)
         HttpLog.log_headers(req.each_header.collect)
         # A bit convoluted becase post_form uses form_data= to assign the data, so
@@ -21,7 +21,7 @@ module Net
         @response = orig_request(req, body, &block)
       end
 
-      if started?
+      if log_enabled && started?
         HttpLog.log_compact(req.method, url, @response.code, bm)
         HttpLog.log_status(@response.code)
         HttpLog.log_benchmark(bm)
@@ -33,7 +33,8 @@ module Net
     end
 
     def connect
-      HttpLog.log_connection(@address, @port) unless started?
+      HttpLog.log_connection(@address, @port) if !started? && HttpLog.url_approved?("#{@address}:#{@port}")
+
       orig_connect
     end
   end
