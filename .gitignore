@@ -2,3 +2,4 @@
 .rvmrc
 pkg/
 *.gem
+coverage/
