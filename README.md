@@ -129,3 +129,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Eric Cohen](https://github.com/eirc)
 * [Nikos Dimitrakopoulos](https://github.com/nikosd)
 * [Marcos Hack](https://github.com/marcoshack)
+* [Andrew Hammond](https://github.com/andrhamm)
