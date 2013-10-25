@@ -19,18 +19,20 @@ if defined?(Excon)
 
       alias_method :orig_request, :request
       def request(params, &block)
-        datum = nil
+        result = nil
         bm = Benchmark.realtime do
-          datum = orig_request(params, &block)
+          result = orig_request(params, &block)
         end
 
+        datum = @data.merge(params)
+        datum[:headers] = @data[:headers].merge(datum[:headers] || {})
         url = _httplog_url(datum)
-
+  
         if HttpLog.url_approved?(url)
-          HttpLog.log_compact(datum[:method], _httplog_url(datum), datum[:status], bm)
+          HttpLog.log_compact(datum[:method], url, datum[:status] || result.status, bm)
           HttpLog.log_benchmark(bm)
         end
-        datum
+        result
       end
 
       alias_method :orig_request_call, :request_call

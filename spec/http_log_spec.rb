@@ -75,7 +75,6 @@ describe HttpLog do
           HttpLog.options[:log_headers] = true
           adapter.send_get_request
           log.should include(HttpLog::LOG_PREFIX + "Header: accept: */*")
-          log.should include(HttpLog::LOG_PREFIX + "Header: user-agent: Ruby")
         end
 
         it "should not log headers if disabled" do
