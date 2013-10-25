@@ -7,6 +7,9 @@ require 'typhoeus'
 require 'ethon'
 require 'patron'
 require 'httplog'
+require 'simplecov'
+
+SimpleCov.start
 
 require 'adapters/http_base_adapter'
 Dir[File.dirname(__FILE__) + '/adapters/*.rb'].each { |f| require f }

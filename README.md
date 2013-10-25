@@ -50,6 +50,11 @@ You can override the following default options:
     HttpLog.options[:log_benchmark] = true
     HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
 
+	# only log requests made to specified hosts (URLs)
+    HttpLog.options[:url_whitelist_pattern] = /.*/
+    # overrides whitelist 
+    HttpLog.options[:url_blacklist_pattern] = nil 
+
 So if you want to use this in a Rails app:
 
     # config/initializers/httplog.rb

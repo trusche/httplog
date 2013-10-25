@@ -5,9 +5,11 @@ if defined?(Ethon)
       module Http
         alias_method :orig_http_request, :http_request
         def http_request(url, action_name, options = {})
-          HttpLog.log_request(action_name, url)
-          HttpLog.log_headers(options[:headers])
-          HttpLog.log_data(options[:body]) if action_name == :post
+          if HttpLog.url_approved?(url)
+            HttpLog.log_request(action_name, url)
+            HttpLog.log_headers(options[:headers])
+            HttpLog.log_data(options[:body]) if action_name == :post
+          end
 
           orig_http_request(url, action_name, options)
         end
@@ -16,6 +18,8 @@ if defined?(Ethon)
       module Operations
         alias_method :orig_perform, :perform
         def perform
+          return orig_perform unless HttpLog.url_approved?(url)
+
           response_code = nil
           bm = Benchmark.realtime do
             reponse_code = orig_perform

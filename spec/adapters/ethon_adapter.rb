@@ -11,4 +11,8 @@ class EthonAdapter < HTTPBaseAdapter
     easy.http_request(parse_uri.to_s, :post, { headers: @headers, body: @data })
     easy.perform
   end
+
+  def self.is_libcurl?
+    true
+  end
 end
