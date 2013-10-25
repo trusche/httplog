@@ -2,9 +2,12 @@ if defined?(Ethon)
   module Ethon
     class Easy
 
+      attr_accessor :action_name
+
       module Http
         alias_method :orig_http_request, :http_request
         def http_request(url, action_name, options = {})
+          @action_name = action_name # remember this for compact logging 
           if HttpLog.url_approved?(url)
             HttpLog.log_request(action_name, url)
             HttpLog.log_headers(options[:headers])
@@ -24,8 +27,6 @@ if defined?(Ethon)
           bm = Benchmark.realtime do
             reponse_code = orig_perform
           end
-
-          puts "HANDLE: #{@handle}"
 
           # Not sure where the acutal status code is stored - so let's
           # extract it from the response header.
