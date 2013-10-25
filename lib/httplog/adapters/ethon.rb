@@ -25,6 +25,8 @@ if defined?(Ethon)
             reponse_code = orig_perform
           end
 
+          puts "HANDLE: #{@handle}"
+
           # Not sure where the acutal status code is stored - so let's
           # extract it from the response header.
           status = response_headers.scan(/HTTP\/... (\d{3})/).flatten.first
