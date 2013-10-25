@@ -4,7 +4,7 @@ PATH
     httplog (0.2.4)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     daemons (1.1.8)
     diff-lcs (1.1.3)
