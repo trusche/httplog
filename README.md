@@ -1,5 +1,7 @@
 ## httplog
 
+[![Gem Version](https://badge.fury.io/rb/httplog.png)](http://badge.fury.io/rb/httplog)
+
 Log outgoing HTTP requests made from your application.
 See the [blog post](http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/)
 for more details.
