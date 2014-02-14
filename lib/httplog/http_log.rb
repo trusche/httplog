@@ -31,15 +31,15 @@ module HttpLog
     end
 
     def url_approved?(url)
-      unless @@options[:url_blacklist_pattern].nil?
-        return false if url.to_s.match(@@options[:url_blacklist_pattern])
+      unless options[:url_blacklist_pattern].nil?
+        return false if url.to_s.match(options[:url_blacklist_pattern])
       end
 
-      url.to_s.match(@@options[:url_whitelist_pattern])
+      url.to_s.match(options[:url_whitelist_pattern])
     end
 
     def log(msg)
-      @@options[:logger].add(@@options[:severity]) { LOG_PREFIX + msg }
+      options[:logger].add(options[:severity]) { LOG_PREFIX + msg }
     end
 
     def log_connection(host, port = nil)
