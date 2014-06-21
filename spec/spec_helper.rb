@@ -19,7 +19,7 @@ Dir["./spec/support/**/*.rb"].each {|f| require f}
 @server_thread = Thread.new do
   Rack::Handler::Thin.run Httplog::Test::Server.new, :Port => 9292
 end
-sleep(1) # wait a sec for the server to be booted
+sleep(3) # wait a moment for the server to be booted
 
 RSpec.configure do |config|
 
