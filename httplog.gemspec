@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_development_dependency "rspec"
+  s.add_development_dependency "guard-rspec"
   s.add_development_dependency "rack"
   s.add_development_dependency "thin"
   s.add_development_dependency "httpclient"
