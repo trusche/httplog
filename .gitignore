@@ -3,4 +3,4 @@
 pkg/
 *.gem
 coverage/
-spec/log/*
+spec/log/*.log
