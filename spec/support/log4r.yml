@@ -1,0 +1,17 @@
+log4r_config:
+  loggers:
+    - name      : test
+      level     : DEBUG
+      trace     : 'true'
+      outputters :
+      - datefile
+
+  outputters:
+  - type: DateFileOutputter
+    name: datefile
+    dirname: "./spec/log"
+    filename: "log4r.log"
+    formatter:
+      date_pattern: '%H:%M:%S'
+      pattern     : '%d %l: %m '
+      type        : PatternFormatter

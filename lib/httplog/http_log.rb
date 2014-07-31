@@ -39,7 +39,12 @@ module HttpLog
     end
 
     def log(msg)
-      options[:logger].add(options[:severity]) { LOG_PREFIX + msg }
+      # This builds a hash {0=>:DEBUG, 1=>:INFO, 2=>:WARN, 3=>:ERROR, 4=>:FATAL, 5=>:UNKNOWN}.
+      # Courtesy of the delayed_job gem in this commit: 
+      # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
+      severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
+      severity = severities[options[:severity]].to_s.downcase
+      options[:logger].send(severity, LOG_PREFIX + msg)
     end
 
     def log_connection(host, port = nil)

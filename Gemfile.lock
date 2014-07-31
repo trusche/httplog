@@ -36,6 +36,7 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    log4r (1.1.10)
     lumberjack (1.0.9)
     method_source (0.8.2)
     mime-types (1.19)
@@ -84,6 +85,7 @@ DEPENDENCIES
   httparty
   httpclient
   httplog!
+  log4r
   patron
   rack
   rspec

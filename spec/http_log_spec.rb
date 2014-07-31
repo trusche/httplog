@@ -160,6 +160,20 @@ describe HttpLog do
           log.should_not include(HttpLog::LOG_PREFIX + "Benchmark: ")
         end
       end
+
+      context "with log4r" do
+        it "works" do
+          require 'log4r'
+          require 'log4r/yamlconfigurator'
+          require 'log4r/outputter/datefileoutputter'          
+          log4r_config= YAML.load_file(File.join(File.dirname(__FILE__),"support/log4r.yml"))
+          Log4r::YamlConfigurator.decode_yaml( log4r_config['log4r_config'] )
+          HttpLog.options[:logger] = Log4r::Logger['test']
+
+          expect { adapter.send_get_request }.to_not raise_error
+        end
+      end
     end
   end
+
 end
