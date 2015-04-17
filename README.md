@@ -109,6 +109,8 @@ With the default configuration, the log output might look like this:
 * When using Ethon or Patron, and any library based on them (such as Typhoeus),
   the TCP connection is not logged (since it's established by libcurl).
 
+* Benchmarking only covers the time between starting the HTTP request and receiving the response. It does *not* cover the time it takes to establish the TCP connection. 
+
 ### Running the specs
 
 Make sure you have the necessary dependencies installed by running `bundle install`.
