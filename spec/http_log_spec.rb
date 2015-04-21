@@ -18,7 +18,8 @@ describe HttpLog do
     ExconAdapter,
     EthonAdapter,
     TyphoeusAdapter,
-    PatronAdapter
+    PatronAdapter,
+    HTTPAdapter
   ]
 
   ADAPTERS.each do |adapter_class|
@@ -165,7 +166,7 @@ describe HttpLog do
         it "works" do
           require 'log4r'
           require 'log4r/yamlconfigurator'
-          require 'log4r/outputter/datefileoutputter'          
+          require 'log4r/outputter/datefileoutputter'
           log4r_config= YAML.load_file(File.join(File.dirname(__FILE__),"support/log4r.yml"))
           Log4r::YamlConfigurator.decode_yaml( log4r_config['log4r_config'] )
           HttpLog.options[:logger] = Log4r::Logger['test']
