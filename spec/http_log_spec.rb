@@ -75,7 +75,7 @@ describe HttpLog do
         it "should log headers if enabled" do
           HttpLog.options[:log_headers] = true
           adapter.send_get_request
-          log.should include(HttpLog::LOG_PREFIX + "Header: accept: */*")
+          log.downcase.should include(HttpLog::LOG_PREFIX + "Header: accept: */*".downcase)
         end
 
         it "should not log headers if disabled" do
