@@ -15,6 +15,7 @@ So far this gem works with the following ruby modules and libraries:
 * [Patron](https://github.com/toland/patron)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
+* [HTTP](http://rubygems.org/gems/http)
 
 These libraries are at least partially supported, where they use one of the above as adapters:
 
@@ -54,8 +55,8 @@ You can override the following default options:
 
 	# only log requests made to specified hosts (URLs)
     HttpLog.options[:url_whitelist_pattern] = /.*/
-    # overrides whitelist 
-    HttpLog.options[:url_blacklist_pattern] = nil 
+    # overrides whitelist
+    HttpLog.options[:url_blacklist_pattern] = nil
 
 So if you want to use this in a Rails app:
 
@@ -109,7 +110,7 @@ With the default configuration, the log output might look like this:
 * When using Ethon or Patron, and any library based on them (such as Typhoeus),
   the TCP connection is not logged (since it's established by libcurl).
 
-* Benchmarking only covers the time between starting the HTTP request and receiving the response. It does *not* cover the time it takes to establish the TCP connection. 
+* Benchmarking only covers the time between starting the HTTP request and receiving the response. It does *not* cover the time it takes to establish the TCP connection.
 
 ### Running the specs
 
@@ -134,3 +135,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Nikos Dimitrakopoulos](https://github.com/nikosd)
 * [Marcos Hack](https://github.com/marcoshack)
 * [Andrew Hammond](https://github.com/andrhamm)
+* [Chris Keele](https://github.com/christhekeele)

@@ -6,6 +6,7 @@ require 'excon'
 require 'typhoeus'
 require 'ethon'
 require 'patron'
+require 'http'
 require 'httplog'
 require 'simplecov'
 
@@ -37,4 +38,3 @@ RSpec.configure do |config|
     @log.string
   end
 end
-
