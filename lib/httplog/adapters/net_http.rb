@@ -14,7 +14,7 @@ module Net
         HttpLog.log_headers(req.each_header.collect)
         # A bit convoluted becase post_form uses form_data= to assign the data, so
         # in that case req.body will be empty.
-        HttpLog::log_data(req.body.nil? || req.body.size == 0 ? body : req.body) if req.method == 'POST'
+        HttpLog::log_data(req.body.nil? || req.body.size == 0 ? body : req.body) #if req.method == 'POST'
       end
 
       bm = Benchmark.realtime do

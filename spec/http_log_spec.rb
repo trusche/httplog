@@ -37,7 +37,7 @@ describe HttpLog do
             log.send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}"))
 
             log.should include(HttpLog::LOG_PREFIX + "Sending: GET http://#{@host}:#{@port}#{@path}")
-            log.should_not include(HttpLog::LOG_PREFIX + "Data:")
+            log.should include(HttpLog::LOG_PREFIX + "Data:")
             log.should_not include(HttpLog::LOG_PREFIX + "Header:")
             log.should include(HttpLog::LOG_PREFIX + "Status: 200")
             log.should include(HttpLog::LOG_PREFIX + "Benchmark: ")
@@ -66,85 +66,95 @@ describe HttpLog do
       end
 
       context "with custom config" do
-        it "should log at other levels" do
-          HttpLog.options[:severity] = Logger::Severity::INFO
-          adapter.send_get_request
-          log.should include("INFO")
-        end
+        context "GET requests" do
+          it "should log at other levels" do
+            HttpLog.options[:severity] = Logger::Severity::INFO
+            adapter.send_get_request
+            log.should include("INFO")
+          end
 
-        it "should log headers if enabled" do
-          HttpLog.options[:log_headers] = true
-          adapter.send_get_request
-          log.downcase.should include(HttpLog::LOG_PREFIX + "Header: accept: */*".downcase)
-        end
+          it "should log headers if enabled" do
+            HttpLog.options[:log_headers] = true
+            adapter.send_get_request
+            log.downcase.should include(HttpLog::LOG_PREFIX + "Header: accept: */*".downcase)
+          end
 
-        it "should not log headers if disabled" do
-          HttpLog.options[:log_headers] = false
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Header:")
-        end
+          it "should not log headers if disabled" do
+            HttpLog.options[:log_headers] = false
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Header:")
+          end
 
-        it "should log the request if url does not match blacklist pattern" do
-          HttpLog.options[:url_blacklist_pattern] = /example.com/
-          adapter.send_get_request
-          log.should include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should log the request if url does not match blacklist pattern" do
+            HttpLog.options[:url_blacklist_pattern] = /example.com/
+            adapter.send_get_request
+            log.should include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should log the request if url matches whitelist pattern and not the blacklist pattern" do
-          HttpLog.options[:url_blacklist_pattern] = /example.com/
-          HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
-          adapter.send_get_request
-          log.should include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should log the request if url matches whitelist pattern and not the blacklist pattern" do
+            HttpLog.options[:url_blacklist_pattern] = /example.com/
+            HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+            adapter.send_get_request
+            log.should include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should not log the request if url matches blacklist pattern" do
-          HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should not log the request if url matches blacklist pattern" do
+            HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should not log the request if url does not match whitelist pattern" do
-          HttpLog.options[:url_whitelist_pattern] = /example.com/
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should not log the request if url does not match whitelist pattern" do
+            HttpLog.options[:url_whitelist_pattern] = /example.com/
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should not log the request if url matches blacklist pattern and the whitelist pattern" do
-          HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
-          HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should not log the request if url matches blacklist pattern and the whitelist pattern" do
+            HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
+            HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should not log the request if disabled" do
-          HttpLog.options[:log_request] = false
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
-        end
+          it "should not log the request if disabled" do
+            HttpLog.options[:log_request] = false
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Sending: GET")
+          end
 
-        it "should not log the connection if disabled" do
-          HttpLog.options[:log_connect] = false
-          adapter.send_get_request
-          log.should_not include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}")
-        end
+          it "should not log the connection if disabled" do
+            HttpLog.options[:log_connect] = false
+            adapter.send_get_request
+            log.should_not include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}")
+          end
 
-        if adapter_class.method_defined? :send_post_request
-          it "should not log POST data if disabled" do
+          it "should not log data if disabled" do
             HttpLog.options[:log_data] = false
-            adapter.send_post_request
+            adapter.send_get_request
             log.should_not include(HttpLog::LOG_PREFIX + "Data:")
           end
+        end
 
-          it "should not log the response if disabled" do
-            HttpLog.options[:log_response] = false
-            adapter.send_post_request
-            log.should_not include(HttpLog::LOG_PREFIX + "Reponse:")
-          end
+        context "POST requests" do
+          if adapter_class.method_defined? :send_post_request
+            it "should not log data if disabled" do
+              HttpLog.options[:log_data] = false
+              adapter.send_post_request
+              log.should_not include(HttpLog::LOG_PREFIX + "Data:")
+            end
 
-          it "should not log the benchmark if disabled" do
-            HttpLog.options[:log_benchmark] = false
-            adapter.send_post_request
-            log.should_not include(HttpLog::LOG_PREFIX + "Benchmark:")
+            it "should not log the response if disabled" do
+              HttpLog.options[:log_response] = false
+              adapter.send_post_request
+              log.should_not include(HttpLog::LOG_PREFIX + "Reponse:")
+            end
+
+            it "should not log the benchmark if disabled" do
+              HttpLog.options[:log_benchmark] = false
+              adapter.send_post_request
+              log.should_not include(HttpLog::LOG_PREFIX + "Benchmark:")
+            end
           end
         end
       end

@@ -11,7 +11,7 @@ if defined?(Ethon)
           if HttpLog.url_approved?(url)
             HttpLog.log_request(action_name, url)
             HttpLog.log_headers(options[:headers])
-            HttpLog.log_data(options[:body]) if action_name == :post
+            HttpLog.log_data(options[:body]) #if action_name == :post
           end
 
           orig_http_request(url, action_name, options)
