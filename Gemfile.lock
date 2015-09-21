@@ -38,7 +38,7 @@ GEM
     httparty (0.13.6)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
-    httpclient (2.3.0.1)
+    httpclient (2.6.0.1)
     json (1.8.3)
     listen (2.7.9)
       celluloid (>= 0.15.2)
