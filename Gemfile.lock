@@ -51,7 +51,7 @@ GEM
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (1.1.5)
-    patron (0.4.18)
+    patron (0.5.0)
     pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
