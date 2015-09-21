@@ -6,7 +6,7 @@ describe HttpLog do
     @host = 'localhost'
     @port = 9292
     @path = "/index.html"
-    @data = "foo=bar&bar=foo"
+    @data = "foo=bar%3Azee&bar=foo"
   end
 
   ADAPTERS = [
@@ -54,7 +54,7 @@ describe HttpLog do
             log.send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}"))
 
             log.should include(HttpLog::LOG_PREFIX + "Sending: POST http://#{@host}:#{@port}#{@path}")
-            log.should include(HttpLog::LOG_PREFIX + "Data: #{@data}")
+            log.should include(HttpLog::LOG_PREFIX + "Data: foo=bar:zee&bar=foo")
             log.should_not include(HttpLog::LOG_PREFIX + "Header:")
             log.should include(HttpLog::LOG_PREFIX + "Status: 200")
             log.should include(HttpLog::LOG_PREFIX + "Benchmark: ")

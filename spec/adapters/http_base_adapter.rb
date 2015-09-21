@@ -5,7 +5,7 @@ class HTTPBaseAdapter
     @path = path
     @protocol = protocol
     @headers = { "accept" => "*/*", "foo" => "bar" }
-    @data = "foo=bar&bar=foo"
+    @data = "foo=bar%3Azee&bar=foo"
     @params = {'foo' => 'bar', 'bar' => 'foo'}
   end
 

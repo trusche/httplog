@@ -93,6 +93,7 @@ module HttpLog
 
     def log_data(data)
       return if options[:compact_log] || !options[:log_data]
+      data = URI.unescape(data) if data
       log("Data: #{data}")
     end
 
