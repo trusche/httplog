@@ -11,6 +11,8 @@ GEM
     daemons (1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     ethon (0.5.7)
       ffi (~> 1.2.0)
       mime-types (~> 1.18)
@@ -34,10 +36,13 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    http (0.8.3)
+    http (0.8.14)
       addressable (~> 2.3)
+      http-cookie (~> 1.0)
       http-form_data (~> 1.0.1)
       http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
     httparty (0.13.6)
@@ -95,6 +100,9 @@ GEM
     thor (0.19.1)
     typhoeus (0.5.3)
       ethon (~> 0.5.3)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
 
 PLATFORMS
   ruby
@@ -104,7 +112,7 @@ DEPENDENCIES
   excon (>= 0.18.0)
   faraday
   guard-rspec
-  http
+  http (= 0.8.14)
   httparty
   httpclient
   httplog!

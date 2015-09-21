@@ -15,7 +15,7 @@ So far this gem works with the following ruby modules and libraries:
 * [Patron](https://github.com/toland/patron)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
-* [HTTP](http://rubygems.org/gems/http)
+* [HTTP](https://github.com/httprb/http) (**Up to version 0.8.14**; see below)
 
 These libraries are at least partially supported, where they use one of the above as adapters:
 
@@ -83,6 +83,8 @@ With the default configuration, the log output might look like this:
 
 
 ### Known Issues
+
+* The [httprb/http](https://github.com/httprb/http) gem made some breaking changes in v0.9.0 that I haven't had time to fix yet. Pull requests welcome, but they should be backwards compatible to <= 0.8.14.
 
 * Requests types other than GET and POST have not been explicitly tested.
   They may or may not be logged, depending on the implementation details of the underlying library.

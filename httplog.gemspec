@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "typhoeus"
   s.add_development_dependency "ethon"
   s.add_development_dependency "patron"
-  s.add_development_dependency "http"
+  s.add_development_dependency "http", ["0.8.14"]
   s.add_development_dependency "simplecov"
   s.add_development_dependency "log4r"
   s.add_development_dependency "rake"
