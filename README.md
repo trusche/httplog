@@ -9,18 +9,18 @@ for more details.
 So far this gem works with the following ruby modules and libraries:
 
 * [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
-* [Ethon](https://github.com/typhoeus/ethon)
+* [Ethon](https://github.com/typhoeus/ethon) (**Needs work to support latest versions**)
 * [Excon](https://github.com/geemus/excon) (for excon >= v18.0, httplog >= 0.2.4 is required)
 * [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
 * [Patron](https://github.com/toland/patron)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
-* [HTTP](https://github.com/httprb/http) (**Up to version 0.8.14**; see below)
+* [HTTP](https://github.com/httprb/http) (**Up to version 0.8.14**; see known issues below)
 
 These libraries are at least partially supported, where they use one of the above as adapters:
 
 * [Faraday](https://github.com/technoweenie/faraday)
-* [Typhoeus](https://github.com/typhoeus/typhoeus)
+* [Typhoeus](https://github.com/typhoeus/typhoeus) (**Needs work to support latest versions**)
 
 In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.
