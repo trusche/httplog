@@ -15,10 +15,31 @@ class FaradayAdapter < HTTPBaseAdapter
     end
   end
 
+  def send_post_form_request
+    connection.post do |req|
+      req.url parse_uri.to_s
+      req.headers = @headers
+      req.body = @params
+    end
+  end
+
+  def send_multipart_post_request
+    file_upload = Faraday::UploadIO.new(@params['file'], 'text/plain')
+
+    connection.post do |req|
+      req.url parse_uri.to_s
+      req.headers = @headers
+      req.body = @params.merge('file' => file_upload)
+    end
+  end
+
   private
 
   def connection
     Faraday.new(url: "#{@protocol}://#{@host}:#{@port}") do |faraday|
+      faraday.request :multipart
+      faraday.request :url_encoded
+
       faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
     end
   end

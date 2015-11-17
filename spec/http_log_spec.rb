@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe HttpLog do
 
-  before do
-    @host = 'localhost'
-    @port = 9292
-    @path = "/index.html"
-    @data = "foo=bar%3Azee&bar=foo"
-  end
+  let(:host) { 'localhost' }
+  let(:port) { 9292 }
+  let(:path) { "/index.html" }
+  let(:headers) { { "accept" => "*/*", "foo" => "bar" } }
+  let(:data) { "foo=bar%3Azee&bar=foo" }
+  let(:params) { {'foo' => 'bar:form-data', 'bar' => 'foo'} }
 
   ADAPTERS = [
     NetHTTPAdapter,
@@ -23,8 +23,8 @@ describe HttpLog do
   ]
 
   ADAPTERS.each do |adapter_class|
-    context adapter_class do
-      let(:adapter) { adapter_class.new(@host, @port, @path) }
+    context adapter_class, :adapter => adapter_class.to_s do
+      let(:adapter) { adapter_class.new(host, port, path, headers, data, params) }
 
       context "with default options" do
         connection_test_method = adapter_class.is_libcurl? ? :to_not : :to
@@ -33,9 +33,9 @@ describe HttpLog do
           it "should log GET requests" do
             res = adapter.send_get_request
 
-            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}"))
+            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
 
-            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET http://#{@host}:#{@port}#{@path}")
+            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET http://#{host}:#{port}#{path}")
             expect(log).to include(HttpLog::LOG_PREFIX + "Data:")
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Header:")
             expect(log).to include(HttpLog::LOG_PREFIX + "Status: 200")
@@ -50,9 +50,9 @@ describe HttpLog do
           it "should log POST requests" do
             res = adapter.send_post_request
 
-            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}"))
+            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
 
-            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: POST http://#{@host}:#{@port}#{@path}")
+            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: POST http://#{host}:#{port}#{path}")
             expect(log).to include(HttpLog::LOG_PREFIX + "Data: foo=bar:zee&bar=foo")
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Header:")
             expect(log).to include(HttpLog::LOG_PREFIX + "Status: 200")
@@ -92,13 +92,13 @@ describe HttpLog do
 
           it "should log the request if url matches whitelist pattern and not the blacklist pattern" do
             HttpLog.options[:url_blacklist_pattern] = /example.com/
-            HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+            HttpLog.options[:url_whitelist_pattern] = /#{host}:#{port}/
             adapter.send_get_request
             expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the request if url matches blacklist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
+            HttpLog.options[:url_blacklist_pattern] = /#{host}:#{port}/
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
@@ -110,8 +110,8 @@ describe HttpLog do
           end
 
           it "should not log the request if url matches blacklist pattern and the whitelist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /#{@host}:#{@port}/
-            HttpLog.options[:url_whitelist_pattern] = /#{@host}:#{@port}/
+            HttpLog.options[:url_blacklist_pattern] = /#{host}:#{port}/
+            HttpLog.options[:url_whitelist_pattern] = /#{host}:#{port}/
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
@@ -125,7 +125,7 @@ describe HttpLog do
           it "should not log the connection if disabled" do
             HttpLog.options[:log_connect] = false
             adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}")
+            expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
           end
 
           it "should not log data if disabled" do
@@ -156,6 +156,53 @@ describe HttpLog do
             end
           end
         end
+
+        context "POST form data requests" do
+          if adapter_class.method_defined? :send_post_form_request
+            it "should not log data if disabled" do
+              HttpLog.options[:log_data] = false
+              adapter.send_post_form_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
+            end
+
+            it "should not log the response if disabled" do
+              HttpLog.options[:log_response] = false
+              adapter.send_post_form_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
+            end
+
+            it "should not log the benchmark if disabled" do
+              HttpLog.options[:log_benchmark] = false
+              adapter.send_post_form_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark:")
+            end
+          end
+        end
+
+        context "POST multi-part requests (file upload)" do
+          let(:upload) { Tempfile.new('http-log') }
+          let(:params) { {'foo' => 'bar', 'file' => upload} }
+
+          if adapter_class.method_defined? :send_multipart_post_request
+            it "should not log data if disabled" do
+              HttpLog.options[:log_data] = false
+              adapter.send_multipart_post_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
+            end
+
+            it "should not log the response if disabled" do
+              HttpLog.options[:log_response] = false
+              adapter.send_multipart_post_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
+            end
+
+            it "should not log the benchmark if disabled" do
+              HttpLog.options[:log_benchmark] = false
+              adapter.send_multipart_post_request
+              expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark:")
+            end
+          end
+        end
       end
 
       context "with compact config" do
@@ -163,8 +210,8 @@ describe HttpLog do
           HttpLog.options[:compact_log] = true
           adapter.send_get_request
 
-          expect(log).to match /\[httplog\] GET http:\/\/#{@host}:#{@port}#{@path}(\?.*)? completed with status code \d{3} in (\d|\.)+/
-          expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{@host}:#{@port}")
+          expect(log).to match /\[httplog\] GET http:\/\/#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+/
+          expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Response:")
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark: ")

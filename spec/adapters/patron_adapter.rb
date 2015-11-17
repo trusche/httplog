@@ -10,6 +10,19 @@ class PatronAdapter < HTTPBaseAdapter
     session.post(parse_uri.to_s, @data, @headers)
   end
 
+  def send_post_form_request
+    session = Patron::Session.new
+    session.post(parse_uri.to_s, @params, @headers)
+  end
+
+  def send_multipart_post_request
+    data = @params.dup
+    file = @params.delete('file')
+
+    session = Patron::Session.new
+    session.post_multipart(parse_uri.to_s, data, {file: file.path}, @headers)
+  end
+
   def self.is_libcurl?
     true
   end
