@@ -9,6 +9,14 @@ class TyphoeusAdapter < HTTPBaseAdapter
     Typhoeus.post(parse_uri.to_s, body: @data, headers: @headers)
   end
 
+  def send_post_form_request
+    Typhoeus.post(parse_uri.to_s, body: @params, headers: @headers)
+  end
+
+  def send_multipart_post_request
+    send_post_form_request
+  end
+
   def self.is_libcurl?
     true
   end

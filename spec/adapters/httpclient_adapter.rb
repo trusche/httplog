@@ -7,8 +7,12 @@ class HTTPClientAdapter < HTTPBaseAdapter
     ::HTTPClient.post(parse_uri, body: @data, header: @headers)
   end
 
-  def send_post_form_request(params)
-    ::HTTPClient.post_content(parse_uri, params, @headers)
+  def send_post_form_request
+    ::HTTPClient.post(parse_uri, body: @params, header: @headers)
+  end
+
+  def send_multipart_post_request
+    send_post_form_request
   end
 
   def self.response_should_be
