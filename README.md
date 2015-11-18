@@ -140,3 +140,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Marcos Hack](https://github.com/marcoshack)
 * [Andrew Hammond](https://github.com/andrhamm)
 * [Chris Keele](https://github.com/christhekeele)
+* [Ryan Souza](https://github.com/ryansouza)
