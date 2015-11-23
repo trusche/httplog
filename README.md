@@ -109,7 +109,7 @@ With the default configuration, the log output might look like this:
         D, [2012-11-22T18:39:46.033409 #12800] DEBUG -- : [httplog] Status: 200
         D, [2012-11-22T18:39:46.033483 #12800] DEBUG -- : [httplog] Benchmark: 0.001562 seconds
 
-* Also when using HTTPClient, make sure you include `httplog` **before** `httpclient` in your `Gemfile`.
+* Also when using HTTPClient, make sure you include `httplog` **after** `httpclient` in your `Gemfile`.
 
 * When using Ethon or Patron, and any library based on them (such as Typhoeus),
   the TCP connection is not logged (since it's established by libcurl).
