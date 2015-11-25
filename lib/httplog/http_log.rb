@@ -1,6 +1,7 @@
 require "net/http"
 require "logger"
 require "benchmark"
+require "colorize"
 
 module HttpLog
   DEFAULT_LOGGER  = Logger.new($stdout)
@@ -16,7 +17,8 @@ module HttpLog
     :log_benchmark         => true,
     :compact_log           => false,
     :url_whitelist_pattern => /.*/,
-    :url_blacklist_pattern => nil
+    :url_blacklist_pattern => nil,
+    :color                 => false
   }
 
   LOG_PREFIX = "[httplog] ".freeze
@@ -44,7 +46,7 @@ module HttpLog
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
       severity = severities[options[:severity]].to_s.downcase
-      options[:logger].send(severity, LOG_PREFIX + msg)
+      options[:logger].send(severity, colorize(LOG_PREFIX + msg))
     end
 
     def log_connection(host, port = nil)
@@ -101,6 +103,11 @@ module HttpLog
       return unless options[:compact_log]
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
+    end
+
+    def colorize(msg)
+      return msg unless options[:color]
+      msg.send(:colorize, options[:color])
     end
   end
 end

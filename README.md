@@ -63,6 +63,12 @@ So if you want to use this in a Rails app:
     # config/initializers/httplog.rb
     HttpLog.options[:logger] = Rails.logger
 
+You can colorized output for more readable:
+
+    HttpLog.options[:color] = {color: :black, background: :light_red} # false is default
+    
+For more color options see [colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
+
 ### Example
 
 With the default configuration, the log output might look like this:
