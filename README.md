@@ -51,8 +51,9 @@ You can override the following default options:
     HttpLog.options[:log_status]    = true
     HttpLog.options[:log_response]  = true
     HttpLog.options[:log_benchmark] = true
-    HttpLog.options[:compact_log]   = false # setting this to true will make all "log_*" options redundant
-
+    HttpLog.options[:compact_log]   = false # setting this to true will make 
+    all "log_*" options redundant
+    HttpLog.options[:color]         = false # (see below)
 	# only log requests made to specified hosts (URLs)
     HttpLog.options[:url_whitelist_pattern] = /.*/
     # overrides whitelist
@@ -63,10 +64,10 @@ So if you want to use this in a Rails app:
     # config/initializers/httplog.rb
     HttpLog.options[:logger] = Rails.logger
 
-You can colorized output for more readable:
+You can colorize the output to make it stand out in your logfile:
 
-    HttpLog.options[:color] = {color: :black, background: :light_red} # false is default
-    
+    HttpLog.options[:color] = {color: :black, background: :light_red}    
+
 For more color options see [colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
 
 ### Example
@@ -147,3 +148,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Andrew Hammond](https://github.com/andrhamm)
 * [Chris Keele](https://github.com/christhekeele)
 * [Ryan Souza](https://github.com/ryansouza)
+* [Ilya Bondarenko](https://github.com/sedx)
