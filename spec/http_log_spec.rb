@@ -66,16 +66,21 @@ describe HttpLog do
             expect(res).to be_a adapter.response if adapter.respond_to? :response
           end
 
-          context "with binary data" do
-            let(:data) { "a UTF-8 striñg with a URI encoded invalid codepoint %c3" }
-            let(:unescaped_data) { "a UTF-8 striñg with a URI encoded invalid codepoint \xC3" }
+          context "with non-UTF data" do
+            let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
+            it "does not raise and error" do
+              expect { adapter.send_post_request }.to_not raise_error
+            end
 
-            it "should log POST data converted to UTF-8" do
-              adapter.send_post_request
+          end
 
-              expect(log.force_encoding(Encoding::ASCII_8BIT)).to include(unescaped_data.force_encoding(Encoding::ASCII_8BIT))
+          context "with encoded non-UTF data" do
+            let(:data) { "a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3" }
+            it "does not raise and error" do
+              expect { adapter.send_post_request }.to_not raise_error
             end
           end
+
         end
       end
 
