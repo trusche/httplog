@@ -8,7 +8,7 @@ describe HttpLog do
   let(:port) { 9292 }
   let(:path) { "/index.html" }
   let(:headers) { { "accept" => "*/*", "foo" => "bar" } }
-  let(:data) { "foo=bar%3Azee&bar=foo" }
+  let(:data) { "foo=bar&bar=foo" }
   let(:params) { {'foo' => 'bar:form-data', 'bar' => 'foo'} }
 
   ADAPTERS = [
@@ -50,13 +50,13 @@ describe HttpLog do
         end
 
         if adapter_class.method_defined? :send_post_request
-          it "should log POST requests" do
+          it "logs POST requests" do
             res = adapter.send_post_request
 
             expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
 
             expect(log).to include(HttpLog::LOG_PREFIX + "Sending: POST http://#{host}:#{port}#{path}")
-            expect(log).to include(HttpLog::LOG_PREFIX + "Data: foo=bar:zee&bar=foo")
+            expect(log).to include(HttpLog::LOG_PREFIX + "Data: foo=bar&bar=foo")
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Header:")
             expect(log).to include(HttpLog::LOG_PREFIX + "Status: 200")
             expect(log).to include(HttpLog::LOG_PREFIX + "Benchmark: ")
@@ -74,7 +74,7 @@ describe HttpLog do
 
           end
 
-          context "with encoded non-UTF data" do
+          context "with URI encoded non-UTF data" do
             let(:data) { "a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3" }
             it "does not raise and error" do
               expect { adapter.send_post_request }.to_not raise_error

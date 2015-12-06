@@ -95,8 +95,7 @@ module HttpLog
 
     def log_data(data)
       return if options[:compact_log] || !options[:log_data]
-      #data = CGI.unescape(data.to_s) if data
-      data = CGI.unescape(data.to_s.encode('UTF-8', :invalid => :replace, :undef => :replace)) if data
+      data = data.to_s.encode('UTF-8', :invalid => :replace, :undef => :replace) if data
       log("Data: #{data}")
     end
 
