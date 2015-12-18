@@ -42,7 +42,7 @@ module HttpLog
 
     def log(msg)
       # This builds a hash {0=>:DEBUG, 1=>:INFO, 2=>:WARN, 3=>:ERROR, 4=>:FATAL, 5=>:UNKNOWN}.
-      # Courtesy of the delayed_job gem in this commit: 
+      # Courtesy of the delayed_job gem in this commit:
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
       severity = severities[options[:severity]].to_s.downcase
@@ -78,6 +78,7 @@ module HttpLog
 
     def log_body(body, encoding = nil)
       return if options[:compact_log] || !options[:log_response]
+
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
@@ -88,7 +89,8 @@ module HttpLog
           gz = Zlib::GzipReader.new( sio )
           log("Response: (deflated)\n#{gz.read}")
         else
-          log("Response:\n#{body.to_s}")
+          body = fix_encoding(body.to_s, encoding)
+          log("Response:\n#{body}")
         end
       end
     end
@@ -108,6 +110,11 @@ module HttpLog
     def colorize(msg)
       return msg unless options[:color]
       msg.send(:colorize, options[:color])
+    end
+
+    def fix_encoding(body, encoding)
+      body.force_encoding(encoding) rescue body.force_encoding('UTF-8')
+      body.encode('UTF-8', :invalid => :replace, :undef => :replace)
     end
   end
 end
