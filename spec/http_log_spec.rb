@@ -66,21 +66,29 @@ describe HttpLog do
             expect(res).to be_a adapter.response if adapter.respond_to? :response
           end
 
-          context "with non-UTF data" do
+          context "with non-UTF request data" do
             let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
             it "does not raise and error" do
-              expect { adapter.send_post_request }.to_not raise_error
+              expect {adapter.send_post_request }.to_not raise_error
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
             end
+          end
 
+          context "with non-UTF response data" do
+            let(:path) { '/test.bin' }
+            it "does not raise and error" do
+              expect { adapter.send_post_request }.to_not raise_error
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
+            end
           end
 
           context "with URI encoded non-UTF data" do
             let(:data) { "a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3" }
             it "does not raise and error" do
               expect { adapter.send_post_request }.to_not raise_error
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
             end
           end
-
         end
       end
 

@@ -46,6 +46,7 @@ module HttpLog
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
       severity = severities[options[:severity]].to_s.downcase
+      msg = msg.to_s.encode('UTF-8', :invalid => :replace, :undef => :replace)
       options[:logger].send(severity, colorize(LOG_PREFIX + msg))
     end
 
@@ -88,14 +89,13 @@ module HttpLog
           gz = Zlib::GzipReader.new( sio )
           log("Response: (deflated)\n#{gz.read}")
         else
-          log("Response:\n#{body.to_s}")
+          log("Response:\n#{body}")
         end
       end
     end
 
     def log_data(data)
       return if options[:compact_log] || !options[:log_data]
-      data = data.to_s.encode('UTF-8', :invalid => :replace, :undef => :replace) if data
       log("Data: #{data}")
     end
 

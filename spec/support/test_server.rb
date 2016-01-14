@@ -15,7 +15,11 @@ module Httplog
         if params['redirect']
           [ 301, {"Location" => "/index.html"}, '' ]
         elsif File.exists?(file)
-          [ 200, {"Content-Type" => "text/html"}, File.read(file) ]
+          if File.extname(file) == '.bin'
+            [ 200, {"Content-Type" => "application/octet-stream"}, File.read(file) ]
+          else
+            [ 200, {"Content-Type" => "text/html"}, File.read(file) ]
+          end
         else
           [ 404, {'Content-Type' => 'text/plain'}, 'file not found' ]
         end
