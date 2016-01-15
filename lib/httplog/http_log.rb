@@ -103,8 +103,8 @@ module HttpLog
     end
 
     def log_data(data)
-      return if options[:compact_log] || !options[:log_data] || data.nil?
-      data = utf_encoded(data)
+      return if options[:compact_log] || !options[:log_data]
+      data = utf_encoded(data.to_s)
       log("Data: #{data}")
     end
 
