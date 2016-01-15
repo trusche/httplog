@@ -1,4 +1,4 @@
-## 3.0.0 - 2016-01-15
+## 0.3.0 - 2016-01-15
 * changes
   * binary data is no longer written to the log
 * bug fixes
