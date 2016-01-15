@@ -90,7 +90,7 @@ module HttpLog
         if encoding =~ /gzip/
           sio = StringIO.new( body.to_s )
           gz = Zlib::GzipReader.new( sio )
-          log("Response: (deflated)\n#{gz.read}")
+          log("Response:\n#{gz.read}")
         else
           log("Response:\n#{body}", encoding)
         end

@@ -31,10 +31,11 @@ if defined?(Ethon)
           # Not sure where the acutal status code is stored - so let's
           # extract it from the response header.
           status = response_headers.scan(/HTTP\/... (\d{3})/).flatten.first
+          encoding = response_headers.scan(/Content-Encoding: (\S+)/).flatten.first
           HttpLog.log_compact(@action_name, @url, @return_code, bm)
           HttpLog.log_status(status)
           HttpLog.log_benchmark(bm)
-          HttpLog.log_body(response_body)
+          HttpLog.log_body(response_body, encoding)
           return_code
         end
       end

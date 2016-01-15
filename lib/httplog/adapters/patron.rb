@@ -19,7 +19,7 @@ if defined?(Patron)
           HttpLog.log_compact(action_name, url, @response.status, bm)
           HttpLog.log_status(@response.status)
           HttpLog.log_benchmark(bm)
-          HttpLog.log_body(@response.body)
+          HttpLog.log_body(@response.body, @response.headers['Content-Encoding'])
         end
       end
     end

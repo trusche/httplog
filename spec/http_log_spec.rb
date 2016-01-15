@@ -47,6 +47,16 @@ describe HttpLog do
 
             expect(res).to be_a adapter.response if adapter.respond_to? :response
           end
+
+          context "with gzipped response body" do
+            let(:path) { '/index.html.gz' }
+            let(:data) { nil }
+
+            it "decompresses gzipped response body" do
+              adapter.send_get_request
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+            end
+          end
         end
 
         if adapter_class.method_defined? :send_post_request
