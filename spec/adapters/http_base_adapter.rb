@@ -9,6 +9,10 @@ class HTTPBaseAdapter
     @protocol = protocol
   end
 
+  def logs_data?
+    true
+  end
+
   def parse_uri
     URI.parse("#{@protocol}://#{@host}:#{@port}#{@path}")
   end

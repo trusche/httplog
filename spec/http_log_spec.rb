@@ -57,6 +57,29 @@ describe HttpLog do
               expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
             end
           end
+
+          context "with UTF-8 response body" do
+            let(:path) { '/utf8.html' }
+            let(:data) { nil }
+
+            it "works" do
+              adapter.send_get_request
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+              if adapter.logs_data?
+                expect(log).to include("    <title>Блог Яндекса</title>")
+              end
+            end
+          end
+
+          context "with binary response body" do
+            let(:path) { '/test.bin' }
+            let(:data) { nil }
+
+            it "doesn't log response" do
+              adapter.send_get_request
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response: (not showing binary data)")
+            end
+          end
         end
 
         if adapter_class.method_defined? :send_post_request

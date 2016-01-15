@@ -26,7 +26,7 @@ module Net
         HttpLog.log_status(@response.code)
         HttpLog.log_benchmark(bm)
         HttpLog.log_headers(@response.each_header.collect)
-        HttpLog.log_body(@response.body, @response["Content-Encoding"])
+        HttpLog.log_body(@response.body, @response['Content-Encoding'], @response['Content-Type'])
       end
 
       @response

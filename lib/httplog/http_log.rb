@@ -40,16 +40,12 @@ module HttpLog
       url.to_s.match(options[:url_whitelist_pattern])
     end
 
-    def log(msg, encoding='UTF-8')
+    def log(msg)
       # This builds a hash {0=>:DEBUG, 1=>:INFO, 2=>:WARN, 3=>:ERROR, 4=>:FATAL, 5=>:UNKNOWN}.
       # Courtesy of the delayed_job gem in this commit: 
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
       severity = severities[options[:severity]].to_s.downcase
-
-      msg.force_encoding(encoding) rescue msg.force_encoding('UTF-8')
-      msg.encode('UTF-8', :invalid => :replace, :undef => :replace)
-
       options[:logger].send(severity, colorize(LOG_PREFIX + msg))
     end
 
@@ -80,25 +76,35 @@ module HttpLog
       log("Benchmark: #{seconds} seconds")
     end
 
-    def log_body(body, encoding = nil)
+    def log_body(body, encoding = nil, content_type=nil)
       return if options[:compact_log] || !options[:log_response]
+
+      if content_type !~ /text/
+        log("Response: (not showing binary data)")
+        return
+      end
+
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
         log("Response: (not available yet)")
-      else
-        if encoding =~ /gzip/
-          sio = StringIO.new( body.to_s )
-          gz = Zlib::GzipReader.new( sio )
-          log("Response:\n#{gz.read}")
-        else
-          log("Response:\n#{body}", encoding)
-        end
+        return
       end
+
+      if encoding =~ /gzip/
+        sio = StringIO.new( body.to_s )
+        gz = Zlib::GzipReader.new( sio )
+        body = gz.read
+      end
+
+      data = utf_encoded(body.to_s, content_type)
+
+      log("Response:\n#{data}")
     end
 
     def log_data(data)
-      return if options[:compact_log] || !options[:log_data]
+      return if options[:compact_log] || !options[:log_data] || data.nil?
+      data = utf_encoded(data)
       log("Data: #{data}")
     end
 
@@ -113,6 +119,10 @@ module HttpLog
       msg.send(:colorize, options[:color])
     end
 
-
+    def utf_encoded(data, content_type=nil)
+      charset = content_type.to_s.scan(/; charset=(\S+)/).flatten.first || 'UTF-8'
+      data.force_encoding(charset) rescue data.force_encoding('UTF-8')
+      data.encode('UTF-8', :invalid => :replace, :undef => :replace)
+    end
   end
 end

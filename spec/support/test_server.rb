@@ -19,8 +19,9 @@ module Httplog
 
         elsif File.exists?(file)
           headers["Content-Type"] = "application/octet-stream" if File.extname(file) == '.bin'
+          headers["Content-Type"] = "text/html; charset=UTF-8" if path =~ /utf8/
           headers["Content-Encoding"] = "gzip" if File.extname(file) == '.gz'
-          [ 200, headers, File.read(file) ]
+          [ 200, headers, File.binread(file) ]
         else
           [ 404, {'Content-Type' => 'text/plain'}, 'file not found' ]
         end

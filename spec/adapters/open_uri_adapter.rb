@@ -10,4 +10,8 @@ class OpenUriAdapter < HTTPBaseAdapter
   def self.should_log_headers?
     false
   end
+
+  def logs_data?
+    false
+  end
 end

@@ -55,9 +55,10 @@ if defined?(Excon)
           datum = orig_response(datum)
         end
         response = datum[:response]
-        encoding = response[:headers] && response[:headers]['Content-Encoding']
+        headers = response[:headers] || {}
+        content_type = 
         HttpLog.log_status(response[:status])
-        HttpLog.log_body(response[:body], encoding)
+        HttpLog.log_body(response[:body], headers['Content-Encoding'], headers['Content-Type'])
         datum
       end
     end
