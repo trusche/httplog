@@ -36,7 +36,12 @@ use this in a production environment.
 
     require 'httplog'
 
-By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
+By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level. 
+
+### Notes on content types
+
+* Binary data from response bodies (as indicated by the `Content-Type` header)is not logged. 
+* Text data (`text/*` and most `application/*` types) is encoded as UTF-8, with invalid characters replaced. If you need to inspect raw non-UTF data exactly as sent over the wire, this tool is probably not for you.
 
 ### Configuration
 
