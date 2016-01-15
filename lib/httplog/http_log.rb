@@ -40,7 +40,7 @@ module HttpLog
       url.to_s.match(options[:url_whitelist_pattern])
     end
 
-    def log(msg)
+    def log(msg, encoding='UTF-8')
       # This builds a hash {0=>:DEBUG, 1=>:INFO, 2=>:WARN, 3=>:ERROR, 4=>:FATAL, 5=>:UNKNOWN}.
       # Courtesy of the delayed_job gem in this commit: 
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
@@ -92,7 +92,7 @@ module HttpLog
           gz = Zlib::GzipReader.new( sio )
           log("Response: (deflated)\n#{gz.read}")
         else
-          log("Response:\n#{body}")
+          log("Response:\n#{body}", encoding)
         end
       end
     end
