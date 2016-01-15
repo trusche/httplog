@@ -79,7 +79,7 @@ module HttpLog
     def log_body(body, encoding = nil, content_type=nil)
       return if options[:compact_log] || !options[:log_response]
 
-      if content_type !~ /text/
+      unless text_based?(content_type)
         log("Response: (not showing binary data)")
         return
       end
@@ -119,10 +119,20 @@ module HttpLog
       msg.send(:colorize, options[:color])
     end
 
+    private
+
     def utf_encoded(data, content_type=nil)
       charset = content_type.to_s.scan(/; charset=(\S+)/).flatten.first || 'UTF-8'
       data.force_encoding(charset) rescue data.force_encoding('UTF-8')
       data.encode('UTF-8', :invalid => :replace, :undef => :replace)
+    end
+
+    def text_based?(content_type)
+      # This is a very naive way of determining if the content type is text-based; but
+      # it will allow application/json and the like without having to resort to more
+      # heavy-handed checks.
+      content_type =~ /^text/ || 
+      content_type =~ /^application/ && content_type != 'application/octet-stream'
     end
   end
 end
