@@ -15,6 +15,7 @@ class HTTPAdapter < HTTPBaseAdapter
   private
 
   def client
-    ::HTTP.with_headers(@headers)
+    method_name = respond_to?(:with_headers) ? :with_headers : :headers
+    ::HTTP.send(method_name, @headers)
   end
 end

@@ -7,13 +7,13 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.3.8)
+    addressable (2.4.0)
     coderay (1.1.0)
     colorize (0.7.7)
     daemons (1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.24)
+    domain_name (0.5.20160310)
       unf (>= 0.0.5, < 1.0.0)
     ethon (0.5.7)
       ffi (~> 1.2.0)
@@ -38,7 +38,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    http (0.8.14)
+    http (1.0.4)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
       http-form_data (~> 1.0.1)
@@ -104,7 +104,7 @@ GEM
       ethon (~> 0.5.3)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.1)
+    unf_ext (0.0.7.2)
 
 PLATFORMS
   ruby
@@ -114,7 +114,7 @@ DEPENDENCIES
   excon (>= 0.18.0)
   faraday
   guard-rspec
-  http (= 0.8.14)
+  http (= 1.0.4)
   httparty
   httpclient
   httplog!
