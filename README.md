@@ -15,7 +15,7 @@ So far this gem works with the following ruby modules and libraries:
 * [Patron](https://github.com/toland/patron)
 * [HTTPClient](https://github.com/nahi/httpclient)
 * [HTTParty](https://github.com/jnunemaker/httparty)
-* [HTTP](https://github.com/httprb/http) (**Up to version 0.8.14**; see known issues below)
+* [HTTP](https://github.com/httprb/http)
 
 These libraries are at least partially supported, where they use one of the above as adapters:
 
@@ -34,7 +34,7 @@ use this in a production environment.
 
 ### Usage
 
-    require 'httplog'
+    require 'httplog' # require this *after* your HTTP gem of choice
 
 By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level. 
 
@@ -75,6 +75,10 @@ You can colorize the output to make it stand out in your logfile:
 
 For more color options see [colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
 
+### Compact logging
+
+If the log is too noisy for you, but you don't want to completely disable it either, set the `compact_log` option to `true`. This will log each request in a single line with method, request URI, response status and time, but no data or headers. No need to disable any other options individually.
+
 ### Example
 
 With the default configuration, the log output might look like this:
@@ -93,10 +97,11 @@ With the default configuration, the log output might look like this:
       </body>
     </html>
 
+With `compact_log` enabled, the same request might look like this:
+
+    [httplog] GET http://localhost:9292/index.html completed with status code 200 in 0.00057 seconds
 
 ### Known Issues
-
-* The [httprb/http](https://github.com/httprb/http) gem made some breaking changes in v0.9.0 that I haven't had time to fix yet. Pull requests welcome, but they should be backwards compatible to <= 0.8.14.
 
 * Requests types other than GET and POST have not been explicitly tested.
   They may or may not be logged, depending on the implementation details of the underlying library.
