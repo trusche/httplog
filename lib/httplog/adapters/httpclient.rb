@@ -36,11 +36,24 @@ if defined?(::HTTPClient)
 
     class Session
       alias_method :orig_create_socket, :create_socket
-      def create_socket(site)
-        if HttpLog.url_approved?("#{site.host}:#{site.port}")
-          HttpLog.log_connection(site.host, site.port)
+
+      # up to version 2.6, the method signature is `create_socket(site)`; after that,
+      # it's `create_socket(hort, port)`
+      if instance_method(:create_socket).arity == 1
+        def create_socket(site)
+          if HttpLog.url_approved?("#{site.host}:#{site.port}")
+            HttpLog.log_connection(site.host, site.port)
+          end
+          orig_create_socket(site)
         end
-        orig_create_socket(site)
+        
+      else
+        def create_socket(host, port)
+          if HttpLog.url_approved?("#{host}:#{port}")
+            HttpLog.log_connection(host, port)
+          end
+          orig_create_socket(host,port)
+        end
       end
     end
   end
