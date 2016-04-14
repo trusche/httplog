@@ -1,7 +1,10 @@
+## 0.3.1 - 2016-04-13
+
+* support for httpclient 2.7
+
 ## 0.3.1 - 2016-04-06
 
-* changes
-  * support for latest version of `httprb`
+* support for latest version of `httprb`
 
 ## 0.3.0 - 2016-01-15
 * changes
