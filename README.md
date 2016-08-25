@@ -2,9 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/httplog.png)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.org/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.png)](https://codeclimate.com/github/trusche/httplog)
 
-Log outgoing HTTP requests made from your application.
-See the [blog post](http://trusche.github.com/blog/2011/09/29/logging-outgoing-http-requests/)
-for more details.
+Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood. 
 
 So far this gem works with the following ruby modules and libraries:
 
@@ -26,7 +24,8 @@ In theory, it should also work with any library built on top of these. But since
 the difference between theory and practice is bigger in practice than in theory, YMMV.
 
 This is very much a development and debugging tool; it is **not recommended** to
-use this in a production environment.
+use this in a production environment as it is moneky-patching the respective HTTP implementations. 
+You have been warned - use at your own risk.
 
 ### Installation
 
