@@ -4,10 +4,13 @@ require "benchmark"
 require "colorize"
 
 module HttpLog
+  LOG_PREFIX = "[httplog] ".freeze
+
   DEFAULT_LOGGER  = Logger.new($stdout)
   DEFAULT_OPTIONS = {
     :logger                => DEFAULT_LOGGER,
     :severity              => Logger::Severity::DEBUG,
+    :prefix                => LOG_PREFIX,
     :log_connect           => true,
     :log_request           => true,
     :log_headers           => false,
@@ -23,7 +26,6 @@ module HttpLog
     :prefix_line_numbers   => false
   }
 
-  LOG_PREFIX = "[httplog] ".freeze
 
   class << self
     def options
@@ -48,7 +50,7 @@ module HttpLog
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
       severity = severities[options[:severity]].to_s.downcase
-      options[:logger].send(severity, colorize(LOG_PREFIX + msg))
+      options[:logger].send(severity, colorize(prefix + msg))
     end
 
     def log_connection(host, port = nil)
@@ -147,6 +149,14 @@ module HttpLog
       # heavy-handed checks.
       content_type =~ /^text/ || 
       content_type =~ /^application/ && content_type != 'application/octet-stream'
+    end
+
+    def prefix
+      if options[:prefix].respond_to?(:call)
+        options[:prefix].call
+      else
+        options[:prefix].to_s
+      end
     end
 
   end

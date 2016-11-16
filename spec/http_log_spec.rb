@@ -192,6 +192,20 @@ describe HttpLog do
             adapter.send_get_request
             expect(log.colorized?).to be_truthy
           end
+
+          it "should log with custom string prefix" do
+            HttpLog.options[:prefix] = '[my logger]'
+            adapter.send_get_request
+            expect(log).to include("[my logger]")
+            expect(log).to_not include(HttpLog::LOG_PREFIX)
+          end
+
+          it "should log with custom lambda prefix" do
+            HttpLog.options[:prefix] = -> { '[custom prefix]' }
+            adapter.send_get_request
+            expect(log).to include("[custom prefix]")
+            expect(log).to_not include(HttpLog::LOG_PREFIX)
+          end
         end
 
         context "POST requests" do
