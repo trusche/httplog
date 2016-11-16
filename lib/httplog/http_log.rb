@@ -18,7 +18,9 @@ module HttpLog
     :compact_log           => false,
     :url_whitelist_pattern => /.*/,
     :url_blacklist_pattern => nil,
-    :color                 => false
+    :color                 => false,
+    :prefix_response_lines => false,
+    :prefix_line_numbers   => false
   }
 
   LOG_PREFIX = "[httplog] ".freeze
@@ -99,7 +101,19 @@ module HttpLog
 
       data = utf_encoded(body.to_s, content_type)
 
-      log("Response:\n#{data}")
+      if options[:prefix_response_lines]
+        log("Response:")
+        data.each_line.with_index do |line, row|
+          if options[:prefix_line_numbers]
+            log("#{row + 1}: #{line.strip}")
+          else
+            log(line.strip)
+          end
+        end
+      else
+        log("Response:\n#{data}")
+      end
+
     end
 
     def log_data(data)
@@ -134,5 +148,6 @@ module HttpLog
       content_type =~ /^text/ || 
       content_type =~ /^application/ && content_type != 'application/octet-stream'
     end
+
   end
 end

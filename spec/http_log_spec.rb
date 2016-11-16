@@ -208,6 +208,23 @@ describe HttpLog do
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
             end
 
+            it "should prefix all response lines" do
+              HttpLog.options[:prefix_response_lines] = true
+
+              adapter.send_post_request
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
+              expect(log).to include(HttpLog::LOG_PREFIX + "<html>")
+            end
+
+            it "should prefix all response lines with line numbers" do
+              HttpLog.options[:prefix_response_lines] = true
+              HttpLog.options[:prefix_line_numbers] = true
+
+              adapter.send_post_request
+              expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
+              expect(log).to include(HttpLog::LOG_PREFIX + "1: <html>")
+            end
+
             it "should not log the benchmark if disabled" do
               HttpLog.options[:log_benchmark] = false
               adapter.send_post_request
