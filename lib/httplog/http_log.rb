@@ -22,6 +22,7 @@ module HttpLog
     :url_whitelist_pattern => /.*/,
     :url_blacklist_pattern => nil,
     :color                 => false,
+    :prefix_data_lines     => false,
     :prefix_response_lines => false,
     :prefix_line_numbers   => false
   }
@@ -105,13 +106,7 @@ module HttpLog
 
       if options[:prefix_response_lines]
         log("Response:")
-        data.each_line.with_index do |line, row|
-          if options[:prefix_line_numbers]
-            log("#{row + 1}: #{line.strip}")
-          else
-            log(line.strip)
-          end
-        end
+        log_data_lines(data)
       else
         log("Response:\n#{data}")
       end
@@ -121,7 +116,13 @@ module HttpLog
     def log_data(data)
       return if options[:compact_log] || !options[:log_data]
       data = utf_encoded(data.to_s)
-      log("Data: #{data}")
+
+      if options[:prefix_data_lines]
+        log("Data:")
+        log_data_lines(data)
+      else
+        log("Data: #{data}")
+      end
     end
 
     def log_compact(method, uri, status, seconds)
@@ -149,6 +150,16 @@ module HttpLog
       # heavy-handed checks.
       content_type =~ /^text/ || 
       content_type =~ /^application/ && content_type != 'application/octet-stream'
+    end
+
+    def log_data_lines(data)
+      data.each_line.with_index do |line, row|
+        if options[:prefix_line_numbers]
+          log("#{row + 1}: #{line.chomp}")
+        else
+          log(line.strip)
+        end
+      end
     end
 
     def prefix
