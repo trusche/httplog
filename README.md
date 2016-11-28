@@ -158,3 +158,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Chris Keele](https://github.com/christhekeele)
 * [Ryan Souza](https://github.com/ryansouza)
 * [Ilya Bondarenko](https://github.com/sedx)
+* [Kostas Zacharakis](https://github.com/kzacharakis)
