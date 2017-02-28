@@ -19,7 +19,7 @@ GEM
       ffi (~> 1.2.0)
       mime-types (~> 1.18)
     eventmachine (1.0.8)
-    excon (0.45.4)
+    excon (0.55.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.2.1)
