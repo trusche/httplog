@@ -21,7 +21,7 @@ GEM
       mime-types (~> 1.18)
     eventmachine (1.0.8)
     excon (0.55.0)
-    faraday (0.9.1)
+    faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.2.1)
     formatador (0.2.5)
