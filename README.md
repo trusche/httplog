@@ -46,33 +46,37 @@ By default, this will log all outgoing HTTP requests and their responses to $std
 
 You can override the following default options:
 
-    HttpLog.options[:logger]        = Logger.new($stdout)
-    HttpLog.options[:severity]      = Logger::Severity::DEBUG
-    HttpLog.options[:log_connect]   = true
-    HttpLog.options[:log_request]   = true
-    HttpLog.options[:log_headers]   = false
-    HttpLog.options[:log_data]      = true
-    HttpLog.options[:log_status]    = true
-    HttpLog.options[:log_response]  = true
-    HttpLog.options[:log_benchmark] = true
-    HttpLog.options[:compact_log]   = false # setting this to true will make 
-    all "log_*" options redundant
-    HttpLog.options[:color]         = false # (see below)
-	# only log requests made to specified hosts (URLs)
-    HttpLog.options[:url_whitelist_pattern] = /.*/
-    # overrides whitelist
-    HttpLog.options[:url_blacklist_pattern] = nil
+    HttpLog.configure do |config|
+      config.logger = Logger.new($stdout)
+      config.severity = Logger::Severity::DEBUG
+      config.log_connect = true
+      config.log_request = true
+      config.log_headers = false
+      config.log_data = true
+      config.log_status = true
+      config.log_response = true
+      config.log_benchmark = true
+      config.compact_log = false # true will make all "log_*" options redundant
+      config.color = false
+      config.url_whitelist_pattern = /.*/
+      config.url_blacklist_pattern = nil
+    end
 
-So if you want to use this in a Rails app:
+If you want to use this in a Rails app, I'd suggest configuring this specifically for each environment. An global initializer is dangerous since `HttpLog` will be undefined since you're **not using this in production**, right? :)
 
-    # config/initializers/httplog.rb
-    HttpLog.options[:logger] = Rails.logger
+    # config/environments/development.rb
+    
+    HttpLog.configure do |config|
+      config.logger = Rails.logger
+    end
 
 You can colorize the output to make it stand out in your logfile:
 
-    HttpLog.options[:color] = {color: :black, background: :light_red}    
+    HttpLog.configure do |config|
+      config.color = {color: :black, background: :light_red}
+    end
 
-For more color options see [colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
+For more color options [please refer to the colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
 
 ### Compact logging
 
