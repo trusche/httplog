@@ -7,13 +7,14 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.4.0)
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
     coderay (1.1.0)
     colorize (0.8.1)
     daemons (1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.20160310)
+    domain_name (0.5.20170223)
       unf (>= 0.0.5, < 1.0.0)
     ethon (0.5.7)
       ffi (~> 1.2.0)
@@ -43,7 +44,7 @@ GEM
       http-cookie (~> 1.0)
       http-form_data (~> 1.0.1)
       http_parser.rb (~> 0.6.0)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
@@ -69,6 +70,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    public_suffix (2.0.5)
     rack (1.6.4)
     rake (10.4.2)
     rb-fsevent (0.9.6)
