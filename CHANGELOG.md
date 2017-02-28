@@ -1,3 +1,15 @@
+## 1.0.0 - 2017-02-28
+
+* **BREAKING CHANGE:** grown-up configuration
+
+  If you're using any custom configuration, please replace any assignments of the type `HttpLog.options[:foo] = 'bar'`  with the new configuration block syntax, e.g. 
+
+      HttpLog.configure do |config|
+        config.foo = 'bar'
+      end
+
+  Please see the README for details.
+
 ## 0.3.2 - 2016-04-13
 
 * support for httpclient 2.7
