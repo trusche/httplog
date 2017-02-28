@@ -49,7 +49,7 @@ GEM
     http_parser.rb (0.6.0)
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.7.1)
+    httpclient (2.8.3)
     json (1.8.6)
     listen (3.0.3)
       rb-fsevent (>= 0.9.3)
