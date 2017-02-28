@@ -31,9 +31,13 @@ RSpec.configure do |config|
     @log = StringIO.new
     @logger = Logger.new @log
 
-    HttpLog.reset_options!
-    HttpLog.options[:logger] = @logger
+    HttpLog.configure{ |c| c.logger = @logger }
   end
+
+  config.after(:each) do
+    HttpLog.reset!
+  end
+
 
   def log
     @log.string

@@ -6,43 +6,26 @@ require "colorize"
 module HttpLog
   LOG_PREFIX = "[httplog] ".freeze
 
-  DEFAULT_LOGGER  = Logger.new($stdout)
-  DEFAULT_OPTIONS = {
-    :logger                => DEFAULT_LOGGER,
-    :severity              => Logger::Severity::DEBUG,
-    :prefix                => LOG_PREFIX,
-    :log_connect           => true,
-    :log_request           => true,
-    :log_headers           => false,
-    :log_data              => true,
-    :log_status            => true,
-    :log_response          => true,
-    :log_benchmark         => true,
-    :compact_log           => false,
-    :url_whitelist_pattern => /.*/,
-    :url_blacklist_pattern => nil,
-    :color                 => false,
-    :prefix_data_lines     => false,
-    :prefix_response_lines => false,
-    :prefix_line_numbers   => false
-  }
-
-
   class << self
-    def options
-      @@options ||= DEFAULT_OPTIONS.clone
+
+    attr_accessor :configuration
+
+    def configuration
+      @configuration ||= Configuration.new
+    end
+    alias_method :config, :configuration
+
+    def reset!
+      @configuration = nil
     end
 
-    def reset_options!
-      @@options = DEFAULT_OPTIONS.clone
+    def configure
+      yield(configuration)
     end
-
+    
     def url_approved?(url)
-      unless options[:url_blacklist_pattern].nil?
-        return false if url.to_s.match(options[:url_blacklist_pattern])
-      end
-
-      url.to_s.match(options[:url_whitelist_pattern])
+      return false if config.url_blacklist_pattern && url.to_s.match(config.url_blacklist_pattern)
+      url.to_s.match(config.url_whitelist_pattern)
     end
 
     def log(msg)
@@ -50,39 +33,39 @@ module HttpLog
       # Courtesy of the delayed_job gem in this commit: 
       # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
       severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
-      severity = severities[options[:severity]].to_s.downcase
-      options[:logger].send(severity, colorize(prefix + msg))
+      severity = severities[configuration.severity].to_s.downcase
+      config.logger.send(severity, colorize(prefix + msg))
     end
 
     def log_connection(host, port = nil)
-      return if options[:compact_log] || !options[:log_connect]
+      return if config.compact_log || !config.log_connect
       log("Connecting: #{[host, port].compact.join(":")}")
     end
 
     def log_request(method, uri)
-      return if options[:compact_log] || !options[:log_request]
+      return if config.compact_log || !config.log_request
       log("Sending: #{method.to_s.upcase} #{uri}")
     end
 
     def log_headers(headers = {})
-      return if options[:compact_log] || !options[:log_headers]
+      return if config.compact_log || !config.log_headers
       headers.each do |key,value|
         log("Header: #{key}: #{value}")
       end
     end
 
     def log_status(status)
-      return if options[:compact_log] || !options[:log_status]
+      return if config.compact_log || !config.log_status
       log("Status: #{status}")
     end
 
     def log_benchmark(seconds)
-      return if options[:compact_log] || !options[:log_benchmark]
+      return if config.compact_log || !config.log_benchmark
       log("Benchmark: #{seconds} seconds")
     end
 
     def log_body(body, encoding = nil, content_type=nil)
-      return if options[:compact_log] || !options[:log_response]
+      return if config.compact_log || !config.log_response
 
       unless text_based?(content_type)
         log("Response: (not showing binary data)")
@@ -104,7 +87,7 @@ module HttpLog
 
       data = utf_encoded(body.to_s, content_type)
 
-      if options[:prefix_response_lines]
+      if config.prefix_response_lines
         log("Response:")
         log_data_lines(data)
       else
@@ -114,10 +97,10 @@ module HttpLog
     end
 
     def log_data(data)
-      return if options[:compact_log] || !options[:log_data]
+      return if config.compact_log || !config.log_data
       data = utf_encoded(data.to_s)
 
-      if options[:prefix_data_lines]
+      if config.prefix_data_lines
         log("Data:")
         log_data_lines(data)
       else
@@ -126,14 +109,14 @@ module HttpLog
     end
 
     def log_compact(method, uri, status, seconds)
-      return unless options[:compact_log]
+      return unless config.compact_log
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
 
     def colorize(msg)
-      return msg unless options[:color]
-      msg.send(:colorize, options[:color])
+      return msg unless config.color
+      msg.send(:colorize, config.color)
     end
 
     private
@@ -154,7 +137,7 @@ module HttpLog
 
     def log_data_lines(data)
       data.each_line.with_index do |line, row|
-        if options[:prefix_line_numbers]
+        if config.prefix_line_numbers
           log("#{row + 1}: #{line.chomp}")
         else
           log(line.strip)
@@ -163,10 +146,10 @@ module HttpLog
     end
 
     def prefix
-      if options[:prefix].respond_to?(:call)
-        options[:prefix].call
+      if config.prefix.respond_to?(:call)
+        config.prefix.call
       else
-        options[:prefix].to_s
+        config.prefix.to_s
       end
     end
 

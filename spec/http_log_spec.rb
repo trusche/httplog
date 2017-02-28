@@ -28,7 +28,7 @@ describe HttpLog do
     context adapter_class, :adapter => adapter_class.to_s do
       let(:adapter) { adapter_class.new(host, port, path, headers, data, params) }
 
-      context "with default options" do
+      context "with default configuration" do
         connection_test_method = adapter_class.is_libcurl? ? :to_not : :to
 
         if adapter_class.method_defined? :send_get_request
@@ -117,91 +117,92 @@ describe HttpLog do
         end
       end
 
-      context "with custom config" do
+      context "with custom configuration" do
         context "GET requests" do
+
           it "should log at other levels" do
-            HttpLog.options[:severity] = Logger::Severity::INFO
+            HttpLog.configure { |c| c.severity = Logger::Severity::INFO }
             adapter.send_get_request
             expect(log).to include("INFO")
           end
 
           it "should log headers if enabled" do
-            HttpLog.options[:log_headers] = true
+            HttpLog.configure { |c| c.log_headers = true }
             adapter.send_get_request
             expect(log.downcase).to include(HttpLog::LOG_PREFIX + "Header: accept: */*".downcase)
           end
 
           it "should not log headers if disabled" do
-            HttpLog.options[:log_headers] = false
+            HttpLog.configure { |c| c.log_headers = false }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Header:")
           end
 
           it "should log the request if url does not match blacklist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /example.com/
+            HttpLog.configure { |c| c.url_blacklist_pattern = /example.com/ }
             adapter.send_get_request
             expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should log the request if url matches whitelist pattern and not the blacklist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /example.com/
-            HttpLog.options[:url_whitelist_pattern] = /#{host}:#{port}/
+            HttpLog.configure { |c| c.url_blacklist_pattern = /example.com/ }
+            HttpLog.configure { |c| c.url_whitelist_pattern = /#{host}:#{port}/ }
             adapter.send_get_request
             expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the request if url matches blacklist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /#{host}:#{port}/
+            HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the request if url does not match whitelist pattern" do
-            HttpLog.options[:url_whitelist_pattern] = /example.com/
+            HttpLog.configure { |c| c.url_whitelist_pattern = /example.com/ }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the request if url matches blacklist pattern and the whitelist pattern" do
-            HttpLog.options[:url_blacklist_pattern] = /#{host}:#{port}/
-            HttpLog.options[:url_whitelist_pattern] = /#{host}:#{port}/
+            HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
+            HttpLog.configure { |c| c.url_whitelist_pattern = /#{host}:#{port}/ }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the request if disabled" do
-            HttpLog.options[:log_request] = false
+            HttpLog.configure { |c| c.log_request = false }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Sending: GET")
           end
 
           it "should not log the connection if disabled" do
-            HttpLog.options[:log_connect] = false
+            HttpLog.configure { |c| c.log_connect = false }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
           end
 
           it "should not log data if disabled" do
-            HttpLog.options[:log_data] = false
+            HttpLog.configure { |c| c.log_data = false }
             adapter.send_get_request
             expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
           end
 
           it "should colorized output" do
-            HttpLog.options[:color] = :red
+            HttpLog.configure { |c| c.color = :red }
             adapter.send_get_request
             expect(log.colorized?).to be_truthy
           end
 
           it "should log with custom string prefix" do
-            HttpLog.options[:prefix] = '[my logger]'
+            HttpLog.configure { |c| c.prefix = '[my logger]' }
             adapter.send_get_request
             expect(log).to include("[my logger]")
             expect(log).to_not include(HttpLog::LOG_PREFIX)
           end
 
           it "should log with custom lambda prefix" do
-            HttpLog.options[:prefix] = -> { '[custom prefix]' }
+            HttpLog.configure { |c| c.prefix = -> { '[custom prefix]' } }
             adapter.send_get_request
             expect(log).to include("[custom prefix]")
             expect(log).to_not include(HttpLog::LOG_PREFIX)
@@ -211,19 +212,19 @@ describe HttpLog do
         context "POST requests" do
           if adapter_class.method_defined? :send_post_request
             it "should not log data if disabled" do
-              HttpLog.options[:log_data] = false
+              HttpLog.configure { |c| c.log_data = false }
               adapter.send_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
             end
 
             it "should not log the response if disabled" do
-              HttpLog.options[:log_response] = false
+              HttpLog.configure { |c| c.log_response = false }
               adapter.send_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
             end
 
             it "should prefix all response lines" do
-              HttpLog.options[:prefix_response_lines] = true
+              HttpLog.configure { |c| c.prefix_response_lines = true }
 
               adapter.send_post_request
               expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
@@ -231,8 +232,8 @@ describe HttpLog do
             end
 
             it "should prefix all response lines with line numbers" do
-              HttpLog.options[:prefix_response_lines] = true
-              HttpLog.options[:prefix_line_numbers] = true
+              HttpLog.configure { |c| c.prefix_response_lines = true }
+              HttpLog.configure { |c| c.prefix_line_numbers = true }
 
               adapter.send_post_request
               expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
@@ -240,13 +241,13 @@ describe HttpLog do
             end
 
             it "should not log the benchmark if disabled" do
-              HttpLog.options[:log_benchmark] = false
+              HttpLog.configure { |c| c.log_benchmark = false }
               adapter.send_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark:")
             end
 
             it "should colorized output" do
-              HttpLog.options[:color] = :red
+              HttpLog.configure { |c| c.color = :red }
               adapter.send_post_request
               expect(log.colorized?).to be_truthy
             end
@@ -256,19 +257,19 @@ describe HttpLog do
         context "POST form data requests" do
           if adapter_class.method_defined? :send_post_form_request
             it "should not log data if disabled" do
-              HttpLog.options[:log_data] = false
+              HttpLog.configure { |c| c.log_data = false }
               adapter.send_post_form_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
             end
 
             it "should not log the response if disabled" do
-              HttpLog.options[:log_response] = false
+              HttpLog.configure { |c| c.log_response = false }
               adapter.send_post_form_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
             end
 
             it "should not log the benchmark if disabled" do
-              HttpLog.options[:log_benchmark] = false
+              HttpLog.configure { |c| c.log_benchmark = false }
               adapter.send_post_form_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark:")
             end
@@ -281,19 +282,19 @@ describe HttpLog do
 
           if adapter_class.method_defined? :send_multipart_post_request
             it "should not log data if disabled" do
-              HttpLog.options[:log_data] = false
+              HttpLog.configure { |c| c.log_data = false }
               adapter.send_multipart_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Data:")
             end
 
             it "should not log the response if disabled" do
-              HttpLog.options[:log_response] = false
+              HttpLog.configure { |c| c.log_response = false }
               adapter.send_multipart_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Reponse:")
             end
 
             it "should not log the benchmark if disabled" do
-              HttpLog.options[:log_benchmark] = false
+              HttpLog.configure { |c| c.log_benchmark = false }
               adapter.send_multipart_post_request
               expect(log).to_not include(HttpLog::LOG_PREFIX + "Benchmark:")
             end
@@ -302,10 +303,10 @@ describe HttpLog do
       end
 
       context "with compact config" do
-        it "should log a single line with status and benchmark" do
-          HttpLog.options[:compact_log] = true
-          adapter.send_get_request
+        before(:each) { HttpLog.configure { |c| c.compact_log = true } }
 
+        it "should log a single line with status and benchmark" do
+          adapter.send_get_request
           expect(log).to match /\[httplog\] GET http:\/\/#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+/
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Response:")
@@ -315,14 +316,17 @@ describe HttpLog do
       end
 
       context "with log4r" do
-        it "works" do
+
+        before(:each) do 
           require 'log4r'
           require 'log4r/yamlconfigurator'
           require 'log4r/outputter/datefileoutputter'
           log4r_config= YAML.load_file(File.join(File.dirname(__FILE__),"support/log4r.yml"))
           Log4r::YamlConfigurator.decode_yaml( log4r_config['log4r_config'] )
-          HttpLog.options[:logger] = Log4r::Logger['test']
+          HttpLog.configure{ |c| c.logger = Log4r::Logger['test'] }
+        end
 
+        it "works" do
           expect { adapter.send_get_request }.to_not raise_error
         end
       end
