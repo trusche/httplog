@@ -2,8 +2,14 @@
 
 * proper configuration
 
-  If you're using any custom configuration, please replace any assignments of the type `HttpLog.options[:foo] = 'bar'`  with the new configuration block syntax, e.g. 
+  If you're using any custom configuration, please replace any assignments of the type 
+  
+      # Old. Bad. Down with this sort of thing.
+      HttpLog.options[:foo] = 'bar'  
+  
+  with the new configuration block syntax, e.g. 
 
+      # Shiny. New. Ruby-ish.
       HttpLog.configure do |config|
         config.foo = 'bar'
       end
