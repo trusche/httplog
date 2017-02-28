@@ -8,7 +8,7 @@
         config.foo = 'bar'
       end
 
-  Please see the README for details.
+  Please see the [README](README.md#configuration) for details.
 
 ## 0.3.2 - 2016-04-13
 
