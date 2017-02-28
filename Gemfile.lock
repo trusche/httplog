@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    httplog (0.3.3)
+    httplog (1.0.0)
       colorize
 
 GEM
