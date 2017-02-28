@@ -14,6 +14,7 @@ module HttpLog
       @configuration ||= Configuration.new
     end
     alias_method :config, :configuration
+    alias_method :options, :configuration # TODO: remove with 1.0.0
 
     def reset!
       @configuration = nil

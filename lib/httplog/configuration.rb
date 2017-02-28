@@ -39,5 +39,12 @@ module HttpLog
       @prefix_response_lines = false
       @prefix_line_numbers   = false
     end
+
+    # TODO: remove in 1.0.0
+    def []=(key, value)
+      $stderr.puts "DEPRECATION WARNING: Assignment to HttpLog.options will be removed in version 1.0.0. Please use HttpLog.configure block instead as described here: https://github.com/trusche/httplog#configuration"
+      self.send("#{key.to_s}=", value)
+    end
+
   end
 end

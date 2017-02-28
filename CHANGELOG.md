@@ -1,6 +1,6 @@
-## 1.0.0 - 2017-02-28
+## 0.99.0 - 2017-02-28
 
-* **BREAKING CHANGE:** grown-up configuration
+* proper configuration
 
   If you're using any custom configuration, please replace any assignments of the type `HttpLog.options[:foo] = 'bar'`  with the new configuration block syntax, e.g. 
 
@@ -8,7 +8,11 @@
         config.foo = 'bar'
       end
 
-  Please see the [README](README.md#configuration) for details.
+  Please see the [README](README.md#configuration) for details. **The old syntax will be dropped in version 1.0.0** (which will be the next version bump) and will raise a deprecation warning until then.
+
+## 0.3.3 - 2016-11-28
+
+* optional prefix for request data
 
 ## 0.3.2 - 2016-04-13
 
