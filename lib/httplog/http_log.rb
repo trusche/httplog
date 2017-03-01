@@ -58,7 +58,7 @@ module HttpLog
 
     def log_benchmark(seconds)
       return if config.compact_log || !config.log_benchmark
-      log("Benchmark: #{seconds} seconds")
+      log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
     def log_body(body, encoding = nil, content_type=nil)

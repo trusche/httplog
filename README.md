@@ -11,7 +11,7 @@ Log outgoing HTTP requests made from your application. Helps with debugging pesk
 This gem works with the following ruby modules and libraries:
 
 * [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
-* [Ethon](https://github.com/typhoeus/ethon) (**Needs work to support latest versions**)
+* [Ethon](https://github.com/typhoeus/ethon)
 * [Excon](https://github.com/geemus/excon)
 * [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
 * [Patron](https://github.com/toland/patron)
