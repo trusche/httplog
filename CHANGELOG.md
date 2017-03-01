@@ -1,6 +1,6 @@
 ## 0.99.0 - 2017-02-28
 
-* proper configuration
+* Proper configuration!
 
   If you're using any custom configuration, please replace any assignments of the type 
   
@@ -15,6 +15,19 @@
       end
 
   Please see the [README](README.md#configuration) for details. **The old syntax will be dropped in version 1.0.0** (which will be the next version bump) and will raise a deprecation warning until then.
+
+* Dropped support for typhoeus
+  
+  That only means typhoeus is no longer explictly tested; it will probably still work, depending on which adapter is used. With the default ethon adapter, the status code will probably not be logged, and there may be other issues. Typhoeus has its own logging facility, so it's just not worth the headache of trying to stay compatible.
+
+* Dropped support for log4r.
+ 
+  Log4r seems to be no longer maintained for some years; it was causing issues with ruby 2.4, so I dropped it.
+
+* Rounding benchmarks to microseconds. Because anything more is just silly.
+
+* Support for ruby 2.4
+* Support for latest versions of all remaining adapters
 
 ## 0.3.3 - 2016-11-28
 
