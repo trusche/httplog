@@ -52,10 +52,9 @@ GEM
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     json (2.0.3)
-    listen (3.1.5)
+    listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-      ruby_dep (~> 1.2)
     log4r (1.1.10)
     lumberjack (1.0.11)
     method_source (0.8.2)
@@ -90,7 +89,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    ruby_dep (1.5.0)
     shellany (0.0.1)
     simplecov (0.13.0)
       docile (~> 1.1.0)
@@ -113,7 +111,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ethon
+  ethon (= 0.5.7)
   excon (>= 0.18.0)
   faraday
   guard-rspec
@@ -121,6 +119,7 @@ DEPENDENCIES
   httparty
   httpclient
   httplog!
+  listen (~> 3.0.8)
   log4r
   patron
   rack
@@ -128,7 +127,7 @@ DEPENDENCIES
   rspec
   simplecov
   thin
-  typhoeus
+  typhoeus (= 0.5.3)
 
 BUNDLED WITH
-   1.13.6
+   1.14.3
