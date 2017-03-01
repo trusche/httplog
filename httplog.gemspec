@@ -24,12 +24,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency "httparty"
   s.add_development_dependency "faraday"
   s.add_development_dependency "excon", [">= 0.18.0"]
-  s.add_development_dependency "typhoeus", ["= 0.5.3"] # FIXME: update and fix resulting errors
-  s.add_development_dependency "ethon", ["= 0.5.7"] # FIXME: ditto
+  # s.add_development_dependency "typhoeus"
+  s.add_development_dependency "ethon"
   s.add_development_dependency "patron"
-  s.add_development_dependency "http", ["1.0.4"]
+  s.add_development_dependency "http"
   s.add_development_dependency "simplecov"
-  s.add_development_dependency "log4r"
+  # s.add_development_dependency "log4r"
   s.add_development_dependency "rake"
   s.add_development_dependency "listen", ["~> 3.0.8"]
   s.add_dependency 'colorize'

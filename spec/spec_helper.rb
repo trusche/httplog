@@ -3,7 +3,7 @@ $:.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'httpclient'
 require 'excon'
-require 'typhoeus'
+# require 'typhoeus'
 require 'ethon'
 require 'patron'
 require 'http'

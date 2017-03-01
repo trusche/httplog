@@ -30,12 +30,7 @@ module HttpLog
     end
 
     def log(msg)
-      # This builds a hash {0=>:DEBUG, 1=>:INFO, 2=>:WARN, 3=>:ERROR, 4=>:FATAL, 5=>:UNKNOWN}.
-      # Courtesy of the delayed_job gem in this commit: 
-      # https://github.com/collectiveidea/delayed_job/commit/e7f5aa1ed806e61251bdb77daf25864eeb3aff59
-      severities = Hash[*Logger::Severity.constants.enum_for(:each_with_index).collect{ |s, i| [i, s] }.flatten]
-      severity = severities[configuration.severity].to_s.downcase
-      config.logger.send(severity, colorize(prefix + msg))
+      config.logger.log(config.severity, colorize(prefix + msg))
     end
 
     def log_connection(host, port = nil)
@@ -57,6 +52,7 @@ module HttpLog
 
     def log_status(status)
       return if config.compact_log || !config.log_status
+      status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("Status: #{status}")
     end
 

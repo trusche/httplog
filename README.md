@@ -6,7 +6,7 @@
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood. 
 
-**+++Requires ruby 2.2 or higher. If you need to stick with older versions of ruby, the last compatible version of httplog is 0.3.3.+++**
+**+++Requires ruby 2.2 or higher. If you're stuck with an older version of ruby for some reason, you're stuck with httplog v0.3.3.+++**
 
 This gem works with the following ruby modules and libraries:
 
@@ -19,13 +19,12 @@ This gem works with the following ruby modules and libraries:
 * [HTTParty](https://github.com/jnunemaker/httparty)
 * [HTTP](https://github.com/httprb/http)
 
-These libraries are at least partially supported, where they use one of the above as adapters:
+These libraries are at least partially supported, where they use one of the above as adapters, but not explicitly tested - YMMV:
 
 * [Faraday](https://github.com/technoweenie/faraday)
-* [Typhoeus](https://github.com/typhoeus/typhoeus) (**Needs work to support latest versions**)
+* [Typhoeus](https://github.com/typhoeus/typhoeus)
 
-In theory, it should also work with any library built on top of these. But since
-the difference between theory and practice is bigger in practice than in theory, YMMV.
+In theory, it should also work with any library built on top of these. But the difference between theory and practice is bigger in practice than in theory.
 
 This is very much a development and debugging tool; it is **not recommended** to
 use this in a production environment as it is moneky-patching the respective HTTP implementations. 
