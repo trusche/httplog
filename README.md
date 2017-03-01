@@ -6,7 +6,9 @@
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood. 
 
-So far this gem works with the following ruby modules and libraries:
+**+++Requires ruby 2.2 or higher. If you need to stick with older versions of ruby, the last compatible version of httplog is 0.3.3.+++**
+
+This gem works with the following ruby modules and libraries:
 
 * [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
 * [Ethon](https://github.com/typhoeus/ethon) (**Needs work to support latest versions**)
