@@ -1,8 +1,9 @@
 language: ruby
 rvm:
-  - "1.9.3"
   - "2.0.0"
   - "2.1.1"
+  - "2.2.3"
+  - "2.3.3"
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
 # workaround for https://github.com/travis-ci/travis-ci/issues/5239:
