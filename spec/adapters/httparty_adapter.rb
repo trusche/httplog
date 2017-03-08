@@ -4,6 +4,10 @@ class HTTPartyAdapter < HTTPBaseAdapter
     HTTParty.get(parse_uri.to_s, headers: @headers)
   end
 
+  def send_head_request
+    HTTParty.head(parse_uri.to_s, headers: @headers)
+  end
+
   def send_post_request
     HTTParty.post(parse_uri.to_s, body: @data, headers: @headers)
   end

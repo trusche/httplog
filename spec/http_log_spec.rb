@@ -60,6 +60,13 @@ describe HttpLog do
               adapter.send_get_request
               expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
             end
+
+            if adapter_class.method_defined? :send_head_request
+              it "doesn't try to decompress body for HEAD requests" do
+                adapter.send_head_request
+                expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
+              end
+            end
           end
 
           context "with UTF-8 response body" do

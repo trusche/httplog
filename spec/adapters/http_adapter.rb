@@ -4,6 +4,10 @@ class HTTPAdapter < HTTPBaseAdapter
     client.get(parse_uri.to_s)
   end
 
+  def send_head_request
+    client.head(parse_uri.to_s)
+  end
+
   def send_post_request
     client.post(parse_uri.to_s, body: @data)
   end

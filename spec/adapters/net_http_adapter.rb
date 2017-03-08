@@ -3,6 +3,11 @@ class NetHTTPAdapter < HTTPBaseAdapter
     Net::HTTP.get_response(@host, [@path, @data].compact.join('?'), @port)
   end
 
+  def send_head_request
+    http = Net::HTTP.new(@host, @port)
+    http.head(@path, @headers)
+  end
+
   def send_post_request
     http = Net::HTTP.new(@host, @port)
     resp = http.post(@path, @data)
