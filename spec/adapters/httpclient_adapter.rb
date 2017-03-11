@@ -3,6 +3,10 @@ class HTTPClientAdapter < HTTPBaseAdapter
     ::HTTPClient.get(parse_uri, header: @headers)
   end
 
+  def send_head_request
+    ::HTTPClient.head(parse_uri, header: @headers)
+  end
+
   def send_post_request
     ::HTTPClient.post(parse_uri, body: @data, header: @headers)
   end

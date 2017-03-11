@@ -76,7 +76,7 @@ module HttpLog
         return
       end
 
-      if encoding =~ /gzip/
+      if encoding =~ /gzip/ && body && !body.empty?
         sio = StringIO.new( body.to_s )
         gz = Zlib::GzipReader.new( sio )
         body = gz.read

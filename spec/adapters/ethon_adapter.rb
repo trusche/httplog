@@ -6,6 +6,12 @@ class EthonAdapter < HTTPBaseAdapter
     easy.perform
   end
 
+  def send_head_request
+    easy = Ethon::Easy.new
+    easy.http_request(parse_uri.to_s, :head, { headers: @headers })
+    easy.perform
+  end
+
   def send_post_request
     easy = Ethon::Easy.new
     easy.http_request(parse_uri.to_s, :post, { headers: @headers, body: @data })
