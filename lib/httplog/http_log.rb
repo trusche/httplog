@@ -23,7 +23,7 @@ module HttpLog
     def configure
       yield(configuration)
     end
-    
+
     def url_approved?(url)
       return false if config.url_blacklist_pattern && url.to_s.match(config.url_blacklist_pattern)
       url.to_s.match(config.url_whitelist_pattern)
@@ -128,7 +128,7 @@ module HttpLog
       # This is a very naive way of determining if the content type is text-based; but
       # it will allow application/json and the like without having to resort to more
       # heavy-handed checks.
-      content_type =~ /^text/ || 
+      content_type =~ /^text/ ||
       content_type =~ /^application/ && content_type != 'application/octet-stream'
     end
 

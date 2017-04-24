@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "rack"
   s.add_development_dependency "thin"
   s.add_development_dependency "httpclient"
   s.add_development_dependency "httparty"
@@ -33,4 +32,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "listen", ["~> 3.0.8"]
   s.add_dependency 'colorize'
+  s.add_dependency 'rack'
 end

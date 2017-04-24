@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    httplog (0.99.2)
+    httplog (0.99.3)
       colorize
+      rack
 
 GEM
   remote: https://rubygems.org/
@@ -116,7 +117,6 @@ DEPENDENCIES
   httplog!
   listen (~> 3.0.8)
   patron
-  rack
   rake
   rspec
   simplecov
