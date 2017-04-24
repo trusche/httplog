@@ -81,17 +81,21 @@ end
 
 If you want to use this in a Rails app, I'd suggest configuring this specifically for each environment. A global initializer is not a good idea since `HttpLog` will be undefined in production. Because you're **not using this in production**, right? :)
 
-    # config/environments/development.rb
-    
-    HttpLog.configure do |config|
-      config.logger = Rails.logger
-    end
+```ruby
+# config/environments/development.rb
+
+HttpLog.configure do |config|
+  config.logger = Rails.logger
+end
+```
 
 You can colorize the output to make it stand out in your logfile:
 
-    HttpLog.configure do |config|
-      config.color = {color: :black, background: :light_red}
-    end
+```ruby
+HttpLog.configure do |config|
+  config.color = {color: :black, background: :light_red}
+end
+```
 
 For more color options [please refer to the colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
 
