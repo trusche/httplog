@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    httplog (0.99.3)
+    httplog (0.99.4)
       colorize
       rack
 
@@ -123,4 +123,4 @@ DEPENDENCIES
   thin
 
 BUNDLED WITH
-   1.14.5
+   1.15.1
