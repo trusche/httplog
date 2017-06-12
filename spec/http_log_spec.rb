@@ -111,7 +111,7 @@ describe HttpLog do
           end
 
           context "with non-UTF request data" do
-            let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
+            let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3".freeze }
             it "does not raise and error" do
               expect {adapter.send_post_request }.to_not raise_error
               expect(log).to include(HttpLog::LOG_PREFIX + "Response:")
