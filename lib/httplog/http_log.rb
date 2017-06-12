@@ -95,7 +95,7 @@ module HttpLog
 
     def log_data(data)
       return if config.compact_log || !config.log_data
-      data = utf_encoded(data.to_s)
+      data = utf_encoded(data.to_s.dup)
 
       if config.prefix_data_lines
         log("Data:")
