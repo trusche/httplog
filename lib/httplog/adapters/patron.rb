@@ -22,6 +22,8 @@ if defined?(Patron)
           HttpLog.log_benchmark(bm)
           HttpLog.log_body(@response.body, headers['Content-Encoding'], headers['Content-Type'])
         end
+
+        @response
       end
     end
   end
