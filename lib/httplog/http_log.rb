@@ -30,6 +30,7 @@ module HttpLog
     end
 
     def log(msg)
+      return unless config.enabled
       config.logger.log(config.severity, colorize(prefix + msg))
     end
 

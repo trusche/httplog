@@ -1,6 +1,7 @@
 module HttpLog
   class Configuration
-    attr_accessor :compact_log,
+    attr_accessor :enabled,
+                  :compact_log,
                   :logger,
                   :severity,
                   :prefix,
@@ -20,6 +21,7 @@ module HttpLog
                   :prefix_line_numbers
 
     def initialize
+      @enabled               = true
       @compact_log           = false
       @logger                = Logger.new($stdout)
       @severity              = Logger::Severity::DEBUG

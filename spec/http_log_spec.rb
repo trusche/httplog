@@ -19,11 +19,11 @@ describe HttpLog do
     FaradayAdapter,
     ExconAdapter,
     EthonAdapter,
-    # FIXME: typheous does weird things to reponse headers using ethon as the default adapter, 
+    # FIXME: typheous does weird things to reponse headers using ethon as the default adapter,
     # even though ethon stand-alone works just fine. Not worth supporting since Typhoeus has its
     # own logging facility.
     #
-    # TyphoeusAdapter, 
+    # TyphoeusAdapter,
     PatronAdapter,
     HTTPAdapter
   ]
@@ -130,6 +130,12 @@ describe HttpLog do
 
       context "with custom configuration" do
         context "GET requests" do
+
+          it "should not log anything unless enabled is set" do
+            HttpLog.configure { |c| c.enabled = false }
+            adapter.send_get_request
+            expect(log).to eq('')
+          end
 
           it "should log at other levels" do
             HttpLog.configure { |c| c.severity = Logger::Severity::INFO }
@@ -329,7 +335,7 @@ describe HttpLog do
 =begin # NOTE: dropping this in v0.99.0 to support ruby 2.4.0. log4r has been stale for years.
       context "with log4r" do
 
-        before(:each) do 
+        before(:each) do
           require 'log4r'
           require 'log4r/yamlconfigurator'
           require 'log4r/outputter/datefileoutputter'

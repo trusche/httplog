@@ -4,7 +4,7 @@
 
 **+++ This is the README for version 0.99.0 and higher. If you're on previous versions, please refer to [this README version](https://github.com/trusche/httplog/tree/v0.3.3), since the configuration syntax has changed.+++**
 
-Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood. 
+Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
 **+++Requires ruby 2.2 or higher. If you're stuck with an older version of ruby for some reason, you're stuck with httplog v0.3.3.+++**
 
@@ -27,7 +27,7 @@ These libraries are at least partially supported, where they use one of the abov
 In theory, it should also work with any library built on top of these. But the difference between theory and practice is bigger in practice than in theory.
 
 This is very much a development and debugging tool; it is **not recommended** to
-use this in a production environment as it is moneky-patching the respective HTTP implementations. 
+use this in a production environment as it is moneky-patching the respective HTTP implementations.
 You have been warned - use at your own risk.
 
 ### Installation
@@ -38,11 +38,11 @@ You have been warned - use at your own risk.
 
     require 'httplog' # require this *after* your HTTP gem of choice
 
-By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level. 
+By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
 ### Notes on content types
 
-* Binary data from response bodies (as indicated by the `Content-Type` header)is not logged. 
+* Binary data from response bodies (as indicated by the `Content-Type` header)is not logged.
 * Text data (`text/*` and most `application/*` types) is encoded as UTF-8, with invalid characters replaced. If you need to inspect raw non-UTF data exactly as sent over the wire, this tool is probably not for you.
 
 ### Configuration
@@ -51,13 +51,16 @@ You can override the following default options:
 
 ```ruby
 HttpLog.configure do |config|
- 
+
+  # Enabled or disabled logging
+  config.enabled = true
+
   # You can assign a different logger
   config.logger = Logger.new($stdout)
-  
+
   # I really wouldn't change this...
   config.severity = Logger::Severity::DEBUG
-  
+
   # Tweak which parts of the HTTP cycle to log...
   config.log_connect   = true
   config.log_request   = true
@@ -66,13 +69,13 @@ HttpLog.configure do |config|
   config.log_status    = true
   config.log_response  = true
   config.log_benchmark = true
-  
+
   # ...or log all request as a single line by setting this to `true`
-  config.compact_log = false 
-  
+  config.compact_log = false
+
   # Prettify the output - see below
   config.color = false
-  
+
   # Limit logging based on URL patterns
   config.url_whitelist_pattern = /.*/
   config.url_blacklist_pattern = nil
