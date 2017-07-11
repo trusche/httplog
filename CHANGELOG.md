@@ -1,3 +1,7 @@
+## 0.99.6 - 2017-07-11
+
+* Added `enabled` configuration option (default: true, doh)
+
 ## 0.99.5 - 2017-07-05
 
 * Bugfix: Returning response for patron adapter
