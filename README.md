@@ -52,7 +52,7 @@ You can override the following default options:
 ```ruby
 HttpLog.configure do |config|
 
-  # Enabled or disabled logging
+  # Enable or disable all logging
   config.enabled = true
 
   # You can assign a different logger
