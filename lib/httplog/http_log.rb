@@ -2,6 +2,7 @@ require "net/http"
 require "logger"
 require "benchmark"
 require "colorize"
+require "rack"
 
 module HttpLog
   LOG_PREFIX = "[httplog] ".freeze
