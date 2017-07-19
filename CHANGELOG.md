@@ -1,3 +1,7 @@
+## 0.99.7 - 2017-07-19
+
+* Requiring `rack` explicitly so that plain ruby clients don't have to
+
 ## 0.99.6 - 2017-07-11
 
 * Added `enabled` configuration option (default: true, doh)
