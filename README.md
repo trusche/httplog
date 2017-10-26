@@ -27,7 +27,7 @@ These libraries are at least partially supported, where they use one of the abov
 In theory, it should also work with any library built on top of these. But the difference between theory and practice is bigger in practice than in theory.
 
 This is very much a development and debugging tool; it is **not recommended** to
-use this in a production environment as it is moneky-patching the respective HTTP implementations.
+use this in a production environment as it is monkey-patching the respective HTTP implementations.
 You have been warned - use at your own risk.
 
 ### Installation
