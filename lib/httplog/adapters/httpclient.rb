@@ -27,6 +27,7 @@ if defined?(::HTTPClient)
         HttpLog.log_compact(req.header.request_method, req.header.request_uri, res.status_code, bm)
         HttpLog.log_status(res.status_code)
         HttpLog.log_benchmark(bm)
+        HttpLog.log_headers(headers)
         HttpLog.log_body(res.body, headers['Content-Encoding'], headers['Content-Type'])
         conn.push(res)
       end
