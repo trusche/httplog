@@ -27,7 +27,7 @@ if defined?(Excon)
         datum = @data.merge(params)
         datum[:headers] = @data[:headers].merge(datum[:headers] || {})
         url = _httplog_url(datum)
-  
+
         if HttpLog.url_approved?(url)
           HttpLog.log_compact(datum[:method], url, datum[:status] || result.status, bm)
           HttpLog.log_benchmark(bm)
@@ -56,8 +56,8 @@ if defined?(Excon)
         end
         response = datum[:response]
         headers = response[:headers] || {}
-        content_type = 
         HttpLog.log_status(response[:status])
+        HttpLog.log_headers(headers)
         HttpLog.log_body(response[:body], headers['Content-Encoding'], headers['Content-Type'])
         datum
       end

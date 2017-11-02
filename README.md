@@ -2,8 +2,6 @@
 
 [![Gem Version](https://badge.fury.io/rb/httplog.png)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.org/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.png)](https://codeclimate.com/github/trusche/httplog)
 
-**+++ This is the README for version 0.99.0 and higher. If you're on previous versions, please refer to [this README version](https://github.com/trusche/httplog/tree/v0.3.3), since the configuration syntax has changed.+++**
-
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
 **+++Requires ruby 2.2 or higher. If you're stuck with an older version of ruby for some reason, you're stuck with httplog v0.3.3.+++**

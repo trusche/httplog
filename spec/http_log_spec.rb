@@ -146,7 +146,10 @@ describe HttpLog do
           it "should log headers if enabled" do
             HttpLog.configure { |c| c.log_headers = true }
             adapter.send_get_request
+            # request header
             expect(log.downcase).to include(HttpLog::LOG_PREFIX + "Header: accept: */*".downcase)
+            # response header
+            expect(log.downcase).to include(HttpLog::LOG_PREFIX + "Header: server: thin".downcase)
           end
 
           it "should not log headers if disabled" do
