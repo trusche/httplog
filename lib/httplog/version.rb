@@ -1,3 +1,3 @@
 module HttpLog
-  VERSION = "0.99.7"
+  VERSION = "1.0.0"
 end
