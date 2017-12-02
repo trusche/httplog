@@ -95,8 +95,12 @@ module HttpLog
 
     end
 
-    def log_data(data)
+    def log_data(data, content_type = nil)
       return if config.compact_log || !config.log_data
+      unless text_based?(content_type)
+        log("Data: (not showing binary data)")
+        return
+      end
       data = utf_encoded(data.to_s.dup)
 
       if config.prefix_data_lines

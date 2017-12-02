@@ -9,7 +9,7 @@ if defined?(::HTTPClient)
       if log_enabled
         HttpLog.log_request(req.header.request_method, req.header.request_uri)
         HttpLog.log_headers(req.headers)
-        HttpLog.log_data(req.body)
+        HttpLog.log_data(req.body, req.headers['Content-Type'])
       end
 
       retryable_response = nil
