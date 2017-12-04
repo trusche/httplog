@@ -7,7 +7,7 @@ describe HttpLog do
   let(:host) { 'localhost' }
   let(:port) { 9292 }
   let(:path) { "/index.html" }
-  let(:headers) { { "accept" => "*/*", "foo" => "bar" } }
+  let(:headers) { { "accept" => "*/*", "foo" => "bar", 'Content-Type' => 'application/x-www-form-urlencoded' } }
   let(:data) { "foo=bar&bar=foo" }
   let(:params) { {'foo' => 'bar:form-data', 'bar' => 'foo'} }
 

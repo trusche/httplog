@@ -42,7 +42,7 @@ if defined?(Excon)
         if HttpLog.url_approved?(url)
           HttpLog.log_request(datum[:method], _httplog_url(datum))
           HttpLog.log_headers(datum[:headers])
-          HttpLog.log_data(datum[:body])# if datum[:method] == :post
+          HttpLog.log_data(datum[:body], datum[:headers]['Content-Type'])# if datum[:method] == :post
         end
         orig_request_call(datum)
       end

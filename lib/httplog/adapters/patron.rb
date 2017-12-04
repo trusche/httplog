@@ -8,7 +8,7 @@ if defined?(Patron)
         if log_enabled
           HttpLog.log_request(action_name, url)
           HttpLog.log_headers(headers)
-          HttpLog.log_data(options[:data])# if action_name == :post
+          HttpLog.log_data(options[:data], headers['Content-Type'])# if action_name == :post
         end
 
         bm = Benchmark.realtime do
