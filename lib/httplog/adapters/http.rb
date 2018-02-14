@@ -14,8 +14,13 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
         if log_enabled
           HttpLog.log_request(req.verb, req.uri)
           HttpLog.log_headers(req.headers.to_h)
-          body = req.body
-          body = body.source if body.respond_to?(:source)
+
+          if defined?(::HTTP::Request::Body)
+            body = req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
+          else
+            body = req.body
+          end
+
           HttpLog.log_data(body.to_s)
           body.rewind if body.respond_to?(:rewind)
         end

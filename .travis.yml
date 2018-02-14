@@ -3,6 +3,10 @@ rvm:
   - "2.2.8"
   - "2.3.5"
   - "2.4.2"
+gemfile:
+  - gemfiles/http2.gemfile
+  - gemfiles/http3.gemfile
+  - gemfiles/http4.gemfile
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
 # workaround for https://github.com/travis-ci/travis-ci/issues/5239:

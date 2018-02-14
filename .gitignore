@@ -4,3 +4,4 @@ pkg/
 *.gem
 coverage/
 spec/log/*.log
+gemfiles/*.lock
