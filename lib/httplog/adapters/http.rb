@@ -14,7 +14,10 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
         if log_enabled
           HttpLog.log_request(req.verb, req.uri)
           HttpLog.log_headers(req.headers.to_h)
-          HttpLog.log_data(req.body) #if req.verb == :post
+          body = req.body
+          body = body.source if body.respond_to?(:source)
+          HttpLog.log_data(body.to_s)
+          body.rewind if body.respond_to?(:rewind)
         end
 
         bm = Benchmark.realtime do
