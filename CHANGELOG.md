@@ -1,3 +1,11 @@
+## 1.0.1 - 2018-02-18
+
+* [#56](https://github.com/trusche/httplog/pull/56) Fixed data logging for httprb v3 ([@tycooon])
+
+## 1.0.0 - 2017-11-02
+
+* [#53](https://github.com/trusche/httplog/pull/53) Fix header logging
+
 ## 0.99.7 - 2017-07-19
 
 * Requiring `rack` explicitly so that plain ruby clients don't have to

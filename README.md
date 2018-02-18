@@ -166,11 +166,9 @@ This will launch a simple rack server on port 9292 and run all tests locally aga
 
 ### Contributing
 
-If you have any issues with httplog,
-or feature requests,
-please [add an issue](https://github.com/trusche/httplog/issues) on GitHub
-or fork the project and send a pull request.
-Please include passing specs with all pull requests.
+If you have any issues with or feature requests for httplog,
+please [open an issue](https://github.com/trusche/httplog/issues) on GitHub
+or fork the project and send a pull request. **Please include passing specs with all pull requests.**
 
 ### Contributors
 
@@ -185,3 +183,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Ryan Souza](https://github.com/ryansouza)
 * [Ilya Bondarenko](https://github.com/sedx)
 * [Kostas Zacharakis](https://github.com/kzacharakis)
+* [Yuri Smirnov](https://github.com/tycooon)
