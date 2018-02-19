@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    httplog (1.0.0)
-      colorize
-      rack
+    httplog (1.0.1)
+      colorize (~> 0.8)
+      rack (~> 2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -105,20 +105,20 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ethon
-  excon (>= 0.18.0)
-  faraday
-  guard-rspec
-  http
-  httparty
-  httpclient
+  ethon (~> 0.11)
+  excon (~> 0.60)
+  faraday (~> 0.14)
+  guard-rspec (~> 4.7)
+  http (~> 3.0)
+  httparty (~> 0.16)
+  httpclient (~> 2.8)
   httplog!
-  listen (~> 3.0.8)
-  patron
-  rake
-  rspec
-  simplecov
-  thin
+  listen (~> 3.0)
+  patron (~> 0.12)
+  rake (~> 12.3)
+  rspec (~> 3.7)
+  simplecov (~> 0.15)
+  thin (~> 1.7)
 
 BUNDLED WITH
    1.16.0

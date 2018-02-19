@@ -1,6 +1,7 @@
 ## 1.0.1 - 2018-02-18
 
 * [#56](https://github.com/trusche/httplog/pull/56) Fixed data logging for httprb v3 ([@tycooon])
+* Cleaned up dependencies and requiring ruby version >= 2.2
 
 ## 1.0.0 - 2017-11-02
 

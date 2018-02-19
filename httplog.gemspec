@@ -4,33 +4,38 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "httplog/version"
 
-Gem::Specification.new do |s|
-  s.name        = "httplog"
-  s.version     = HttpLog::VERSION
-  s.authors     = ["Thilo Rusche"]
-  s.summary     = %q{Logs outgoing HTTP requests.}
-  s.homepage    = %q{http://github.com/trusche/httplog}
-  s.description = %q{Log outgoing HTTP requests made from your application. Helpful for tracking API calls
+Gem::Specification.new do |gem|
+  gem.name        = "httplog"
+  gem.version     = HttpLog::VERSION
+  gem.licenses    = ["MIT"]
+  gem.summary     = %q{Log outgoing HTTP requests.}
+  gem.authors     = ["Thilo Rusche"]
+  gem.email       = %q{thilorusche@gmail.com}
+  gem.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md", "CHANGELOG.md"]
+  gem.homepage    = %q{http://github.com/trusche/httplog}
+  gem.description = %q{Log outgoing HTTP requests made from your application. Helpful for tracking API calls
                      of third party gems that don't provide their own log output.}
-  s.email       = %q{thilorusche@gmail.com}
 
-  s.files       = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- test/*`.split("\n")
+  gem.require_paths = ["lib"]
 
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "thin"
-  s.add_development_dependency "httpclient"
-  s.add_development_dependency "httparty"
-  s.add_development_dependency "faraday"
-  s.add_development_dependency "excon", [">= 0.18.0"]
-  # s.add_development_dependency "typhoeus"
-  s.add_development_dependency "ethon"
-  s.add_development_dependency "patron"
-  s.add_development_dependency "http"
-  s.add_development_dependency "simplecov"
-  # s.add_development_dependency "log4r"
-  s.add_development_dependency "rake"
-  s.add_development_dependency "listen", ["~> 3.0.8"]
-  s.add_dependency 'colorize'
-  s.add_dependency 'rack'
+  gem.required_ruby_version = ">= 2.2"
+
+  gem.add_development_dependency "rspec", ["~> 3.7"]
+  gem.add_development_dependency "guard-rspec", ["~> 4.7"]
+  gem.add_development_dependency "thin", ["~> 1.7"]
+  gem.add_development_dependency "httpclient", ["~> 2.8"]
+  gem.add_development_dependency "httparty", ["~> 0.16"]
+  gem.add_development_dependency "faraday", ["~> 0.14"]
+  gem.add_development_dependency "excon", ["~> 0.60"]
+  gem.add_development_dependency "ethon", ["~> 0.11"]
+  gem.add_development_dependency "patron", ["~> 0.12"]
+  gem.add_development_dependency "http", ["~> 3.0"]
+  gem.add_development_dependency "simplecov", ["~> 0.15"]
+  gem.add_development_dependency "rake", ["~> 12.3"]
+  gem.add_development_dependency "listen", ["~> 3.0"]
+
+  gem.add_dependency "colorize", ["~> 0.8"]
+  gem.add_dependency "rack", ["~> 2.0"]
 end
