@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem "http", "~> 3.0"
+gem "rack", "~> 1.0"
 
 gemspec path: ".."

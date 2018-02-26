@@ -37,5 +37,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "listen", ["~> 3.0"]
 
   gem.add_dependency "colorize", ["~> 0.8"]
-  gem.add_dependency "rack", ["~> 2.0"]
+  gem.add_dependency "rack", [">= 1.0"]
 end

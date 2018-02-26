@@ -3,7 +3,7 @@ PATH
   specs:
     httplog (1.0.1)
       colorize (~> 0.8)
-      rack (~> 2.0)
+      rack (>= 1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -23,7 +23,7 @@ GEM
     excon (0.60.0)
     faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
-    ffi (1.9.21)
+    ffi (1.9.23)
     formatador (0.2.5)
     guard (2.14.2)
       formatador (>= 0.2.4)
@@ -52,9 +52,10 @@ GEM
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     json (2.1.0)
-    listen (3.0.8)
+    listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
     lumberjack (1.0.12)
     method_source (0.9.0)
     multi_xml (0.6.0)
@@ -63,7 +64,7 @@ GEM
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    patron (0.12.0)
+    patron (0.12.1)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -86,6 +87,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    ruby_dep (1.5.0)
     shellany (0.0.1)
     simplecov (0.15.1)
       docile (~> 1.1.0)
