@@ -1,0 +1,36 @@
+# Offense count: 13
+Metrics/AbcSize:
+  Enabled: false
+
+# Offense count: 43
+# Configuration parameters: CountComments, ExcludedMethods.
+Metrics/BlockLength:
+  Enabled: false
+
+# Offense count: 137
+# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Metrics/LineLength:
+  Enabled: false
+
+# Offense count: 7
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+# Offense count: 195
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: when_needed, always, never
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Offense count: 328
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
+# SupportedStyles: single_quotes, double_quotes
+Style/StringLiterals:
+  Enabled: false

@@ -24,14 +24,11 @@ if defined?(Ethon)
         def perform
           return orig_perform unless HttpLog.url_approved?(url)
 
-          response_code = nil
-          bm = Benchmark.realtime do
-            reponse_code = orig_perform
-          end
+          bm = Benchmark.realtime { orig_perform }
 
           # Not sure where the actual status code is stored - so let's
           # extract it from the response header.
-          status   = response_headers.scan(/HTTP\/... (\d{3})/).flatten.first
+          status   = response_headers.scan(%r{HTTP/... (\d{3})}).flatten.first
           encoding = response_headers.scan(/Content-Encoding: (\S+)/).flatten.first
           content_type = response_headers.scan(/Content-Type: (\S+(; charset=\S+)?)/).flatten.first
 

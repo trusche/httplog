@@ -7,10 +7,10 @@ require 'colorize'
 require 'rack'
 
 module HttpLog
-  LOG_PREFIX = '[httplog] '
+  LOG_PREFIX = '[httplog] '.freeze
 
   class << self
-    attr_accessor :configuration
+    attr_writer :configuration
 
     def configuration
       @configuration ||= Configuration.new
@@ -64,7 +64,7 @@ module HttpLog
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
-    def log_body(body, encoding=nil, content_type=nil)
+    def log_body(body, encoding = nil, content_type = nil)
       return if config.compact_log || !config.log_response
 
       unless text_based?(content_type)

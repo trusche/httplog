@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
-  module ::HTTP
+  module ::HTTP # rubocop:disable Style/ClassAndModuleChildren
     class Client
       request_method = respond_to?('make_request') ? 'make_request' : 'perform'
       orig_request_method = "orig_#{request_method}"
@@ -14,11 +14,11 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
           HttpLog.log_request(req.verb, req.uri)
           HttpLog.log_headers(req.headers.to_h)
 
-          if defined?(::HTTP::Request::Body)
-            body = req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
-          else
-            body = req.body
-          end
+          body = if defined?(::HTTP::Request::Body)
+                   req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
+                 else
+                   req.body
+                 end
 
           HttpLog.log_data(body.to_s)
           body.rewind if body.respond_to?(:rewind)

@@ -14,7 +14,6 @@ module HttpLog
                   :log_status,
                   :log_response,
                   :log_benchmark,
-                  :compact_log,
                   :url_whitelist_pattern,
                   :url_blacklist_pattern,
                   :color,
@@ -35,7 +34,6 @@ module HttpLog
       @log_status            = true
       @log_response          = true
       @log_benchmark         = true
-      @compact_log           = false
       @url_whitelist_pattern = /.*/
       @url_blacklist_pattern = nil
       @color                 = false

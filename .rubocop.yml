@@ -1,0 +1,55 @@
+inherit_from: ./.rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.2
+  Exclude:
+    - 'db/**/*'
+    - 'db/schema.rb'
+    - 'app/assets/**'
+    - 'config/**/*'
+    - 'bin/**/*'
+    - 'node_modules/**/*'
+    - 'public/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'doc/**/*'
+    - 'coverage/**/*'
+    - Gemfile
+    - Guardfile
+
+Layout/EmptyLinesAroundBlockBody:
+  EnforcedStyle: no_empty_lines
+  Enabled: true
+
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: no_empty_lines
+  Enabled: true
+
+Layout/EmptyLinesAroundModuleBody:
+  EnforcedStyle: no_empty_lines
+
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
+Style/Documentation:
+  Enabled: false
+
+Style/Lambda:
+  EnforcedStyle: literal
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: '[]'
+    '%i': '[]'
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false

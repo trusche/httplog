@@ -13,7 +13,6 @@ Gem::Specification.new do |gem|
   gem.summary     = 'Log outgoing HTTP requests.'
   gem.authors     = ['Thilo Rusche']
   gem.email       = 'thilorusche@gmail.com'
-  gem.files       = Dir['lib/**/*'] + ['MIT-LICENSE', 'Rakefile', 'README.md', 'CHANGELOG.md']
   gem.homepage    = 'http://github.com/trusche/httplog'
   gem.description = "Log outgoing HTTP requests made from your application. Helpful for tracking API calls
                      of third party gems that don't provide their own log output."

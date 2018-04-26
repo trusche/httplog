@@ -24,7 +24,7 @@ describe HttpLog do
 
   ADAPTERS.each do |adapter_class|
     context adapter_class, adapter: adapter_class.to_s do
-      let(:adapter) { adapter_class.new(host, port, path, headers, data, params) }
+      let(:adapter) { adapter_class.new(host: host, port: port, path: path, headers: headers, data: data, params: params) }
 
       context 'with default configuration' do
         connection_test_method = adapter_class.is_libcurl? ? :to_not : :to
@@ -321,7 +321,7 @@ describe HttpLog do
 
         it 'should log a single line with status and benchmark' do
           adapter.send_get_request
-          expect(log).to match /\[httplog\] GET http:\/\/#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+/
+          expect(log).to match(%r{\[httplog\] GET http://#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+})
           expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
           expect(log).to_not include(HttpLog::LOG_PREFIX + 'Response:')
           expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')

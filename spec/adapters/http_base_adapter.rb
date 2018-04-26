@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class HTTPBaseAdapter
-  def initialize(host, port, path, headers, data, params, protocol = 'http')
-    @host = host
-    @port = port
-    @path = path
-    @headers = headers
-    @data = data
-    @params = params
-    @protocol = protocol
+  def initialize(options = {})
+    @host     = options.fetch(:host, 'localhost')
+    @port     = options.fetch(:port, 80)
+    @path     = options.fetch(:path, '/')
+    @headers  = options.fetch(:headers, {})
+    @data     = options.fetch(:data, nil)
+    @params   = options.fetch(:params, {})
+    @protocol = options.fetch(:protocol, 'http')
   end
 
   def logs_data?

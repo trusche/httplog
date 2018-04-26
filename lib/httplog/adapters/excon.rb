@@ -51,9 +51,7 @@ if defined?(Excon)
       def response(datum = {})
         return orig_response(datum) unless HttpLog.url_approved?(_httplog_url(datum))
 
-        bm = Benchmark.realtime do
-          datum = orig_response(datum)
-        end
+        datum = orig_response(datum)
         response = datum[:response]
         headers = response[:headers] || {}
         HttpLog.log_status(response[:status])
