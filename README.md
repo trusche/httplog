@@ -4,7 +4,7 @@
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
-**+++Requires ruby 2.2 or higher. If you're stuck with an older version of ruby for some reason, you're stuck with httplog v0.3.3.+++**
+Requires ruby >= 2.2.
 
 This gem works with the following ruby modules and libraries:
 
@@ -128,6 +128,9 @@ With `compact_log` enabled, the same request might look like this:
 
 ### Known Issues
 
+Following are some known quirks and issues with particular libraries. If you know a workaround or have
+a suggestion for a fix, please open an issue or, even better, submit a pull request!
+
 * Requests types other than GET and POST have not been explicitly tested.
   They may or may not be logged, depending on the implementation details of the underlying library.
   If they are not for a particular library, please feel free to open an issue with the details.
@@ -157,6 +160,9 @@ With `compact_log` enabled, the same request might look like this:
   the TCP connection is not logged (since it's established by libcurl).
 
 * Benchmarking only covers the time between starting the HTTP request and receiving the response. It does *not* cover the time it takes to establish the TCP connection.
+
+* When using [REST Client](https://github.com/rest-client/rest-client), POST requests might be missing the requests
+  data. See #54 for details.
 
 ### Running the specs
 
