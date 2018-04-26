@@ -18,11 +18,6 @@ describe HttpLog do
     FaradayAdapter,
     ExconAdapter,
     EthonAdapter,
-    # FIXME: typheous does weird things to reponse headers using ethon as the default adapter,
-    # even though ethon stand-alone works just fine. Not worth supporting since Typhoeus has its
-    # own logging facility.
-    #
-    # TyphoeusAdapter,
     PatronAdapter,
     HTTPAdapter
   ].freeze
@@ -40,12 +35,13 @@ describe HttpLog do
 
             expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
 
-            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: GET http://#{host}:#{port}#{path}")
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Data:')
+            expect(log).to     include(HttpLog::LOG_PREFIX + "Sending: GET http://#{host}:#{port}#{path}")
+            expect(log).to     include(HttpLog::LOG_PREFIX + 'Data:')
             expect(log).to_not include(HttpLog::LOG_PREFIX + 'Header:')
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Status: 200')
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Benchmark: ')
-            expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+            expect(log).to     include(HttpLog::LOG_PREFIX + 'Status: 200')
+            expect(log).to     include(HttpLog::LOG_PREFIX + 'Benchmark: ')
+            expect(log).to     include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+
             expect(log.colorized?).to be_falsey
 
             expect(res).to be_a adapter.response if adapter.respond_to? :response
