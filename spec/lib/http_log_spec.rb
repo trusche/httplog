@@ -47,7 +47,7 @@ describe HttpLog do
             expect(res).to be_a adapter.response if adapter.respond_to? :response
           end
 
-          context 'with gzipped response body' do
+          context 'with gzip encoding' do
             let(:path) { '/index.html.gz' }
             let(:data) { nil }
 

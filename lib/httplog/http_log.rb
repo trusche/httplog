@@ -80,9 +80,13 @@ module HttpLog
       end
 
       if encoding =~ /gzip/ && body && !body.empty?
-        sio = StringIO.new(body.to_s)
-        gz = Zlib::GzipReader.new(sio)
-        body = gz.read
+        begin
+          sio = StringIO.new(body.to_s)
+          gz = Zlib::GzipReader.new(sio)
+          body = gz.read
+        rescue Zlib::GzipFile::Error => e
+          log("(gzip decompression failed)")
+        end
       end
 
       data = utf_encoded(body.to_s, content_type)
