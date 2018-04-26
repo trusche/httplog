@@ -1,3 +1,13 @@
+## 1.0.3 - 2018-04-26
+
+* [#58](https://github.com/trusche/httplog/issues/58) Fixed decompression error for HTTPClient with `transparent_gzip_decompression` enabled.
+* Rubocop!
+
+## 1.0.2 - 2018-02-26
+
+* [#57](https://github.com/trusche/httplog/issues/57) Changed rack dependency to be less strict
+* Updated travis to test against both major rack versions
+
 ## 1.0.1 - 2018-02-18
 
 * [#56](https://github.com/trusche/httplog/pull/56) Fixed data logging for httprb v3 ([@tycooon])
