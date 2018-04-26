@@ -1,21 +1,22 @@
-require "net/http"
-require "logger"
-require "benchmark"
-require "colorize"
-require "rack"
+# frozen_string_literal: true
+
+require 'net/http'
+require 'logger'
+require 'benchmark'
+require 'colorize'
+require 'rack'
 
 module HttpLog
-  LOG_PREFIX = "[httplog] ".freeze
+  LOG_PREFIX = '[httplog] '
 
   class << self
-
     attr_accessor :configuration
 
     def configuration
       @configuration ||= Configuration.new
     end
-    alias_method :config, :configuration
-    alias_method :options, :configuration # TODO: remove with 1.0.0
+    alias config configuration
+    alias options configuration # TODO: remove with 1.0.0
 
     def reset!
       @configuration = nil
@@ -37,7 +38,7 @@ module HttpLog
 
     def log_connection(host, port = nil)
       return if config.compact_log || !config.log_connect
-      log("Connecting: #{[host, port].compact.join(":")}")
+      log("Connecting: #{[host, port].compact.join(':')}")
     end
 
     def log_request(method, uri)
@@ -47,7 +48,7 @@ module HttpLog
 
     def log_headers(headers = {})
       return if config.compact_log || !config.log_headers
-      headers.each do |key,value|
+      headers.each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
@@ -63,36 +64,35 @@ module HttpLog
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
-    def log_body(body, encoding = nil, content_type=nil)
+    def log_body(body, encoding = nil, content_type = nil)
       return if config.compact_log || !config.log_response
 
       unless text_based?(content_type)
-        log("Response: (not showing binary data)")
+        log('Response: (not showing binary data)')
         return
       end
 
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
-        log("Response: (not available yet)")
+        log('Response: (not available yet)')
         return
       end
 
       if encoding =~ /gzip/ && body && !body.empty?
-        sio = StringIO.new( body.to_s )
-        gz = Zlib::GzipReader.new( sio )
+        sio = StringIO.new(body.to_s)
+        gz = Zlib::GzipReader.new(sio)
         body = gz.read
       end
 
       data = utf_encoded(body.to_s, content_type)
 
       if config.prefix_response_lines
-        log("Response:")
+        log('Response:')
         log_data_lines(data)
       else
         log("Response:\n#{data}")
       end
-
     end
 
     def log_data(data)
@@ -100,7 +100,7 @@ module HttpLog
       data = utf_encoded(data.to_s.dup)
 
       if config.prefix_data_lines
-        log("Data:")
+        log('Data:')
         log_data_lines(data)
       else
         log("Data: #{data}")
@@ -120,10 +120,14 @@ module HttpLog
 
     private
 
-    def utf_encoded(data, content_type=nil)
+    def utf_encoded(data, content_type = nil)
       charset = content_type.to_s.scan(/; charset=(\S+)/).flatten.first || 'UTF-8'
-      data.force_encoding(charset) rescue data.force_encoding('UTF-8')
-      data.encode('UTF-8', :invalid => :replace, :undef => :replace)
+      begin
+        data.force_encoding(charset)
+      rescue StandardError
+        data.force_encoding('UTF-8')
+      end
+      data.encode('UTF-8', invalid: :replace, undef: :replace)
     end
 
     def text_based?(content_type)
@@ -131,7 +135,7 @@ module HttpLog
       # it will allow application/json and the like without having to resort to more
       # heavy-handed checks.
       content_type =~ /^text/ ||
-      content_type =~ /^application/ && content_type != 'application/octet-stream'
+        content_type =~ /^application/ && content_type != 'application/octet-stream'
     end
 
     def log_data_lines(data)
@@ -151,6 +155,5 @@ module HttpLog
         config.prefix.to_s
       end
     end
-
   end
 end

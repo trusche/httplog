@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httparty'
 class HTTPartyAdapter < HTTPBaseAdapter
   def send_get_request

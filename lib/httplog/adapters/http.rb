@@ -1,14 +1,13 @@
+# frozen_string_literal: true
+
 if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
   module ::HTTP
     class Client
-
-      #
       request_method = respond_to?('make_request') ? 'make_request' : 'perform'
       orig_request_method = "orig_#{request_method}"
       alias_method(orig_request_method, request_method) unless method_defined?(orig_request_method)
 
       define_method request_method do |req, options|
-
         log_enabled = HttpLog.url_approved?(req.uri)
 
         if log_enabled
@@ -43,7 +42,7 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
     end
 
     class Connection
-      alias_method(:orig_initialize, :initialize) unless method_defined?(:orig_initialize)
+      alias orig_initialize initialize unless method_defined?(:orig_initialize)
 
       def initialize(req, options)
         HttpLog.log_connection(req.uri.host, req.uri.port) if HttpLog.url_approved?(req.uri)

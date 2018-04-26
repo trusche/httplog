@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HTTPClientAdapter < HTTPBaseAdapter
   def send_get_request
     ::HTTPClient.get(parse_uri, header: @headers)

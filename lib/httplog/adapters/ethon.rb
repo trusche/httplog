@@ -1,17 +1,18 @@
+# frozen_string_literal: true
+
 if defined?(Ethon)
   module Ethon
     class Easy
-
       attr_accessor :action_name
 
       module Http
-        alias_method :orig_http_request, :http_request
+        alias orig_http_request http_request
         def http_request(url, action_name, options = {})
           @action_name = action_name # remember this for compact logging
           if HttpLog.url_approved?(url)
             HttpLog.log_request(action_name, url)
             HttpLog.log_headers(options[:headers])
-            HttpLog.log_data(options[:body]) #if action_name == :post
+            HttpLog.log_data(options[:body]) # if action_name == :post
           end
 
           orig_http_request(url, action_name, options)
@@ -19,7 +20,7 @@ if defined?(Ethon)
       end
 
       module Operations
-        alias_method :orig_perform, :perform
+        alias orig_perform perform
         def perform
           return orig_perform unless HttpLog.url_approved?(url)
 

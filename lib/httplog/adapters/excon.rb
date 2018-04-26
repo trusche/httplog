@@ -1,23 +1,23 @@
+# frozen_string_literal: true
+
 if defined?(Excon)
   module Excon
     class Socket
-      alias_method :orig_connect, :connect
+      alias orig_connect connect
       def connect
         host = @data[:proxy] ? @data[:proxy][:host] : @data[:host]
         port = @data[:proxy] ? @data[:proxy][:port] : @data[:port]
         HttpLog.log_connection(host, port)
         orig_connect
       end
-
     end
 
     class Connection
-
       def _httplog_url(datum)
         "#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}#{datum[:query]}"
       end
 
-      alias_method :orig_request, :request
+      alias orig_request request
       def request(params, &block)
         result = nil
         bm = Benchmark.realtime do
@@ -35,20 +35,20 @@ if defined?(Excon)
         result
       end
 
-      alias_method :orig_request_call, :request_call
+      alias orig_request_call request_call
       def request_call(datum)
         url = _httplog_url(datum)
 
         if HttpLog.url_approved?(url)
           HttpLog.log_request(datum[:method], _httplog_url(datum))
           HttpLog.log_headers(datum[:headers])
-          HttpLog.log_data(datum[:body])# if datum[:method] == :post
+          HttpLog.log_data(datum[:body]) # if datum[:method] == :post
         end
         orig_request_call(datum)
       end
 
-      alias_method :orig_response, :response
-      def response(datum={})
+      alias orig_response response
+      def response(datum = {})
         return orig_response(datum) unless HttpLog.url_approved?(_httplog_url(datum))
 
         bm = Benchmark.realtime do

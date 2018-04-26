@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 class FaradayAdapter < HTTPBaseAdapter
   def send_get_request
@@ -47,7 +49,7 @@ class FaradayAdapter < HTTPBaseAdapter
       faraday.request :multipart
       faraday.request :url_encoded
 
-      faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
     end
   end
 end

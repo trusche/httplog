@@ -1,5 +1,7 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem "http", github: "httprb/http"
+source 'https://rubygems.org'
 
-gemspec path: ".."
+gem 'http', github: 'httprb/http'
+
+gemspec path: '..'

@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 if defined?(::HTTPClient)
   class HTTPClient
     private
-    alias_method :orig_do_get_block, :do_get_block
+
+    alias orig_do_get_block do_get_block
 
     def do_get_block(req, proxy, conn, &block)
       log_enabled = HttpLog.url_approved?(req.header.request_uri)
@@ -32,11 +35,11 @@ if defined?(::HTTPClient)
         conn.push(res)
       end
 
-      raise retryable_response if retryable_response != nil
+      raise retryable_response unless retryable_response.nil?
     end
 
     class Session
-      alias_method :orig_create_socket, :create_socket
+      alias orig_create_socket create_socket
 
       # up to version 2.6, the method signature is `create_socket(site)`; after that,
       # it's `create_socket(hort, port)`
@@ -53,7 +56,7 @@ if defined?(::HTTPClient)
           if HttpLog.url_approved?("#{host}:#{port}")
             HttpLog.log_connection(host, port)
           end
-          orig_create_socket(host,port)
+          orig_create_socket(host, port)
         end
       end
     end

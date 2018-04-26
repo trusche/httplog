@@ -1,4 +1,6 @@
-require "patron"
+# frozen_string_literal: true
+
+require 'patron'
 class PatronAdapter < HTTPBaseAdapter
   def send_get_request
     session = Patron::Session.new
@@ -25,7 +27,7 @@ class PatronAdapter < HTTPBaseAdapter
     file = @params.delete('file')
 
     session = Patron::Session.new
-    session.post_multipart(parse_uri.to_s, data, {file: file.path}, @headers)
+    session.post_multipart(parse_uri.to_s, data, { file: file.path }, @headers)
   end
 
   def self.is_libcurl?

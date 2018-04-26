@@ -1,4 +1,6 @@
 #!/usr/bin/env rake
+# frozen_string_literal: true
+
 begin
   require 'bundler/setup'
 rescue LoadError
@@ -13,10 +15,10 @@ rescue LoadError
 end
 require 'rspec/core/rake_task'
 
-desc "Run specs"
+desc 'Run specs'
 RSpec::Core::RakeTask.new(:spec)
 
-desc "Generate documentation"
+desc 'Generate documentation'
 RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'HttpLog'
@@ -36,9 +38,9 @@ end
 
 # ----- Packaging -----
 task :build do
-  sh "gem build httplog.gemspec"
+  sh 'gem build httplog.gemspec'
   mkdir_p 'pkg'
-  sh "mv *.gem pkg/ "
+  sh 'mv *.gem pkg/ '
 end
 
-task :default => :spec
+task default: :spec

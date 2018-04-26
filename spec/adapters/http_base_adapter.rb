@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HTTPBaseAdapter
   def initialize(host, port, path, headers, data, params, protocol = 'http')
     @host = host

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'http'
 class HTTPAdapter < HTTPBaseAdapter
   def send_get_request

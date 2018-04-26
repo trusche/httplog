@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NetHTTPAdapter < HTTPBaseAdapter
   def send_get_request
     Net::HTTP.get_response(@host, [@path, @data].compact.join('?'), @port)

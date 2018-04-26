@@ -1,5 +1,7 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem "http", "~> 2.0"
+source 'https://rubygems.org'
 
-gemspec path: ".."
+gem 'http', '~> 2.0'
+
+gemspec path: '..'
