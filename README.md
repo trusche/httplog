@@ -94,11 +94,11 @@ You can colorize the output to make it stand out in your logfile:
 
 ```ruby
 HttpLog.configure do |config|
-  config.color = {color: :black, background: :light_red}
+  config.color = {color: :black, background: :yellow}
 end
 ```
 
-For more color options [please refer to the colorize documentation](https://github.com/fazibear/colorize/blob/master/README.md)
+For more color options please refer to the [rainbow documentation](https://github.com/sickill/rainbow)
 
 ### Compact logging
 

@@ -1,3 +1,9 @@
+## 1.1.0 - 2018-06-22
+
+* [#59](https://github.com/trusche/httplog/issues/59) Switched colorization library to MIT licensed [rainbow](https://github.com/sickill/rainbow).
+  This is not a breaking change, but if you currently use a color name that is not defined by the Rainbow gem, it will
+  simply be ignored.
+
 ## 1.0.3 - 2018-04-26
 
 * [#58](https://github.com/trusche/httplog/issues/58) Fixed decompression error for HTTPClient with `transparent_gzip_decompression` enabled.

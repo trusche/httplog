@@ -3,7 +3,7 @@
 require 'net/http'
 require 'logger'
 require 'benchmark'
-require 'colorize'
+require 'rainbow'
 require 'rack'
 
 module HttpLog
@@ -119,7 +119,10 @@ module HttpLog
 
     def colorize(msg)
       return msg unless config.color
-      msg.send(:colorize, config.color)
+      Rainbow(msg).send(config.color)
+    rescue
+      warn "HTTPLOG CONFIGURATION ERROR: #{config.color} is not a valid color"
+      msg
     end
 
     private
