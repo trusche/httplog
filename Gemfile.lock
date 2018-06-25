@@ -3,7 +3,7 @@ PATH
   specs:
     httplog (1.1.0)
       rack (>= 1.0)
-      rainbow
+      rainbow (>= 2.0.0)
 
 GEM
   remote: https://rubygems.org/
