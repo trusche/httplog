@@ -91,7 +91,16 @@ HttpLog.configure do |config|
 end
 ```
 
-You can colorize the output to make it stand out in your logfile:
+You can colorize the output to make it stand out in your logfile, either with a single color
+for the text:
+
+```ruby
+HttpLog.configure do |config|
+  config.color = :red
+end
+```
+
+Or with a color hash for text and background:
 
 ```ruby
 HttpLog.configure do |config|

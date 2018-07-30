@@ -119,7 +119,13 @@ module HttpLog
 
     def colorize(msg)
       return msg unless config.color
-      Rainbow(msg).send(config.color)
+      if config.color.is_a?(Hash)
+        msg = Rainbow(msg).color(config.color[:color]) if config.color[:color]
+        msg = Rainbow(msg).bg(config.color[:background]) if config.color[:background]
+      else
+        msg = Rainbow(msg).color(config.color)
+      end
+      msg
     rescue
       warn "HTTPLOG CONFIGURATION ERROR: #{config.color} is not a valid color"
       msg

@@ -201,10 +201,16 @@ describe HttpLog do
             expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
           end
 
-          it 'should colorized output' do
+          it 'should colorized output with single color' do
             HttpLog.configure { |c| c.color = :red }
             adapter.send_get_request
-            expect(log).to include("\e[0")
+            expect(log).to include("\e[31m")
+          end
+
+          it 'should colorized output with color hash' do
+            HttpLog.configure { |c| c.color = { color: :black, background: :yellow } }
+            adapter.send_get_request
+            expect(log).to include("\e[30m\e[43m")
           end
 
           it 'should log with custom string prefix' do
