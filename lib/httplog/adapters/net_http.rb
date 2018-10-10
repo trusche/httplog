@@ -6,7 +6,7 @@ module Net
     alias orig_connect connect unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
-      url = "http://#{@address}:#{@port}#{req.path}"
+      url = req.uri.to_s
 
       log_enabled = HttpLog.url_approved?(url)
 
