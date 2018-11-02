@@ -37,35 +37,35 @@ module HttpLog
     end
 
     def log_connection(host, port = nil)
-      return if config.compact_log || !config.log_connect
+      return if already_logged? || !config.log_connect
       log("Connecting: #{[host, port].compact.join(':')}")
     end
 
     def log_request(method, uri)
-      return if config.compact_log || !config.log_request
+      return if already_logged? || !config.log_request
       log("Sending: #{method.to_s.upcase} #{uri}")
     end
 
     def log_headers(headers = {})
-      return if config.compact_log || !config.log_headers
+      return if already_logged? || !config.log_headers
       headers.each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
 
     def log_status(status)
-      return if config.compact_log || !config.log_status
+      return if already_logged? || !config.log_status
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("Status: #{status}")
     end
 
     def log_benchmark(seconds)
-      return if config.compact_log || !config.log_benchmark
+      return if already_logged? || !config.log_benchmark
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
     def log_body(body, encoding = nil, content_type = nil)
-      return if config.compact_log || !config.log_response
+      return if already_logged? || !config.log_response
 
       unless text_based?(content_type)
         log('Response: (not showing binary data)')
@@ -100,7 +100,7 @@ module HttpLog
     end
 
     def log_data(data)
-      return if config.compact_log || !config.log_data
+      return if already_logged? || !config.log_data
       data = utf_encoded(data.to_s.dup)
 
       if config.prefix_data_lines
@@ -112,9 +112,24 @@ module HttpLog
     end
 
     def log_compact(method, uri, status, seconds)
-      return unless config.compact_log
+      return unless already_logged?
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
+    end
+
+    def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:)
+      return unless config.json_log
+
+      log({
+        method: method,
+        url: url,
+        request_body: request_body,
+        request_headers: request_headers,
+        response_code: response_code,
+        response_body: response_body,
+        response_headers: response_headers,
+        benchmark: benchmark
+      }.to_json)
     end
 
     def colorize(msg)
@@ -167,6 +182,10 @@ module HttpLog
       else
         config.prefix.to_s
       end
+    end
+
+    def already_logged?
+      config.compact_log || config.json_log
     end
   end
 end

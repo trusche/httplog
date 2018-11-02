@@ -4,6 +4,7 @@ module HttpLog
   class Configuration
     attr_accessor :enabled,
                   :compact_log,
+                  :json_log,
                   :logger,
                   :severity,
                   :prefix,
@@ -24,6 +25,7 @@ module HttpLog
     def initialize
       @enabled               = true
       @compact_log           = false
+      @json_log              = false
       @logger                = Logger.new($stdout)
       @severity              = Logger::Severity::DEBUG
       @prefix                = LOG_PREFIX
