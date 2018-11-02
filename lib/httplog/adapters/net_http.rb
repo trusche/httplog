@@ -23,7 +23,16 @@ module Net
       end
 
       if log_enabled && started?
-        HttpLog.log_compact(req.method, url, @response.code, bm)
+        HttpLog.log_json(
+          method: req.method,
+          url: url,
+          request_body: req.body.nil? || req.body.empty? ? body : req.body,
+          request_headers: req.each_header.collect,
+          response_code: @response.code,
+          response_body: @response.body,
+          response_headers: @response.each_header.collect,
+          benchmark: bm
+        )
         HttpLog.log_status(@response.code)
         HttpLog.log_benchmark(bm)
         HttpLog.log_headers(@response.each_header.collect)
