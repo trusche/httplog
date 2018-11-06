@@ -330,18 +330,19 @@ describe HttpLog do
 
       context 'with JSON config' do
         before(:each) { HttpLog.configure { |c| c.json_log = true } }
+        if adapter_class.method_defined? :send_post_request
+          it 'should log a single line with JSON structure' do
+            adapter.send_post_request
+            logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
 
-        it 'should log a single line with JSON structure' do
-          adapter.send_post_request
-          logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
-
-          expect(logged_json['method']).to eq 'POST'
-          expect(logged_json['request_body']).to eq 'foo=bar&bar=foo'
-          expect(logged_json['request_headers']).to be_a Hash
-          expect(logged_json['response_headers']).to be_a Hash
-          expect(logged_json['response_code']).to eq 200
-          expect(logged_json['response_body']).to eq "<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>"
-          expect(logged_json['benchmark']).to be_a Numeric
+            expect(logged_json['method']).to eq 'POST'
+            expect(logged_json['request_body']).to eq 'foo=bar&bar=foo'
+            expect(logged_json['request_headers']).to be_a Hash
+            expect(logged_json['response_headers']).to be_a Hash
+            expect(logged_json['response_code']).to eq 200
+            expect(logged_json['response_body']).to eq "<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>"
+            expect(logged_json['benchmark']).to be_a Numeric
+          end
         end
       end
     end
