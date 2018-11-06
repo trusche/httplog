@@ -119,13 +119,12 @@ module HttpLog
 
     def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:)
       return unless config.json_log
-
       log({
-        method: method,
+        method: method.upcase,
         url: url,
         request_body: request_body,
         request_headers: request_headers.to_h,
-        response_code: response_code,
+        response_code: response_code.to_i,
         response_body: response_body,
         response_headers: response_headers.to_h,
         benchmark: benchmark
