@@ -24,6 +24,10 @@ module Net
 
       if log_enabled && started?
         HttpLog.log_compact(req.method, url, @response.code, bm)
+
+        encoding = @response['Content-Encoding']
+        content_type = @response['Content-Type']
+
         HttpLog.log_json(
           method: req.method,
           url: url,
@@ -32,12 +36,14 @@ module Net
           response_code: @response.code,
           response_body: @response.body,
           response_headers: @response.each_header.collect,
-          benchmark: bm
+          benchmark: bm,
+          encoding: encoding,
+          content_type: content_type
         )
         HttpLog.log_status(@response.code)
         HttpLog.log_benchmark(bm)
         HttpLog.log_headers(@response.each_header.collect)
-        HttpLog.log_body(@response.body, @response['Content-Encoding'], @response['Content-Type'])
+        HttpLog.log_body(@response.body, encoding, content_type)
       end
 
       @response
