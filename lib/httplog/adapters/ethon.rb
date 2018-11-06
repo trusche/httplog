@@ -9,6 +9,7 @@ if defined?(Ethon)
         alias orig_http_request http_request
         def http_request(url, action_name, options = {})
           @action_name = action_name # remember this for compact logging
+          @options = options         # remember this for compact logging
           if HttpLog.url_approved?(url)
             HttpLog.log_request(action_name, url)
             HttpLog.log_headers(options[:headers])
@@ -37,6 +38,16 @@ if defined?(Ethon)
           headers = response_headers.split(/\r?\n/)[1..-1]
 
           HttpLog.log_compact(@action_name, @url, @return_code, bm)
+          HttpLog.log_json(
+            method: @action_name,
+            url: @url,
+            request_body: @options[:body],
+            request_headers: @options[:headers],
+            response_code: @return_code,
+            response_body: response_body,
+            response_headers: headers.map{ |header| header.split(/:\s/) }.to_h,
+            benchmark: bm
+          )
           HttpLog.log_status(status)
           HttpLog.log_benchmark(bm)
           HttpLog.log_headers(headers)

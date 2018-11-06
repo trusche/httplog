@@ -119,6 +119,9 @@ module HttpLog
 
     def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:)
       return unless config.json_log
+
+      response_code = transform_response_code(response_code) if response_code.is_a?(Symbol)
+
       log({
         method: method.upcase,
         url: url,
@@ -129,6 +132,10 @@ module HttpLog
         response_headers: response_headers.to_h,
         benchmark: benchmark
       }.to_json)
+    end
+
+    def transform_response_code(response_code_name)
+      Rack::Utils::HTTP_STATUS_CODES.detect{ |k, v| v.to_s.downcase == response_code_name.to_s.downcase }.first
     end
 
     def colorize(msg)
