@@ -64,8 +64,6 @@ module HttpLog
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
-    require 'pry'
-
     def log_body(body, encoding = nil, content_type = nil)
       return if already_logged? || !config.log_response
 
