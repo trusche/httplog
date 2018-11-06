@@ -23,6 +23,7 @@ module Net
       end
 
       if log_enabled && started?
+        HttpLog.log_compact(req.method, url, @response.code, bm)
         HttpLog.log_json(
           method: req.method,
           url: url,
