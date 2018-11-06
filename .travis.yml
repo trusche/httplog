@@ -13,7 +13,7 @@ gemfile:
 matrix:
   allow_failures:
     - rvm: "2.2.8"
-    - gemfile: "gemfiles/http4.gemfile"
+      gemfile: "gemfiles/http4.gemfile"
 
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
