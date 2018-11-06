@@ -112,7 +112,7 @@ module HttpLog
     end
 
     def log_compact(method, uri, status, seconds)
-      return unless already_logged?
+      return unless config.compact_log
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
@@ -124,10 +124,10 @@ module HttpLog
         method: method,
         url: url,
         request_body: request_body,
-        request_headers: request_headers,
+        request_headers: request_headers.to_h,
         response_code: response_code,
         response_body: response_body,
-        response_headers: response_headers,
+        response_headers: response_headers.to_h,
         benchmark: benchmark
       }.to_json)
     end
