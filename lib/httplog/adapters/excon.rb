@@ -51,9 +51,24 @@ if defined?(Excon)
       def response(datum = {})
         return orig_response(datum) unless HttpLog.url_approved?(_httplog_url(datum))
 
-        datum = orig_response(datum)
+        bm = Benchmark.realtime do
+          datum = orig_response(datum)
+        end
+
         response = datum[:response]
         headers = response[:headers] || {}
+        url = _httplog_url(datum)
+
+        HttpLog.log_json(
+          method: datum[:method],
+          url: url,
+          request_body: datum[:body],
+          request_headers: datum[:headers],
+          response_code: response[:status],
+          response_body: response[:body],
+          response_headers: response[:headers],
+          benchmark: bm)
+
         HttpLog.log_status(response[:status])
         HttpLog.log_headers(headers)
         HttpLog.log_body(response[:body], headers['Content-Encoding'], headers['Content-Type'])
