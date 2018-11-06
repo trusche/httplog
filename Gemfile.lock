@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    httplog (1.1.1)
+    httplog (1.1.2)
       rack (>= 1.0)
       rainbow (>= 2.0.0)
 
@@ -123,4 +123,4 @@ DEPENDENCIES
   thin (~> 1.7)
 
 BUNDLED WITH
-   1.16.1
+   1.17.1
