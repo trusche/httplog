@@ -28,6 +28,16 @@ if defined?(::HTTPClient)
         res = conn.pop
         headers = res.headers
         HttpLog.log_compact(req.header.request_method, req.header.request_uri, res.status_code, bm)
+        HttpLog.log_json(
+          method: req.header.request_method,
+          url: req.header.request_uri,
+          request_body: req.body,
+          request_headers: req.headers,
+          response_code: res.status_code,
+          response_body: res.body,
+          response_headers: headers,
+          benchmark: bm
+        )
         HttpLog.log_status(res.status_code)
         HttpLog.log_benchmark(bm)
         HttpLog.log_headers(headers)
