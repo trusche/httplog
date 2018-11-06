@@ -27,6 +27,9 @@ if defined?(::HTTPClient)
       if log_enabled
         res = conn.pop
         headers = res.headers
+        encoding = headers['Content-Encoding']
+        content_type = headers['Content-Type']
+
         HttpLog.log_compact(req.header.request_method, req.header.request_uri, res.status_code, bm)
         HttpLog.log_json(
           method: req.header.request_method,
@@ -36,12 +39,14 @@ if defined?(::HTTPClient)
           response_code: res.status_code,
           response_body: res.body,
           response_headers: headers,
-          benchmark: bm
+          benchmark: bm,
+          encoding: encoding,
+          content_type: content_type
         )
         HttpLog.log_status(res.status_code)
         HttpLog.log_benchmark(bm)
         HttpLog.log_headers(headers)
-        HttpLog.log_body(res.body, headers['Content-Encoding'], headers['Content-Type'])
+        HttpLog.log_body(res.body, encoding, content_type)
         conn.push(res)
       end
 

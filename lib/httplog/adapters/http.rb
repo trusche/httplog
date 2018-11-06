@@ -30,6 +30,9 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
 
         if log_enabled
           headers = @response.headers
+          encoding = headers['Content-Encoding']
+          content_type = headers['Content-Type']
+
           HttpLog.log_compact(req.verb, req.uri, @response.code, bm)
           HttpLog.log_json(
             method: req.verb,
@@ -39,12 +42,14 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
             response_code: @response.code,
             response_body: @response.body,
             response_headers: @response.headers,
-            benchmark: bm
+            benchmark: bm,
+            encoding: encoding,
+            content_type: content_type
           )
           HttpLog.log_status(@response.code)
           HttpLog.log_benchmark(bm)
           HttpLog.log_headers(@response.headers.to_h)
-          HttpLog.log_body(@response.body, headers['Content-Encoding'], headers['Content-Type'])
+          HttpLog.log_body(@response.body, encoding, content_type)
         end
 
         @response

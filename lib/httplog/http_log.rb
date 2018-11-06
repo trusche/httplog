@@ -64,19 +64,32 @@ module HttpLog
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
+    require 'pry'
+
     def log_body(body, encoding = nil, content_type = nil)
       return if already_logged? || !config.log_response
 
+      data = parse_body(body, encoding, content_type)
+
+      if config.prefix_response_lines
+        log('Response:')
+        log_data_lines(data)
+      elsif data.start_with?('(')
+        log("Response: #{data}")
+      else
+        log("Response:\n#{data}")
+      end
+    end
+
+    def parse_body(body, encoding, content_type)
       unless text_based?(content_type)
-        log('Response: (not showing binary data)')
-        return
+        return "(not showing binary data)"
       end
 
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
-        log('Response: (not available yet)')
-        return
+        return '(not available yet)'
       end
 
       if encoding =~ /gzip/ && body && !body.empty?
@@ -89,14 +102,7 @@ module HttpLog
         end
       end
 
-      data = utf_encoded(body.to_s, content_type)
-
-      if config.prefix_response_lines
-        log('Response:')
-        log_data_lines(data)
-      else
-        log("Response:\n#{data}")
-      end
+      utf_encoded(body.to_s, content_type)
     end
 
     def log_data(data)
@@ -117,9 +123,9 @@ module HttpLog
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
 
-    def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:)
+    def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:, encoding:, content_type:)
       return unless config.json_log
-
+      
       response_code = transform_response_code(response_code) if response_code.is_a?(Symbol)
 
       log({
@@ -128,7 +134,7 @@ module HttpLog
         request_body: request_body,
         request_headers: request_headers.to_h,
         response_code: response_code.to_i,
-        response_body: response_body,
+        response_body: parse_body(response_body, encoding, content_type),
         response_headers: response_headers.to_h,
         benchmark: benchmark
       }.to_json)

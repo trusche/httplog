@@ -46,7 +46,9 @@ if defined?(Ethon)
             response_code: @return_code,
             response_body: response_body,
             response_headers: headers.map{ |header| header.split(/:\s/) }.to_h,
-            benchmark: bm
+            benchmark: bm,
+            encoding: encoding,
+            content_type: content_type
           )
           HttpLog.log_status(status)
           HttpLog.log_benchmark(bm)

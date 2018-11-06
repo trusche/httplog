@@ -19,6 +19,9 @@ if defined?(Patron)
 
         if log_enabled
           headers = @response.headers
+          encoding = headers['Content-Encoding']
+          content_type =headers['Content-Type']
+
           HttpLog.log_compact(action_name, url, @response.status, bm)
           HttpLog.log_json(
             method: action_name,
@@ -28,12 +31,14 @@ if defined?(Patron)
             response_code: @response.status,
             response_body: @response.body,
             response_headers: headers,
-            benchmark: bm
+            benchmark: bm,
+            encoding: encoding,
+            content_type: content_type
           )
           HttpLog.log_status(@response.status)
           HttpLog.log_benchmark(bm)
           HttpLog.log_headers(headers)
-          HttpLog.log_body(@response.body, headers['Content-Encoding'], headers['Content-Type'])
+          HttpLog.log_body(@response.body, encoding, content_type)
         end
 
         @response
