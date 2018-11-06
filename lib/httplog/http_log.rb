@@ -119,7 +119,8 @@ module HttpLog
 
     def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:)
       return unless config.json_log
-      request_details = {
+
+      log({
         method: method,
         url: url,
         request_body: request_body,
@@ -128,10 +129,7 @@ module HttpLog
         response_body: response_body,
         response_headers: response_headers,
         benchmark: benchmark
-      }
-      request_details.each { |k, v| request_details[k] = v.force_encoding(Encoding::UTF_8) if v.is_a?(String) }
-      
-      log(request_details)
+      }.to_json)
     end
 
     def colorize(msg)
