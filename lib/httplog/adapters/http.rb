@@ -31,6 +31,16 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
         if log_enabled
           headers = @response.headers
           HttpLog.log_compact(req.verb, req.uri, @response.code, bm)
+          HttpLog.log_json(
+            method: req.verb,
+            url: req.uri,
+            request_body: body,
+            request_headers: req.headers,
+            response_code: @response.code,
+            response_body: @response.body,
+            response_headers: @response.headers,
+            benchmark: bm
+          )
           HttpLog.log_status(@response.code)
           HttpLog.log_benchmark(bm)
           HttpLog.log_headers(@response.headers.to_h)

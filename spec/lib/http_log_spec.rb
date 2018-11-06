@@ -339,7 +339,7 @@ describe HttpLog do
           expect(logged_json['request_body']).to eq 'foo=bar&bar=foo'
           expect(logged_json['request_headers']).to be_a Hash
           expect(logged_json['response_headers']).to be_a Hash
-          expect(logged_json['response_code']).to eq '200'
+          expect(logged_json['response_code']).to eq 200
           expect(logged_json['response_body']).to eq "<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>"
           expect(logged_json['benchmark']).to be_a Numeric
         end
