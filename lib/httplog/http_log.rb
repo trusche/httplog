@@ -8,6 +8,7 @@ require 'rack'
 
 module HttpLog
   LOG_PREFIX = '[httplog] '.freeze
+  class BodyParsingError < StandardError; end
 
   class << self
     attr_writer :configuration
@@ -72,22 +73,22 @@ module HttpLog
       if config.prefix_response_lines
         log('Response:')
         log_data_lines(data)
-      elsif data.start_with?('(')
-        log("Response: #{data}")
       else
         log("Response:\n#{data}")
       end
+    rescue BodyParsingError => e
+      log("Response: #{e.message}")
     end
 
     def parse_body(body, encoding, content_type)
       unless text_based?(content_type)
-        return "(not showing binary data)"
+        raise BodyParsingError, "(not showing binary data)"
       end
 
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the reponse body is not available here.
-        return '(not available yet)'
+        raise BodyParsingError, '(not available yet)'
       end
 
       if encoding =~ /gzip/ && body && !body.empty?
@@ -126,13 +127,19 @@ module HttpLog
       
       response_code = transform_response_code(response_code) if response_code.is_a?(Symbol)
 
+      parsed_body = begin
+        parse_body(response_body, encoding, content_type)
+      rescue BodyParsingError => e
+        e.message
+      end
+
       log({
         method: method.upcase,
         url: url,
         request_body: request_body,
         request_headers: request_headers.to_h,
         response_code: response_code.to_i,
-        response_body: parse_body(response_body, encoding, content_type),
+        response_body: parsed_body,
         response_headers: response_headers.to_h,
         benchmark: benchmark
       }.to_json)
