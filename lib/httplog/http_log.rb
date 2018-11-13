@@ -180,7 +180,7 @@ module HttpLog
       # it will allow application/json and the like without having to resort to more
       # heavy-handed checks.
       content_type =~ /^text/ ||
-        content_type =~ /^application/ && content_type != 'application/octet-stream'
+        content_type =~ /^application/ && !['application/octet-stream', 'application/pdf'].include?(content_type)
     end
 
     def log_data_lines(data)
