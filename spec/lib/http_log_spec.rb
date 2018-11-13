@@ -78,20 +78,25 @@ describe HttpLog do
           end
 
           context 'with binary response body' do
-            let(:path) { '/test.bin' }
-            let(:data) { nil }
+            [
+              '/test.bin',
+              '/test.pdf'
+            ].each do |response_file_name|
+              let(:path) { response_file_name }
+              let(:data) { nil }
 
-            it "doesn't log response" do
-              adapter.send_get_request
-              expect(log).to include(HttpLog::LOG_PREFIX + 'Response: (not showing binary data)')
-            end
-
-            context 'with JSON logging' do
-              before(:each) { HttpLog.configure { |c| c.json_log = true } }
               it "doesn't log response" do
                 adapter.send_get_request
-                logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
-                expect(logged_json['response_body']).to eq '(not showing binary data)'
+                expect(log).to include(HttpLog::LOG_PREFIX + 'Response: (not showing binary data)')
+              end
+
+              context 'with JSON logging' do
+                before(:each) { HttpLog.configure { |c| c.json_log = true } }
+                it "doesn't log response" do
+                  adapter.send_get_request
+                  logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
+                  expect(logged_json['response_body']).to eq '(not showing binary data)'
+                end
               end
             end
           end
