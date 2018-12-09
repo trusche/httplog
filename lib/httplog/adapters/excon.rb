@@ -21,6 +21,8 @@ if defined?(Excon)
 
     class Connection
       include Excon::HttpLogHelper
+      attr_reader :bm
+
       alias orig_request request
       def request(params, &block)
         result = nil
@@ -28,43 +30,24 @@ if defined?(Excon)
           result = orig_request(params, &block)
         end
 
-        datum = @data.merge(params)
-        datum[:headers] = @data[:headers].merge(datum[:headers] || {})
-        url = _httplog_url(datum)
+        url = _httplog_url(@data)
+        return result unless HttpLog.url_approved?(url)
 
-        # if HttpLog.url_approved?(url)
-        #   @http_log[:method] = datum[:method]
-        #   @http_log[:response_code] = datum[:status] || result.status
-        #   @http_log[:benchmark] = bm
-        # end
-        result
-      end
-
-      alias orig_response response
-      def response(datum = {})
-        return orig_response(datum) unless HttpLog.url_approved?(_httplog_url(datum))
-
-        bm = Benchmark.realtime do
-          datum = orig_response(datum)
-        end # FIXME: benchmark should start before REQUEST!
-
-        response = datum[:response]
-        headers  = response[:headers] || {}
+        headers = result[:headers] || {}
 
         HttpLog.call(
-          method: datum[:method],
-          url: _httplog_url(datum),
-          request_body: datum[:body],
-          request_headers: datum[:headers],
-          response_code: response[:status],
-          response_body: response[:body],
-          response_headers: response[:headers],
+          method: params[:method],
+          url: url,
+          request_body: @data[:body],
+          request_headers: @data[:headers] || {},
+          response_code: result[:status],
+          response_body: result[:body],
+          response_headers: headers,
           benchmark: bm,
           encoding: headers['Content-Encoding'],
           content_type: headers['Content-Type']
         )
-
-        datum
+        result
       end
     end
   end
