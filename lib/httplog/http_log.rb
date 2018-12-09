@@ -45,44 +45,51 @@ module HttpLog
 
     def url_approved?(url)
       return false if config.url_blacklist_pattern && url.to_s.match(config.url_blacklist_pattern)
+
       !config.url_whitelist_pattern || url.to_s.match(config.url_whitelist_pattern)
     end
 
     def log(msg)
       return unless config.enabled
+
       config.logger.log(config.severity, colorize(prefix + msg))
     end
 
     def log_connection(host, port = nil)
-      return if already_logged? || !config.log_connect
+      return if config.json_log || config.compact_log || !config.log_connect
+
       log("Connecting: #{[host, port].compact.join(':')}")
     end
 
     def log_request(method, uri)
-      return if already_logged? || !config.log_request
+      return unless config.log_request
+
       log("Sending: #{method.to_s.upcase} #{uri}")
     end
 
     def log_headers(headers = {})
-      return if already_logged? || !config.log_headers
+      return unless config.log_headers
+
       headers.each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
 
     def log_status(status)
-      return if already_logged? || !config.log_status
+      return unless config.log_status
+
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("Status: #{status}")
     end
 
     def log_benchmark(seconds)
-      return if already_logged? || !config.log_benchmark
+      return unless config.log_benchmark
+
       log("Benchmark: #{seconds.to_f.round(6)} seconds")
     end
 
     def log_body(body, encoding = nil, content_type = nil)
-      return if already_logged? || !config.log_response
+      return unless config.log_response
 
       data = parse_body(body, encoding, content_type)
 
@@ -121,7 +128,7 @@ module HttpLog
     end
 
     def log_data(data)
-      return if already_logged? || !config.log_data
+      return unless config.log_data
       data = utf_encoded(data.to_s.dup)
 
       if config.prefix_data_lines
@@ -224,10 +231,6 @@ module HttpLog
       else
         config.prefix.to_s
       end
-    end
-
-    def already_logged?
-      config.compact_log || config.json_log
     end
   end
 end

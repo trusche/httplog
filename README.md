@@ -72,6 +72,9 @@ HttpLog.configure do |config|
   # ...or log all request as a single line by setting this to `true`
   config.compact_log = false
 
+  # You can also log in JSON format
+  config.json_log = false
+
   # Prettify the output - see below
   config.color = false
 
