@@ -1,6 +1,7 @@
 ## 1.2.0 - 2018-12-09
 
 * [#65](https://github.com/trusche/httplog/pull/65) Added JSON as an optional output format
+* Ruby 2.2 no longer supported
 
 ## 1.1.1 - 2018-06-30
 
