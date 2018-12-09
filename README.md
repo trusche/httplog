@@ -116,7 +116,7 @@ If the log is too noisy for you, but you don't want to completely disable it eit
 
 ### JSON logging
 
-If you want to log HTTP requests in a compact JSON format, set the `json_log` option to `true` and the `compact_log` option (which takes precedence) to `false`.
+If you want to log HTTP requests in a JSON format, set the `json_log` option to `true`. You can combine this with `compact_log` to only log the basic request metrics without headers and bodies.
 
 ### Example
 
@@ -140,9 +140,13 @@ With `compact_log` enabled, the same request might look like this:
 
     [httplog] GET http://localhost:9292/index.html completed with status code 200 in 0.00057 seconds
 
-With `json_log` enabled, the same request might look like this:
+With `json_log` enabled:
 
     [httplog] {"method":"GET","url":"localhost:80","request_body":null, "request_headers":{"foo":"bar"}, "response_code":200,"response_body":"<html>\n      <head>\n        <title>Test Page</title>\n      </head>\n      <body>\n        <h1>This is the test page.</h1>\n      </body>\n    </html>","response_headers":{"foo":"bar"},"benchmark":0.00057}
+
+And with `json_log` *and* `compact_log` enabled:
+
+    [httplog] {"method":"GET","url":"localhost:80","response_code":200,"benchmark":0.00057}
 
 ### Known Issues
 
@@ -208,3 +212,4 @@ Thanks to these fine folks for contributing pull requests:
 * [Ilya Bondarenko](https://github.com/sedx)
 * [Kostas Zacharakis](https://github.com/kzacharakis)
 * [Yuri Smirnov](https://github.com/tycooon)
+* [Manuel Bustillo Alonso](https://github.com/bustikiller)

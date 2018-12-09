@@ -1,3 +1,11 @@
+## 1.2.0 - 2018-12-09
+
+* [#65](https://github.com/trusche/httplog/pull/65) Added JSON as an optional output format
+
+## 1.1.1 - 2018-06-30
+
+* [#60](https://github.com/trusche/httplog/issues/60) Fixed a bug in color configuration settings
+
 ## 1.1.0 - 2018-06-22
 
 * [#59](https://github.com/trusche/httplog/issues/59) Switched colorization library to MIT licensed [rainbow](https://github.com/sickill/rainbow).
