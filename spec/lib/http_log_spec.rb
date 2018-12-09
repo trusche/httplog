@@ -181,12 +181,14 @@ describe HttpLog do
           it 'should not log the request if url matches blacklist pattern' do
             HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
             adapter.send_get_request
+            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
             expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
           end
 
           it 'should not log the request if url does not match whitelist pattern' do
             HttpLog.configure { |c| c.url_whitelist_pattern = /example.com/ }
             adapter.send_get_request
+            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
             expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
           end
 
@@ -194,6 +196,7 @@ describe HttpLog do
             HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
             HttpLog.configure { |c| c.url_whitelist_pattern = /#{host}:#{port}/ }
             adapter.send_get_request
+            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
             expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
           end
 
@@ -330,7 +333,7 @@ describe HttpLog do
       end
 
       context 'with compact config' do
-        before(:each) { HttpLog.configure { |c| c.compact_log = true } }
+        before { HttpLog.configure { |c| c.compact_log = true } }
 
         it 'should log a single line with status and benchmark' do
           adapter.send_get_request
@@ -343,19 +346,39 @@ describe HttpLog do
       end
 
       context 'with JSON config' do
-        before(:each) { HttpLog.configure { |c| c.json_log = true } }
+        before { HttpLog.configure { |c| c.json_log = true } }
+
         if adapter_class.method_defined? :send_post_request
           it 'should log a single line with JSON structure' do
             adapter.send_post_request
             logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
 
-            expect(logged_json['method']).to eq 'POST'
-            expect(logged_json['request_body']).to eq 'foo=bar&bar=foo'
-            expect(logged_json['request_headers']).to be_a Hash
-            expect(logged_json['response_headers']).to be_a Hash
-            expect(logged_json['response_code']).to eq 200
-            expect(logged_json['response_body']).to eq "<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>"
-            expect(logged_json['benchmark']).to be_a Numeric
+            expect(logged_json['method']).to eq('POST')
+            expect(logged_json['request_body']).to eq('foo=bar&bar=foo')
+            expect(logged_json['request_headers']).to be_a(Hash)
+            expect(logged_json['response_headers']).to be_a(Hash)
+            expect(logged_json['response_code']).to eq(200)
+            expect(logged_json['response_body']).to eq("<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>")
+            expect(logged_json['benchmark']).to be_a(Numeric)
+          end
+        end
+
+        context 'and compact config' do
+          before { HttpLog.configure { |c| c.compact_log = true } }
+
+          if adapter_class.method_defined? :send_post_request
+            it 'should log a single line with JSON structure' do
+              adapter.send_post_request
+              logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
+
+              expect(logged_json['method']).to eq('POST')
+              expect(logged_json['request_body']).to be_nil
+              expect(logged_json['request_headers']).to be_nil
+              expect(logged_json['response_headers']).to be_nil
+              expect(logged_json['response_code']).to eq(200)
+              expect(logged_json['response_body']).to be_nil
+              expect(logged_json['benchmark']).to be_a(Numeric)
+            end
           end
         end
       end

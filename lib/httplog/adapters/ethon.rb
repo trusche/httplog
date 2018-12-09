@@ -8,14 +8,7 @@ if defined?(Ethon)
       module Http
         alias orig_http_request http_request
         def http_request(url, action_name, options = {})
-          @action_name = action_name # remember this for compact logging
-          @options = options         # remember this for compact logging
-          if HttpLog.url_approved?(url)
-            HttpLog.log_request(action_name, url)
-            HttpLog.log_headers(options[:headers])
-            HttpLog.log_data(options[:body]) # if action_name == :post
-          end
-
+          @http_log    = options.merge(method: action_name) # remember this for compact logging
           orig_http_request(url, action_name, options)
         end
       end
@@ -37,12 +30,11 @@ if defined?(Ethon)
           # an array; probably overlooked it. Anyway, let's do it ourselves:
           headers = response_headers.split(/\r?\n/)[1..-1]
 
-          HttpLog.log_compact(@action_name, @url, @return_code, bm)
-          HttpLog.log_json(
-            method: @action_name,
+          HttpLog.call(
+            method: @http_log[:method],
             url: @url,
-            request_body: @options[:body],
-            request_headers: @options[:headers],
+            request_body: @http_log[:body],
+            request_headers: @http_log[:headers],
             response_code: @return_code,
             response_body: response_body,
             response_headers: headers.map{ |header| header.split(/:\s/) }.to_h,
@@ -50,10 +42,6 @@ if defined?(Ethon)
             encoding: encoding,
             content_type: content_type
           )
-          HttpLog.log_status(status)
-          HttpLog.log_benchmark(bm)
-          HttpLog.log_headers(headers)
-          HttpLog.log_body(response_body, encoding, content_type)
           return_code
         end
       end

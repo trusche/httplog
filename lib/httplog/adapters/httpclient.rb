@@ -7,14 +7,6 @@ if defined?(::HTTPClient)
     alias orig_do_get_block do_get_block
 
     def do_get_block(req, proxy, conn, &block)
-      log_enabled = HttpLog.url_approved?(req.header.request_uri)
-
-      if log_enabled
-        HttpLog.log_request(req.header.request_method, req.header.request_uri)
-        HttpLog.log_headers(req.headers)
-        HttpLog.log_data(req.body)
-      end
-
       retryable_response = nil
       bm = Benchmark.realtime do
         begin
@@ -24,29 +16,21 @@ if defined?(::HTTPClient)
         end
       end
 
-      if log_enabled
+      if HttpLog.url_approved?(req.header.request_uri)
         res = conn.pop
-        headers = res.headers
-        encoding = headers['Content-Encoding']
-        content_type = headers['Content-Type']
 
-        HttpLog.log_compact(req.header.request_method, req.header.request_uri, res.status_code, bm)
-        HttpLog.log_json(
+        HttpLog.call(
           method: req.header.request_method,
           url: req.header.request_uri,
           request_body: req.body,
           request_headers: req.headers,
           response_code: res.status_code,
           response_body: res.body,
-          response_headers: headers,
+          response_headers: res.headers,
           benchmark: bm,
-          encoding: encoding,
-          content_type: content_type
+          encoding: res.headers['Content-Encoding'],
+          content_type: res.headers['Content-Type']
         )
-        HttpLog.log_status(res.status_code)
-        HttpLog.log_benchmark(bm)
-        HttpLog.log_headers(headers)
-        HttpLog.log_body(res.body, encoding, content_type)
         conn.push(res)
       end
 

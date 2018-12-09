@@ -2,21 +2,25 @@
 
 if defined?(Excon)
   module Excon
+    module HttpLogHelper
+      def _httplog_url(datum)
+        @httplog_url ||= "#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}#{datum[:query]}"
+      end
+    end
+
     class Socket
+      include Excon::HttpLogHelper
       alias orig_connect connect
       def connect
         host = @data[:proxy] ? @data[:proxy][:host] : @data[:host]
         port = @data[:proxy] ? @data[:proxy][:port] : @data[:port]
-        HttpLog.log_connection(host, port)
+        HttpLog.log_connection(host, port) if ::HttpLog.url_approved?(_httplog_url(@data))
         orig_connect
       end
     end
 
     class Connection
-      def _httplog_url(datum)
-        "#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}#{datum[:query]}"
-      end
-
+      include Excon::HttpLogHelper
       alias orig_request request
       def request(params, &block)
         result = nil
@@ -28,23 +32,12 @@ if defined?(Excon)
         datum[:headers] = @data[:headers].merge(datum[:headers] || {})
         url = _httplog_url(datum)
 
-        if HttpLog.url_approved?(url)
-          HttpLog.log_compact(datum[:method], url, datum[:status] || result.status, bm)
-          HttpLog.log_benchmark(bm)
-        end
+        # if HttpLog.url_approved?(url)
+        #   @http_log[:method] = datum[:method]
+        #   @http_log[:response_code] = datum[:status] || result.status
+        #   @http_log[:benchmark] = bm
+        # end
         result
-      end
-
-      alias orig_request_call request_call
-      def request_call(datum)
-        url = _httplog_url(datum)
-
-        if HttpLog.url_approved?(url)
-          HttpLog.log_request(datum[:method], _httplog_url(datum))
-          HttpLog.log_headers(datum[:headers])
-          HttpLog.log_data(datum[:body]) # if datum[:method] == :post
-        end
-        orig_request_call(datum)
       end
 
       alias orig_response response
@@ -53,30 +46,24 @@ if defined?(Excon)
 
         bm = Benchmark.realtime do
           datum = orig_response(datum)
-        end
+        end # FIXME: benchmark should start before REQUEST!
 
         response = datum[:response]
-        headers = response[:headers] || {}
-        url = _httplog_url(datum)
-        encoding = headers['Content-Encoding']
-        content_type = headers['Content-Type']
+        headers  = response[:headers] || {}
 
-        HttpLog.log_json(
+        HttpLog.call(
           method: datum[:method],
-          url: url,
+          url: _httplog_url(datum),
           request_body: datum[:body],
           request_headers: datum[:headers],
           response_code: response[:status],
           response_body: response[:body],
           response_headers: response[:headers],
           benchmark: bm,
-          encoding: encoding,
-          content_type: content_type
+          encoding: headers['Content-Encoding'],
+          content_type: headers['Content-Type']
         )
 
-        HttpLog.log_status(response[:status])
-        HttpLog.log_headers(headers)
-        HttpLog.log_body(response[:body], encoding, content_type)
         datum
       end
     end

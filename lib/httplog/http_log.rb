@@ -27,9 +27,25 @@ module HttpLog
       yield(configuration)
     end
 
+    def call(options = {})
+      if config.json_log
+        log_json(options)
+      elsif config.compact_log
+        log_compact(options[:method], options[:url], options[:response_code], options[:benchmark])
+      else
+        HttpLog.log_request(options[:method], options[:url])
+        HttpLog.log_headers(options[:request_headers])
+        HttpLog.log_data(options[:request_body])
+        HttpLog.log_status(options[:response_code])
+        HttpLog.log_benchmark(options[:benchmark])
+        HttpLog.log_headers(options[:response_headers])
+        HttpLog.log_body(options[:response_body], options[:encoding], options[:content_type])
+      end
+    end
+
     def url_approved?(url)
       return false if config.url_blacklist_pattern && url.to_s.match(config.url_blacklist_pattern)
-      url.to_s.match(config.url_whitelist_pattern)
+      !config.url_whitelist_pattern || url.to_s.match(config.url_whitelist_pattern)
     end
 
     def log(msg)
@@ -122,27 +138,36 @@ module HttpLog
       log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds} seconds")
     end
 
-    def log_json(method:, url:, request_body:, request_headers:, response_code:, response_body:, response_headers:, benchmark:, encoding:, content_type:)
+    def log_json(data = {})
       return unless config.json_log
-      
-      response_code = transform_response_code(response_code) if response_code.is_a?(Symbol)
+
+      data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
 
       parsed_body = begin
-        parse_body(response_body, encoding, content_type)
+        parse_body(data[:response_body], data[:encoding], data[:content_type])
       rescue BodyParsingError => e
         e.message
       end
 
-      log({
-        method: method.upcase,
-        url: url,
-        request_body: request_body,
-        request_headers: request_headers.to_h,
-        response_code: response_code.to_i,
-        response_body: parsed_body,
-        response_headers: response_headers.to_h,
-        benchmark: benchmark
-      }.to_json)
+      if config.compact_log
+        log({
+          method: data[:method].to_s.upcase,
+          url: data[:url],
+          response_code: data[:response_code].to_i,
+          benchmark: data[:benchmark]
+        }.to_json)
+      else
+        log({
+          method: data[:method].to_s.upcase,
+          url: data[:url],
+          request_body: data[:request_body],
+          request_headers: data[:request_headers].to_h,
+          response_code: data[:response_code].to_i,
+          response_body: parsed_body,
+          response_headers: data[:response_headers].to_h,
+          benchmark: data[:benchmark]
+        }.to_json)
+      end
     end
 
     def transform_response_code(response_code_name)

@@ -8,11 +8,7 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
       alias_method(orig_request_method, request_method) unless method_defined?(orig_request_method)
 
       define_method request_method do |req, options|
-        log_enabled = HttpLog.url_approved?(req.uri)
-
-        if log_enabled
-          HttpLog.log_request(req.verb, req.uri)
-          HttpLog.log_headers(req.headers.to_h)
+        if HttpLog.url_approved?(req.uri)
 
           body = if defined?(::HTTP::Request::Body)
                    req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
@@ -20,21 +16,11 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
                    req.body
                  end
 
-          HttpLog.log_data(body.to_s)
-          body.rewind if body.respond_to?(:rewind)
-        end
+          bm = Benchmark.realtime do
+            @response = send(orig_request_method, req, options)
+          end
 
-        bm = Benchmark.realtime do
-          @response = send(orig_request_method, req, options)
-        end
-
-        if log_enabled
-          headers = @response.headers
-          encoding = headers['Content-Encoding']
-          content_type = headers['Content-Type']
-
-          HttpLog.log_compact(req.verb, req.uri, @response.code, bm)
-          HttpLog.log_json(
+          HttpLog.call(
             method: req.verb,
             url: req.uri,
             request_body: body,
@@ -43,13 +29,11 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
             response_body: @response.body,
             response_headers: @response.headers,
             benchmark: bm,
-            encoding: encoding,
-            content_type: content_type
+            encoding: @response.headers['Content-Encoding'],
+            content_type: @response.headers['Content-Type']
           )
-          HttpLog.log_status(@response.code)
-          HttpLog.log_benchmark(bm)
-          HttpLog.log_headers(@response.headers.to_h)
-          HttpLog.log_body(@response.body, encoding, content_type)
+
+          body.rewind if body.respond_to?(:rewind)
         end
 
         @response

@@ -5,40 +5,23 @@ if defined?(Patron)
     class Session
       alias orig_request request
       def request(action_name, url, headers, options = {})
-        log_enabled = HttpLog.url_approved?(url)
-
-        if log_enabled
-          HttpLog.log_request(action_name, url)
-          HttpLog.log_headers(headers)
-          HttpLog.log_data(options[:data]) # if action_name == :post
-        end
-
         bm = Benchmark.realtime do
           @response = orig_request(action_name, url, headers, options)
         end
 
-        if log_enabled
-          headers = @response.headers
-          encoding = headers['Content-Encoding']
-          content_type =headers['Content-Type']
-
-          HttpLog.log_compact(action_name, url, @response.status, bm)
-          HttpLog.log_json(
+        if HttpLog.url_approved?(url)
+          HttpLog.call(
             method: action_name,
             url: url,
             request_body: options[:data],
             request_headers: headers,
             response_code: @response.status,
             response_body: @response.body,
-            response_headers: headers,
+            response_headers: @response.headers,
             benchmark: bm,
-            encoding: encoding,
-            content_type: content_type
+            encoding: @response.headers['Content-Encoding'],
+            content_type: @response.headers['Content-Type']
           )
-          HttpLog.log_status(@response.status)
-          HttpLog.log_benchmark(bm)
-          HttpLog.log_headers(headers)
-          HttpLog.log_body(@response.body, encoding, content_type)
         end
 
         @response

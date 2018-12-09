@@ -36,7 +36,7 @@ module HttpLog
       @log_status            = true
       @log_response          = true
       @log_benchmark         = true
-      @url_whitelist_pattern = /.*/
+      @url_whitelist_pattern = nil
       @url_blacklist_pattern = nil
       @color                 = false
       @prefix_data_lines     = false
