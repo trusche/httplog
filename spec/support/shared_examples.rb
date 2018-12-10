@@ -8,6 +8,22 @@ RSpec.shared_examples 'logs nothing' do |method|
   it { is_expected.to eq('') }
 end
 
+RSpec.shared_examples 'logs expected response' do
+  it { is_expected.to include("Response:#{adapter.expected_response_body}") }
+end
+
+RSpec.shared_examples 'logs data' do |data|
+  it { is_expected.to include(["Data:", data].compact.join(' ')) }
+end
+
+RSpec.shared_examples 'logs status' do |status|
+  it { is_expected.to include(["Status:", status].compact.join(' ')) }
+end
+
+RSpec.shared_examples 'logs benchmark' do |data|
+  it { is_expected.to match(/Benchmark: \d+\.\d+ seconds/) }
+end
+
 RSpec.shared_examples 'data logging disabled' do
   let(:log_data) { false }
   it { is_expected.to_not include('Data:') }

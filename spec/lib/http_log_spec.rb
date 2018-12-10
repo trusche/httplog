@@ -12,6 +12,7 @@ describe HttpLog do
   let(:data)    { 'foo=bar&bar=foo' }
   let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo' } }
   let(:html)    { File.read('./spec/support/index.html') }
+  let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
   # Configuration
   let(:enabled)               { HttpLog.configuration.enabled }
@@ -74,11 +75,10 @@ describe HttpLog do
           let!(:res) { adapter.send_get_request }
 
           it_behaves_like 'logs request', 'GET'
-
-          it { is_expected.to include('Data:') }
-          it { is_expected.to include('Status: 200') }
-          it { is_expected.to include('Benchmark: ') }
-          it { is_expected.to include("Response:#{adapter.expected_response_body}") }
+          it_behaves_like 'logs data'
+          it_behaves_like 'logs expected response'
+          it_behaves_like 'logs status', 200
+          it_behaves_like 'logs benchmark'
 
           it { is_expected.to_not include('Header:') }
           it { is_expected.to_not include("\e[0") }
@@ -93,9 +93,7 @@ describe HttpLog do
             let(:path) { '/index.html.gz' }
             let(:data) { nil }
 
-            it 'decompresses gzipped response body' do
-              expect(log).to include("Response:#{adapter.expected_response_body}")
-            end
+            it_behaves_like 'logs expected response'
 
             if adapter_class.method_defined? :send_head_request
               it "doesn't try to decompress body for HEAD requests" do
@@ -108,12 +106,8 @@ describe HttpLog do
             let(:path) { '/utf8.html' }
             let(:data) { nil }
 
-            it 'works' do
-              expect(log).to include("Response:#{adapter.expected_response_body}")
-              if adapter.logs_data?
-                expect(log).to include('    <title>Блог Яндекса</title>')
-              end
-            end
+            it_behaves_like 'logs expected response'
+            it { is_expected.to include('    <title>Блог Яндекса</title>') if adapter.logs_data? }
           end
 
           context 'with binary response body' do
@@ -121,16 +115,11 @@ describe HttpLog do
               let(:path) { response_file_name }
               let(:data) { nil }
 
-              it "doesn't log response" do
-                expect(log).to include('Response: (not showing binary data)')
-              end
+              it { is_expected.to include('Response: (not showing binary data)') }
 
-              context 'with JSON logging' do
+              context 'and JSON logging' do
                 let(:json_log) { true }
-                it "doesn't log response" do
-                  logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
-                  expect(logged_json['response_body']).to eq '(not showing binary data)'
-                end
+                it { expect(json['response_body']).to eq '(not showing binary data)' }
               end
             end
           end
@@ -145,11 +134,10 @@ describe HttpLog do
             end
 
             it_behaves_like 'logs request', 'POST'
-
-            it { is_expected.to include('Data: foo=bar&bar=foo') }
-            it { is_expected.to include('Status: 200') }
-            it { is_expected.to include('Benchmark: ') }
-            it { is_expected.to include("Response:#{adapter.expected_response_body}") }
+            it_behaves_like 'logs expected response'
+            it_behaves_like 'logs data', 'foo=bar&bar=foo'
+            it_behaves_like 'logs status', 200
+            it_behaves_like 'logs benchmark'
 
             it { is_expected.to_not include('Header:') }
 
@@ -157,12 +145,12 @@ describe HttpLog do
 
             context 'with non-UTF request data' do
               let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
-              it { is_expected.to include('Response:') }
+              it_behaves_like 'logs expected response' # == doesn't throw exception
             end
 
             context 'with URI encoded non-UTF data' do
               let(:data) { 'a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3' }
-              it { is_expected.to include('Response:') }
+              it_behaves_like 'logs expected response' # == doesn't throw exception
             end
           end
         end
@@ -296,7 +284,6 @@ describe HttpLog do
 
         if adapter_class.method_defined? :send_post_request
           before { adapter.send_post_request }
-          let(:json) { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
           it { expect(json['method']).to eq('POST') }
           it { expect(json['request_body']).to eq(data) }
