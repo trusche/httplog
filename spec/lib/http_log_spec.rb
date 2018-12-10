@@ -3,12 +3,54 @@
 require 'spec_helper'
 
 describe HttpLog do
-  let(:host) { 'localhost' }
-  let(:port) { 9292 }
-  let(:path) { '/index.html' }
+  subject { log } # see spec_helper
+
+  let(:host)    { 'localhost' }
+  let(:port)    { 9292 }
+  let(:path)    { '/index.html' }
   let(:headers) { { 'accept' => '*/*', 'foo' => 'bar' } }
-  let(:data) { 'foo=bar&bar=foo' }
-  let(:params) { { 'foo' => 'bar:form-data', 'bar' => 'foo' } }
+  let(:data)    { 'foo=bar&bar=foo' }
+  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo' } }
+  let(:html)    { File.read('./spec/support/index.html') }
+
+  # Configuration
+  let(:enabled)               { HttpLog.configuration.enabled }
+  let(:severity)              { HttpLog.configuration.severity }
+  let(:log_headers)           { HttpLog.configuration.log_headers }
+  let(:log_request)           { HttpLog.configuration.log_request }
+  let(:log_response)          { HttpLog.configuration.log_response }
+  let(:log_data)              { HttpLog.configuration.log_data }
+  let(:log_connect)           { HttpLog.configuration.log_connect }
+  let(:log_benchmark)         { HttpLog.configuration.log_benchmark }
+  let(:color)                 { HttpLog.configuration.color }
+  let(:prefix)                { HttpLog.configuration.prefix }
+  let(:prefix_response_lines) { HttpLog.configuration.prefix_response_lines }
+  let(:prefix_line_numbers)   { HttpLog.configuration.prefix_line_numbers }
+  let(:json_log)              { HttpLog.configuration.json_log }
+  let(:compact_log)           { HttpLog.configuration.compact_log }
+  let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
+  let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
+
+  def configure
+    HttpLog.configure do |c|
+      c.enabled               = enabled
+      c.severity              = severity
+      c.log_headers           = log_headers
+      c.log_request           = log_request
+      c.log_response          = log_response
+      c.log_data              = log_data
+      c.log_connect           = log_connect
+      c.log_benchmark         = log_benchmark
+      c.color                 = color
+      c.prefix                = prefix
+      c.prefix_response_lines = prefix_response_lines
+      c.prefix_line_numbers   = prefix_line_numbers
+      c.json_log              = json_log
+      c.compact_log           = compact_log
+      c.url_blacklist_pattern = url_blacklist_pattern
+      c.url_whitelist_pattern = url_whitelist_pattern
+    end
+  end
 
   ADAPTERS = [
     NetHTTPAdapter,
@@ -25,41 +67,39 @@ describe HttpLog do
   ADAPTERS.each do |adapter_class|
     context adapter_class, adapter: adapter_class.to_s do
       let(:adapter) { adapter_class.new(host: host, port: port, path: path, headers: headers, data: data, params: params) }
+      before { configure }
 
       context 'with default configuration' do
-        connection_test_method = adapter_class.is_libcurl? ? :to_not : :to
+        describe 'GET requests' do
+          let!(:res) { adapter.send_get_request }
 
-        if adapter_class.method_defined? :send_get_request
-          it 'should log GET requests' do
-            res = adapter.send_get_request
+          it_behaves_like 'logs request', 'GET'
 
-            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
+          it { is_expected.to include('Data:') }
+          it { is_expected.to include('Status: 200') }
+          it { is_expected.to include('Benchmark: ') }
+          it { is_expected.to include("Response:#{adapter.expected_response_body}") }
 
-            expect(log).to     include(HttpLog::LOG_PREFIX + "Sending: GET http://#{host}:#{port}#{path}")
-            expect(log).to     include(HttpLog::LOG_PREFIX + 'Data:')
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Header:')
-            expect(log).to     include(HttpLog::LOG_PREFIX + 'Status: 200')
-            expect(log).to     include(HttpLog::LOG_PREFIX + 'Benchmark: ')
-            expect(log).to     include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+          it { is_expected.to_not include('Header:') }
+          it { is_expected.to_not include("\e[0") }
 
-            expect(log).to_not include("\e[0")
-
-            expect(res).to be_a adapter.response if adapter.respond_to? :response
+          unless adapter_class.is_libcurl?
+            it { is_expected.to include("Connecting: #{host}:#{port}") }
           end
+
+          it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
 
           context 'with gzip encoding' do
             let(:path) { '/index.html.gz' }
             let(:data) { nil }
 
             it 'decompresses gzipped response body' do
-              adapter.send_get_request
-              expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+              expect(log).to include("Response:#{adapter.expected_response_body}")
             end
 
             if adapter_class.method_defined? :send_head_request
               it "doesn't try to decompress body for HEAD requests" do
-                adapter.send_head_request
-                expect(log).to include(HttpLog::LOG_PREFIX + 'Response:')
+                expect(log).to include('Response:')
               end
             end
           end
@@ -69,8 +109,7 @@ describe HttpLog do
             let(:data) { nil }
 
             it 'works' do
-              adapter.send_get_request
-              expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
+              expect(log).to include("Response:#{adapter.expected_response_body}")
               if adapter.logs_data?
                 expect(log).to include('    <title>Блог Яндекса</title>')
               end
@@ -78,22 +117,17 @@ describe HttpLog do
           end
 
           context 'with binary response body' do
-            [
-              '/test.bin',
-              '/test.pdf'
-            ].each do |response_file_name|
+            %w[/test.bin /test.pdf].each do |response_file_name|
               let(:path) { response_file_name }
               let(:data) { nil }
 
               it "doesn't log response" do
-                adapter.send_get_request
-                expect(log).to include(HttpLog::LOG_PREFIX + 'Response: (not showing binary data)')
+                expect(log).to include('Response: (not showing binary data)')
               end
 
               context 'with JSON logging' do
-                before(:each) { HttpLog.configure { |c| c.json_log = true } }
+                let(:json_log) { true }
                 it "doesn't log response" do
-                  adapter.send_get_request
                   logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
                   expect(logged_json['response_body']).to eq '(not showing binary data)'
                 end
@@ -102,35 +136,33 @@ describe HttpLog do
           end
         end
 
-        if adapter_class.method_defined? :send_post_request
-          it 'logs POST requests' do
-            res = adapter.send_post_request
+        describe 'POST requests' do
+          if adapter_class.method_defined? :send_post_request
+            let!(:res) { adapter.send_post_request }
 
-            expect(log).send(connection_test_method, include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}"))
-
-            expect(log).to include(HttpLog::LOG_PREFIX + "Sending: POST http://#{host}:#{port}#{path}")
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Data: foo=bar&bar=foo')
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Header:')
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Status: 200')
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Benchmark: ')
-            expect(log).to include(HttpLog::LOG_PREFIX + "Response:#{adapter.expected_response_body}")
-
-            expect(res).to be_a adapter.response if adapter.respond_to? :response
-          end
-
-          context 'with non-UTF request data' do
-            let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
-            it 'does not raise and error' do
-              expect { adapter.send_post_request }.to_not raise_error
-              expect(log).to include(HttpLog::LOG_PREFIX + 'Response:')
+            unless adapter_class.is_libcurl?
+              it { is_expected.to include("Connecting: #{host}:#{port}") }
             end
-          end
 
-          context 'with URI encoded non-UTF data' do
-            let(:data) { 'a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3' }
-            it 'does not raise and error' do
-              expect { adapter.send_post_request }.to_not raise_error
-              expect(log).to include(HttpLog::LOG_PREFIX + 'Response:')
+            it_behaves_like 'logs request', 'POST'
+
+            it { is_expected.to include('Data: foo=bar&bar=foo') }
+            it { is_expected.to include('Status: 200') }
+            it { is_expected.to include('Benchmark: ') }
+            it { is_expected.to include("Response:#{adapter.expected_response_body}") }
+
+            it { is_expected.to_not include('Header:') }
+
+            it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
+
+            context 'with non-UTF request data' do
+              let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
+              it { is_expected.to include('Response:') }
+            end
+
+            context 'with URI encoded non-UTF data' do
+              let(:data) { 'a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3' }
+              it { is_expected.to include('Response:') }
             end
           end
         end
@@ -138,171 +170,108 @@ describe HttpLog do
 
       context 'with custom configuration' do
         context 'GET requests' do
-          it 'should not log anything unless enabled is set' do
-            HttpLog.configure { |c| c.enabled = false }
-            adapter.send_get_request
-            expect(log).to eq('')
+          before { adapter.send_get_request }
+
+          context 'when disabled' do
+            let(:enabled) { false }
+            it_behaves_like 'logs nothing'
           end
 
-          it 'should log at other levels' do
-            HttpLog.configure { |c| c.severity = Logger::Severity::INFO }
-            adapter.send_get_request
-            expect(log).to include('INFO')
+          context 'with different log level' do
+            let(:severity) { Logger::Severity::INFO }
+            it { is_expected.to include('INFO') }
           end
 
-          it 'should log headers if enabled' do
-            HttpLog.configure { |c| c.log_headers = true }
-            adapter.send_get_request
-            # request header
-            expect(log.downcase).to include(HttpLog::LOG_PREFIX + 'Header: accept: */*'.downcase)
-            # response header
-            expect(log.downcase).to include(HttpLog::LOG_PREFIX + 'Header: server: thin'.downcase)
+          context 'with headers logging' do
+            let(:log_headers) { true }
+            it { is_expected.to match(%r{Header: accept: */*}i) } # request
+            it { is_expected.to match(/Header: Server: thin/i) } # response
           end
 
-          it 'should not log headers if disabled' do
-            HttpLog.configure { |c| c.log_headers = false }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Header:')
+          context 'with blacklist hit' do
+            let(:url_blacklist_pattern) { /#{host}:#{port}/ }
+            it_behaves_like 'logs nothing'
           end
 
-          it 'should log the request if url does not match blacklist pattern' do
-            HttpLog.configure { |c| c.url_blacklist_pattern = /example.com/ }
-            adapter.send_get_request
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          context 'with blacklist miss' do
+            let(:url_blacklist_pattern) { /example.com/ }
+            it_behaves_like 'logs request', 'GET'
           end
 
-          it 'should log the request if url matches whitelist pattern and not the blacklist pattern' do
-            HttpLog.configure { |c| c.url_blacklist_pattern = /example.com/ }
-            HttpLog.configure { |c| c.url_whitelist_pattern = /#{host}:#{port}/ }
-            adapter.send_get_request
-            expect(log).to include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          context 'with whitelist hit' do
+            let(:url_whitelist_pattern) { /#{host}:#{port}/ }
+            it_behaves_like 'logs request', 'GET'
+
+            context 'and blacklist hit' do
+              let(:url_blacklist_pattern) { /#{host}:#{port}/ }
+              it_behaves_like 'logs nothing'
+            end
           end
 
-          it 'should not log the request if url matches blacklist pattern' do
-            HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          context 'with whitelist miss' do
+            let(:url_whitelist_pattern) { /example.com/ }
+            it_behaves_like 'logs nothing'
           end
 
-          it 'should not log the request if url does not match whitelist pattern' do
-            HttpLog.configure { |c| c.url_whitelist_pattern = /example.com/ }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          it_behaves_like 'with request logging disabled'
+          it_behaves_like 'with connection logging disabled'
+          it_behaves_like 'data logging disabled'
+          it_behaves_like 'response logging disabled'
+          it_behaves_like 'benchmark logging disabled'
+
+          context 'with single color' do
+            let(:color) { :red }
+            it { is_expected.to include("\e[31m") }
           end
 
-          it 'should not log the request if url matches blacklist pattern and the whitelist pattern' do
-            HttpLog.configure { |c| c.url_blacklist_pattern = /#{host}:#{port}/ }
-            HttpLog.configure { |c| c.url_whitelist_pattern = /#{host}:#{port}/ }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Connecting')
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          context 'with color hash' do
+            let(:color) { { color: :black, background: :yellow } }
+            it { is_expected.to include("\e[30m\e[43m") }
           end
 
-          it 'should not log the request if disabled' do
-            HttpLog.configure { |c| c.log_request = false }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Sending: GET')
+          context 'with custom prefix' do
+            let(:prefix) { '[my logger]' }
+            it { is_expected.to include('[my logger]') }
+            it { is_expected.to_not include(HttpLog::LOG_PREFIX) }
           end
 
-          it 'should not log the connection if disabled' do
-            HttpLog.configure { |c| c.log_connect = false }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
+          context 'with custom lambda prefix' do
+            let(:prefix) { -> { '[custom prefix]' } }
+            it { is_expected.to include('[custom prefix]') }
+            it { is_expected.to_not include(HttpLog::LOG_PREFIX) }
           end
 
-          it 'should not log data if disabled' do
-            HttpLog.configure { |c| c.log_data = false }
-            adapter.send_get_request
-            expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
-          end
-
-          it 'should colorized output with single color' do
-            HttpLog.configure { |c| c.color = :red }
-            adapter.send_get_request
-            expect(log).to include("\e[31m")
-          end
-
-          it 'should colorized output with color hash' do
-            HttpLog.configure { |c| c.color = { color: :black, background: :yellow } }
-            adapter.send_get_request
-            expect(log).to include("\e[30m\e[43m")
-          end
-
-          it 'should log with custom string prefix' do
-            HttpLog.configure { |c| c.prefix = '[my logger]' }
-            adapter.send_get_request
-            expect(log).to include('[my logger]')
-            expect(log).to_not include(HttpLog::LOG_PREFIX)
-          end
-
-          it 'should log with custom lambda prefix' do
-            HttpLog.configure { |c| c.prefix = -> { '[custom prefix]' } }
-            adapter.send_get_request
-            expect(log).to include('[custom prefix]')
-            expect(log).to_not include(HttpLog::LOG_PREFIX)
+          context 'with compact config' do
+            let(:compact_log) { true }
+            it { is_expected.to match(%r{\[httplog\] GET http://#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+}) }
+            it { is_expected.to_not include("Connecting: #{host}:#{port}") }
+            it { is_expected.to_not include('Response:') }
+            it { is_expected.to_not include('Data:') }
+            it { is_expected.to_not include('Benchmark: ') }
           end
         end
 
         context 'POST requests' do
           if adapter_class.method_defined? :send_post_request
-            it 'should not log data if disabled' do
-              HttpLog.configure { |c| c.log_data = false }
-              adapter.send_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
-            end
+            before { adapter.send_post_request }
 
-            it 'should not log the response if disabled' do
-              HttpLog.configure { |c| c.log_response = false }
-              adapter.send_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Reponse:')
-            end
-
-            it 'should prefix all response lines' do
-              HttpLog.configure { |c| c.prefix_response_lines = true }
-
-              adapter.send_post_request
-              expect(log).to include(HttpLog::LOG_PREFIX + 'Response:')
-              expect(log).to include(HttpLog::LOG_PREFIX + '<html>')
-            end
-
-            it 'should prefix all response lines with line numbers' do
-              HttpLog.configure { |c| c.prefix_response_lines = true }
-              HttpLog.configure { |c| c.prefix_line_numbers = true }
-
-              adapter.send_post_request
-              expect(log).to include(HttpLog::LOG_PREFIX + 'Response:')
-              expect(log).to include(HttpLog::LOG_PREFIX + '1: <html>')
-            end
-
-            it 'should not log the benchmark if disabled' do
-              HttpLog.configure { |c| c.log_benchmark = false }
-              adapter.send_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Benchmark:')
-            end
+            it_behaves_like 'data logging disabled'
+            it_behaves_like 'response logging disabled'
+            it_behaves_like 'benchmark logging disabled'
+            it_behaves_like 'with prefix response lines'
+            it_behaves_like 'with line numbers'
           end
         end
 
         context 'POST form data requests' do
           if adapter_class.method_defined? :send_post_form_request
-            it 'should not log data if disabled' do
-              HttpLog.configure { |c| c.log_data = false }
-              adapter.send_post_form_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
-            end
+            before { adapter.send_post_form_request }
 
-            it 'should not log the response if disabled' do
-              HttpLog.configure { |c| c.log_response = false }
-              adapter.send_post_form_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Reponse:')
-            end
-
-            it 'should not log the benchmark if disabled' do
-              HttpLog.configure { |c| c.log_benchmark = false }
-              adapter.send_post_form_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Benchmark:')
-            end
+            it_behaves_like 'data logging disabled'
+            it_behaves_like 'response logging disabled'
+            it_behaves_like 'benchmark logging disabled'
+            it_behaves_like 'with prefix response lines'
+            it_behaves_like 'with line numbers'
           end
         end
 
@@ -311,74 +280,42 @@ describe HttpLog do
           let(:params) { { 'foo' => 'bar', 'file' => upload } }
 
           if adapter_class.method_defined? :send_multipart_post_request
-            it 'should not log data if disabled' do
-              HttpLog.configure { |c| c.log_data = false }
-              adapter.send_multipart_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
-            end
+            before { adapter.send_multipart_post_request }
 
-            it 'should not log the response if disabled' do
-              HttpLog.configure { |c| c.log_response = false }
-              adapter.send_multipart_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Reponse:')
-            end
-
-            it 'should not log the benchmark if disabled' do
-              HttpLog.configure { |c| c.log_benchmark = false }
-              adapter.send_multipart_post_request
-              expect(log).to_not include(HttpLog::LOG_PREFIX + 'Benchmark:')
-            end
+            it_behaves_like 'data logging disabled'
+            it_behaves_like 'response logging disabled'
+            it_behaves_like 'benchmark logging disabled'
+            it_behaves_like 'with prefix response lines'
+            it_behaves_like 'with line numbers'
           end
-        end
-      end
-
-      context 'with compact config' do
-        before { HttpLog.configure { |c| c.compact_log = true } }
-
-        it 'should log a single line with status and benchmark' do
-          adapter.send_get_request
-          expect(log).to match(%r{\[httplog\] GET http://#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+})
-          expect(log).to_not include(HttpLog::LOG_PREFIX + "Connecting: #{host}:#{port}")
-          expect(log).to_not include(HttpLog::LOG_PREFIX + 'Response:')
-          expect(log).to_not include(HttpLog::LOG_PREFIX + 'Data:')
-          expect(log).to_not include(HttpLog::LOG_PREFIX + 'Benchmark: ')
         end
       end
 
       context 'with JSON config' do
-        before { HttpLog.configure { |c| c.json_log = true } }
+        let(:json_log) { true }
 
         if adapter_class.method_defined? :send_post_request
-          it 'should log a single line with JSON structure' do
-            adapter.send_post_request
-            logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
+          before { adapter.send_post_request }
+          let(:json) { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
-            expect(logged_json['method']).to eq('POST')
-            expect(logged_json['request_body']).to eq('foo=bar&bar=foo')
-            expect(logged_json['request_headers']).to be_a(Hash)
-            expect(logged_json['response_headers']).to be_a(Hash)
-            expect(logged_json['response_code']).to eq(200)
-            expect(logged_json['response_body']).to eq("<html>\n  <head>\n    <title>Test Page</title>\n  </head>\n  <body>\n    <h1>This is the test page.</h1>\n  </body>\n</html>")
-            expect(logged_json['benchmark']).to be_a(Numeric)
-          end
-        end
+          it { expect(json['method']).to eq('POST') }
+          it { expect(json['request_body']).to eq(data) }
+          it { expect(json['request_headers']).to be_a(Hash) }
+          it { expect(json['response_headers']).to be_a(Hash) }
+          it { expect(json['response_code']).to eq(200) }
+          it { expect(json['response_body']).to eq(html) }
+          it { expect(json['benchmark']).to be_a(Numeric) }
 
-        context 'and compact config' do
-          before { HttpLog.configure { |c| c.compact_log = true } }
+          context 'and compact config' do
+            let(:compact_log) { true }
 
-          if adapter_class.method_defined? :send_post_request
-            it 'should log a single line with JSON structure' do
-              adapter.send_post_request
-              logged_json = JSON.parse log.match(/\[httplog\]\s(.*)/).captures.first
-
-              expect(logged_json['method']).to eq('POST')
-              expect(logged_json['request_body']).to be_nil
-              expect(logged_json['request_headers']).to be_nil
-              expect(logged_json['response_headers']).to be_nil
-              expect(logged_json['response_code']).to eq(200)
-              expect(logged_json['response_body']).to be_nil
-              expect(logged_json['benchmark']).to be_a(Numeric)
-            end
+            it { expect(json['method']).to eq('POST') }
+            it { expect(json['request_body']).to be_nil }
+            it { expect(json['request_headers']).to be_nil }
+            it { expect(json['response_headers']).to be_nil }
+            it { expect(json['response_code']).to eq(200) }
+            it { expect(json['response_body']).to be_nil }
+            it { expect(json['benchmark']).to be_a(Numeric) }
           end
         end
       end
