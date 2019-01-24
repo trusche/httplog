@@ -3,6 +3,7 @@ rvm:
   - "2.3.8"
   - "2.4.4"
   - "2.5.2"
+  - "2.6.0"
 gemfile:
   - gemfiles/http2.gemfile
   - gemfiles/http3.gemfile
