@@ -28,7 +28,7 @@ if defined?(Ethon)
 
           # Hard to believe that Ethon wouldn't parse out the headers into
           # an array; probably overlooked it. Anyway, let's do it ourselves:
-          headers = response_headers.split(/\r?\n/)[1..-1]
+          headers = response_headers.split(/\r?\n/).drop(1)
 
           HttpLog.call(
             method: @http_log[:method],
