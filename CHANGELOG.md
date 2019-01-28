@@ -1,3 +1,7 @@
+## 1.2.1 - 2019-01-28
+
+* [#67](https://github.com/trusche/httplog/pull/67) Gracefully handling empty response headers in Ethon
+
 ## 1.2.0 - 2018-12-31
 
 * [#65](https://github.com/trusche/httplog/pull/65) Added JSON as an optional output format
