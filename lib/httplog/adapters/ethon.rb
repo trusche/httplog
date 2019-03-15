@@ -8,7 +8,7 @@ if defined?(Ethon)
       module Http
         alias orig_http_request http_request
         def http_request(url, action_name, options = {})
-          @http_log    = options.merge(method: action_name) # remember this for compact logging
+          @http_log = options.merge(method: action_name) # remember this for compact logging
           orig_http_request(url, action_name, options)
         end
       end
@@ -22,7 +22,6 @@ if defined?(Ethon)
 
           # Not sure where the actual status code is stored - so let's
           # extract it from the response header.
-          status   = response_headers.scan(%r{HTTP/... (\d{3})}).flatten.first
           encoding = response_headers.scan(/Content-Encoding: (\S+)/).flatten.first
           content_type = response_headers.scan(/Content-Type: (\S+(; charset=\S+)?)/).flatten.first
 
@@ -37,7 +36,7 @@ if defined?(Ethon)
             request_headers: @http_log[:headers],
             response_code: @return_code,
             response_body: response_body,
-            response_headers: headers.map{ |header| header.split(/:\s/) }.to_h,
+            response_headers: headers.map { |header| header.split(/:\s/) }.to_h,
             benchmark: bm,
             encoding: encoding,
             content_type: content_type

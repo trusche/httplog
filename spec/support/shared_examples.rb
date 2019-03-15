@@ -3,7 +3,7 @@ RSpec.shared_examples 'logs request' do |method|
   it { is_expected.to include(HttpLog::LOG_PREFIX + "Sending: #{method} http://#{host}:#{port}#{path}") }
 end
 
-RSpec.shared_examples 'logs nothing' do |method|
+RSpec.shared_examples 'logs nothing' do
   subject { log }
   it { is_expected.to eq('') }
 end
@@ -20,7 +20,7 @@ RSpec.shared_examples 'logs status' do |status|
   it { is_expected.to include(["Status:", status].compact.join(' ')) }
 end
 
-RSpec.shared_examples 'logs benchmark' do |data|
+RSpec.shared_examples 'logs benchmark' do
   it { is_expected.to match(/Benchmark: \d+\.\d+ seconds/) }
 end
 

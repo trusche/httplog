@@ -119,7 +119,7 @@ module HttpLog
           sio = StringIO.new(body.to_s)
           gz = Zlib::GzipReader.new(sio)
           body = gz.read
-        rescue Zlib::GzipFile::Error => e
+        rescue Zlib::GzipFile::Error
           log("(gzip decompression failed)")
         end
       end
@@ -178,7 +178,7 @@ module HttpLog
     end
 
     def transform_response_code(response_code_name)
-      Rack::Utils::HTTP_STATUS_CODES.detect{ |k, v| v.to_s.downcase == response_code_name.to_s.downcase }.first
+      Rack::Utils::HTTP_STATUS_CODES.detect { |_k, v| v.to_s.casecmp(response_code_name.to_s).zero? }.first
     end
 
     def colorize(msg)
@@ -190,7 +190,7 @@ module HttpLog
         msg = Rainbow(msg).color(config.color)
       end
       msg
-    rescue
+    rescue StandardError
       warn "HTTPLOG CONFIGURATION ERROR: #{config.color} is not a valid color"
       msg
     end

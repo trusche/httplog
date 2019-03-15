@@ -3,7 +3,7 @@
 if defined?(Excon)
   module Excon
     module HttpLogHelper
-      def _httplog_url(datum)
+      def httplog_url(datum)
         @httplog_url ||= "#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}#{datum[:query]}"
       end
     end
@@ -14,7 +14,7 @@ if defined?(Excon)
       def connect
         host = @data[:proxy] ? @data[:proxy][:host] : @data[:host]
         port = @data[:proxy] ? @data[:proxy][:port] : @data[:port]
-        HttpLog.log_connection(host, port) if ::HttpLog.url_approved?(_httplog_url(@data))
+        HttpLog.log_connection(host, port) if ::HttpLog.url_approved?(httplog_url(@data))
         orig_connect
       end
     end
@@ -30,7 +30,7 @@ if defined?(Excon)
           result = orig_request(params, &block)
         end
 
-        url = _httplog_url(@data)
+        url = httplog_url(@data)
         return result unless HttpLog.url_approved?(url)
 
         headers = result[:headers] || {}

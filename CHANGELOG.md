@@ -1,3 +1,7 @@
+## 1.2.2 - 2019-03-15
+
+* [#70](https://github.com/trusche/httplog/pull/70) Fixed a bug where blacklisting caused requests to not be sent with HTTP adapter
+
 ## 1.2.1 - 2019-01-28
 
 * [#67](https://github.com/trusche/httplog/pull/67) Gracefully handling empty response headers in Ethon
