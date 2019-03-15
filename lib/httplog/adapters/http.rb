@@ -8,17 +8,16 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
       alias_method(orig_request_method, request_method) unless method_defined?(orig_request_method)
 
       define_method request_method do |req, options|
-        if HttpLog.url_approved?(req.uri)
+        bm = Benchmark.realtime do
+          @response = send(orig_request_method, req, options)
+        end
 
+        if HttpLog.url_approved?(req.uri)
           body = if defined?(::HTTP::Request::Body)
                    req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
                  else
                    req.body
                  end
-
-          bm = Benchmark.realtime do
-            @response = send(orig_request_method, req, options)
-          end
 
           HttpLog.call(
             method: req.verb,
