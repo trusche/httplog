@@ -231,7 +231,7 @@ describe HttpLog do
 
           context 'with compact config' do
             let(:compact_log) { true }
-            it { is_expected.to match(%r{\[httplog\] GET http://#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in (\d|\.)+}) }
+            it { is_expected.to match(%r{\[httplog\] GET http://#{host}:#{port}#{path}(\?.*)? completed with status code \d{3} in \d+\.\d{1,6} }) }
             it { is_expected.to_not include("Connecting: #{host}:#{port}") }
             it { is_expected.to_not include('Response:') }
             it { is_expected.to_not include('Data:') }
