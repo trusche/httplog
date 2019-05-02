@@ -34,11 +34,11 @@ module HttpLog
         log_compact(options[:method], options[:url], options[:response_code], options[:benchmark])
       else
         HttpLog.log_request(options[:method], options[:url])
-        HttpLog.log_headers(options[:request_headers])
+        HttpLog.log_request_headers(options[:request_headers])
         HttpLog.log_data(options[:request_body])
         HttpLog.log_status(options[:response_code])
         HttpLog.log_benchmark(options[:benchmark])
-        HttpLog.log_headers(options[:response_headers])
+        HttpLog.log_response_headers(options[:response_headers])
         HttpLog.log_body(options[:response_body], options[:encoding], options[:content_type])
       end
     end
@@ -67,12 +67,16 @@ module HttpLog
       log("Sending: #{method.to_s.upcase} #{uri}")
     end
 
-    def log_headers(headers = {})
-      return unless config.log_headers
+    def log_request_headers(headers = {})
+      return unless config.log_headers || config.log_request_headers
 
-      headers.each do |key, value|
-        log("Header: #{key}: #{value}")
-      end
+      log_headers(headers)
+    end
+
+    def log_response_headers(headers = {})
+      return unless config.log_headers || config.log_response_headers
+
+      log_headers(headers)
     end
 
     def log_status(status)
@@ -196,6 +200,12 @@ module HttpLog
     end
 
     private
+
+    def log_headers(headers = {})
+      headers.each do |key, value|
+        log("Header: #{key}: #{value}")
+      end
+    end
 
     def utf_encoded(data, content_type = nil)
       charset = content_type.to_s.scan(/; charset=(\S+)/).flatten.first || 'UTF-8'

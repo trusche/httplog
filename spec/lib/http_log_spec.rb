@@ -19,7 +19,9 @@ describe HttpLog do
   let(:severity)              { HttpLog.configuration.severity }
   let(:log_headers)           { HttpLog.configuration.log_headers }
   let(:log_request)           { HttpLog.configuration.log_request }
+  let(:log_request_headers)   { HttpLog.configuration.log_request_headers }
   let(:log_response)          { HttpLog.configuration.log_response }
+  let(:log_response_headers)  { HttpLog.configuration.log_response_headers }
   let(:log_data)              { HttpLog.configuration.log_data }
   let(:log_connect)           { HttpLog.configuration.log_connect }
   let(:log_benchmark)         { HttpLog.configuration.log_benchmark }
@@ -38,7 +40,9 @@ describe HttpLog do
       c.severity              = severity
       c.log_headers           = log_headers
       c.log_request           = log_request
+      c.log_request_headers   = log_request_headers
       c.log_response          = log_response
+      c.log_response_headers  = log_response_headers
       c.log_data              = log_data
       c.log_connect           = log_connect
       c.log_benchmark         = log_benchmark
@@ -170,10 +174,82 @@ describe HttpLog do
             it { is_expected.to include('INFO') }
           end
 
-          context 'with headers logging' do
+          context 'with headers logging enabled' do
             let(:log_headers) { true }
-            it { is_expected.to match(%r{Header: accept: */*}i) } # request
-            it { is_expected.to match(/Header: Server: thin/i) } # response
+
+            context 'and specific headers logging' do
+              context 'when only request headers logging is enabled' do
+                let(:log_request_headers) { true }
+                let(:log_response_headers) { false }
+
+                it { is_expected.to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.not_to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when only response headers logging is enabled' do
+                let(:log_request_headers) { false }
+                let(:log_response_headers) { true }
+
+                it { is_expected.not_to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when both request and response headers logging are enabled' do
+                let(:log_request_headers) { true }
+                let(:log_response_headers) { true }
+
+                it { is_expected.to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when both request and response headers logging are disabled' do
+                let(:log_request_headers) { false }
+                let(:log_response_headers) { false }
+
+
+                it { is_expected.to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.to match(/Header: Server: thin/i) } # response
+              end
+            end
+          end
+
+          context 'with headers logging disabled' do
+            let(:log_headers) { false }
+
+            context 'and specific headers logging' do
+              context 'when only request headers logging is enabled' do
+                let(:log_request_headers) { true }
+                let(:log_response_headers) { false }
+
+                it { is_expected.to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.not_to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when only response headers logging is enabled' do
+                let(:log_request_headers) { false }
+                let(:log_response_headers) { true }
+
+                it { is_expected.not_to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when both request and response headers logging are enabled' do
+                let(:log_request_headers) { true }
+                let(:log_response_headers) { true }
+
+                it { is_expected.to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.to match(/Header: Server: thin/i) } # response
+              end
+
+              context 'when both request and response headers logging are disabled' do
+                let(:log_request_headers) { false }
+                let(:log_response_headers) { false }
+
+
+                it { is_expected.not_to match(%r{Header: accept: */*}i) } # request
+                it { is_expected.not_to match(/Header: Server: thin/i) } # response
+              end
+            end
           end
 
           context 'with blacklist hit' do

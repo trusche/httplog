@@ -10,10 +10,11 @@ module HttpLog
                   :prefix,
                   :log_connect,
                   :log_request,
-                  :log_headers,
+                  :log_request_headers,
                   :log_data,
                   :log_status,
                   :log_response,
+                  :log_response_headers,
                   :log_benchmark,
                   :url_whitelist_pattern,
                   :url_blacklist_pattern,
@@ -21,6 +22,7 @@ module HttpLog
                   :prefix_data_lines,
                   :prefix_response_lines,
                   :prefix_line_numbers
+    attr_writer   :log_headers
 
     def initialize
       @enabled               = true
@@ -31,10 +33,12 @@ module HttpLog
       @prefix                = LOG_PREFIX
       @log_connect           = true
       @log_request           = true
+      @log_request_headers   = false
       @log_headers           = false
       @log_data              = true
       @log_status            = true
       @log_response          = true
+      @log_headers_response  = false
       @log_benchmark         = true
       @url_whitelist_pattern = nil
       @url_blacklist_pattern = nil
@@ -42,6 +46,10 @@ module HttpLog
       @prefix_data_lines     = false
       @prefix_response_lines = false
       @prefix_line_numbers   = false
+    end
+
+    def log_headers
+      @log_headers && !(log_request_headers || log_response_headers)
     end
 
     # TODO: remove in 1.0.0
