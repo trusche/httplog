@@ -7,7 +7,8 @@ require 'rainbow'
 require 'rack'
 
 module HttpLog
-  LOG_PREFIX = '[httplog] '.freeze
+  LOG_PREFIX = '[httplog] '
+  FILTER_VALUE = '[FILTERED]'
   class BodyParsingError < StandardError; end
 
   class << self
@@ -70,7 +71,7 @@ module HttpLog
     def log_headers(headers = {})
       return unless config.log_headers
 
-      filter_out_hash(headers).each do |key, value|
+      filter_out(headers).each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
@@ -104,21 +105,24 @@ module HttpLog
     end
 
     def filter_out(msg)
-      return msg unless msg.is_a?(String)
-
-      config.filtered_keywords.reduce(msg) do |acc, keyword|
-        if msg.include? keyword
-          acc.gsub(/#{keyword}=\w+/, "#{keyword}=[FILTERED]")
-        else
-          acc
+      case msg
+      when String, HTTP::URI, Addressable::URI
+        config.filtered_keywords.reduce(msg) do |acc, keyword|
+          if msg.to_s.include? keyword
+            acc.gsub(/#{keyword}=\w+/, "#{keyword}=#{FILTER_VALUE}")
+          else
+            acc
+          end
         end
+      when Hash, Enumerator, HTTP::Headers
+        hash = msg.to_h
+        hash.keys
+            .select{ |k, _| config.filtered_keywords.include?(k.downcase) }
+            .each{ |k| hash[k] = FILTER_VALUE }
+        hash
+      else
+        msg
       end
-    end
-
-    def filter_out_hash(hash)
-      hash = hash.to_h
-      (hash.keys & config.filtered_keywords).each{ | keyword| hash[keyword] = '[FILTERED]' }
-      hash
     end
 
     def parse_body(body, encoding, content_type)
@@ -186,10 +190,10 @@ module HttpLog
           method: data[:method].to_s.upcase,
           url: filter_out(data[:url]),
           request_body: filter_out(data[:request_body]),
-          request_headers: filter_out_hash(data[:request_headers].to_h),
+          request_headers: filter_out(data[:request_headers].to_h),
           response_code: data[:response_code].to_i,
           response_body: filter_out(parsed_body),
-          response_headers: filter_out_hash(data[:response_headers].to_h),
+          response_headers: filter_out(data[:response_headers].to_h),
           benchmark: data[:benchmark]
         }.to_json)
       end

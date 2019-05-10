@@ -8,9 +8,9 @@ describe HttpLog do
   let(:host)    { 'localhost' }
   let(:port)    { 9292 }
   let(:path)    { '/index.html' }
-  let(:headers) { { 'accept' => '*/*', 'foo' => 'bar', 'secret' => '1234', 'password' => '5678' } }
-  let(:data)    { 'foo=bar&bar=foo&secret=1234&password=5678' }
-  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo', 'secret' => '1234', 'password' => '5678' } }
+  let(:headers) { { 'accept' => '*/*', 'foo' => 'bar', 'secret' => 'key_1', 'password' => 'key_2' } }
+  let(:data)    { 'foo=bar&bar=foo&secret=key_1&password=key_2' }
+  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo', 'secret' => 'key_1', 'password' => 'key_2' } }
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
