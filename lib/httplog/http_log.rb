@@ -64,13 +64,13 @@ module HttpLog
     def log_request(method, uri)
       return unless config.log_request
 
-      log("Sending: #{method.to_s.upcase} #{uri}")
+      log("Sending: #{method.to_s.upcase} #{filter_out(uri)}")
     end
 
     def log_headers(headers = {})
       return unless config.log_headers
 
-      headers.each do |key, value|
+      filter_out_hash(headers).each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
@@ -95,12 +95,28 @@ module HttpLog
 
       if config.prefix_response_lines
         log('Response:')
-        log_data_lines(data)
+        log_data_lines(filter_out(data))
       else
-        log("Response:\n#{data}")
+        log("Response:\n#{filter_out(data)}")
       end
     rescue BodyParsingError => e
       log("Response: #{e.message}")
+    end
+
+    def filter_out(msg)
+      return msg unless msg.is_a?(String)
+
+      config.filtered_keywords.reduce(msg) do |acc, keyword|
+        if msg.include? keyword
+          acc.gsub(/#{keyword}=\w+/, "#{keyword}=[FILTERED]")
+        else
+          acc
+        end
+      end
+    end
+
+    def filter_out_hash(hash)
+      hash
     end
 
     def parse_body(body, encoding, content_type)
@@ -133,9 +149,9 @@ module HttpLog
 
       if config.prefix_data_lines
         log('Data:')
-        log_data_lines(data)
+        log_data_lines(filter_out(data))
       else
-        log("Data: #{data}")
+        log("Data: #{filter_out(data)}")
       end
     end
 

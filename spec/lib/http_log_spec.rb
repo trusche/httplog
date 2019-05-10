@@ -8,9 +8,9 @@ describe HttpLog do
   let(:host)    { 'localhost' }
   let(:port)    { 9292 }
   let(:path)    { '/index.html' }
-  let(:headers) { { 'accept' => '*/*', 'foo' => 'bar' } }
-  let(:data)    { 'foo=bar&bar=foo' }
-  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo' } }
+  let(:headers) { { 'accept' => '*/*', 'foo' => 'bar', 'secret' => '1234', 'password' => '5678' } }
+  let(:data)    { 'foo=bar&bar=foo&secret=1234&password=5678' }
+  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo', 'secret' => '1234', 'password' => '5678' } }
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
@@ -310,7 +310,26 @@ describe HttpLog do
       end
 
       context 'with filtered keywords' do
+        let(:filtered_keywords) { %w(secret password) }
 
+        context 'POST' do
+          if adapter_class.method_defined? :send_post_request
+            before { adapter.send_post_request }
+            it_behaves_like 'filters out keywords'
+          end
+        end
+
+        context 'POST form' do
+          if adapter_class.method_defined? :send_post_form_request
+            before { adapter.send_post_form_request }
+            it_behaves_like 'filters out keywords'
+          end
+        end
+
+        context 'GET' do
+          before { adapter.send_get_request }
+          it_behaves_like 'filters out keywords'
+        end        
       end
     end
   end
