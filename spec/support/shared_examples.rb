@@ -64,5 +64,7 @@ end
 
 RSpec.shared_examples 'filters out keywords' do
   it { is_expected.to_not include('secret=1234') }
+  it { is_expected.to_not include('secret: 1234') }
   it { is_expected.to_not include('password=5678') }
+  it { is_expected.to_not include('password: 5678') }
 end

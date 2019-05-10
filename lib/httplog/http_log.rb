@@ -116,6 +116,8 @@ module HttpLog
     end
 
     def filter_out_hash(hash)
+      hash = hash.to_h
+      (hash.keys & config.filtered_keywords).each{ | keyword| hash[keyword] = '[FILTERED]' }
       hash
     end
 

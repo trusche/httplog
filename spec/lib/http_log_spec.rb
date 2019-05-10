@@ -311,6 +311,7 @@ describe HttpLog do
 
       context 'with filtered keywords' do
         let(:filtered_keywords) { %w(secret password) }
+        let(:log_headers) { true }
 
         context 'POST' do
           if adapter_class.method_defined? :send_post_request
