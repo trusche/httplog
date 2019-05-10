@@ -330,7 +330,18 @@ describe HttpLog do
         context 'GET' do
           before { adapter.send_get_request }
           it_behaves_like 'filters out keywords'
-        end        
+        end
+
+        context 'with JSON logging' do
+          let(:json_log) { true }
+
+          context 'POST' do
+            if adapter_class.method_defined? :send_post_request
+              before { adapter.send_post_request }
+              it_behaves_like 'filters out keywords'
+            end
+          end
+        end
       end
     end
   end

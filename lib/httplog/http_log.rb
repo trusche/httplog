@@ -177,19 +177,19 @@ module HttpLog
       if config.compact_log
         log({
           method: data[:method].to_s.upcase,
-          url: data[:url],
+          url: filter_out(data[:url]),
           response_code: data[:response_code].to_i,
           benchmark: data[:benchmark]
         }.to_json)
       else
         log({
           method: data[:method].to_s.upcase,
-          url: data[:url],
-          request_body: data[:request_body],
-          request_headers: data[:request_headers].to_h,
+          url: filter_out(data[:url]),
+          request_body: filter_out(data[:request_body]),
+          request_headers: filter_out_hash(data[:request_headers].to_h),
           response_code: data[:response_code].to_i,
-          response_body: parsed_body,
-          response_headers: data[:response_headers].to_h,
+          response_body: filter_out(parsed_body),
+          response_headers: filter_out_hash(data[:response_headers].to_h),
           benchmark: data[:benchmark]
         }.to_json)
       end
