@@ -20,7 +20,8 @@ module HttpLog
                   :color,
                   :prefix_data_lines,
                   :prefix_response_lines,
-                  :prefix_line_numbers
+                  :prefix_line_numbers,
+                  :filtered_keywords
 
     def initialize
       @enabled               = true
@@ -42,6 +43,7 @@ module HttpLog
       @prefix_data_lines     = false
       @prefix_response_lines = false
       @prefix_line_numbers   = false
+      @filtered_keywords     = []
     end
 
     # TODO: remove in 1.0.0

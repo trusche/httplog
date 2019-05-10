@@ -31,6 +31,7 @@ describe HttpLog do
   let(:compact_log)           { HttpLog.configuration.compact_log }
   let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
   let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
+  let(:filtered_keywords)     { HttpLog.configuration.filtered_keywords }
 
   def configure
     HttpLog.configure do |c|
@@ -50,6 +51,7 @@ describe HttpLog do
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
+      c.filtered_keywords     = filtered_keywords
     end
   end
 
@@ -305,6 +307,10 @@ describe HttpLog do
             it { expect(json['benchmark']).to be_a(Numeric) }
           end
         end
+      end
+
+      context 'with filtered keywords' do
+
       end
     end
   end
