@@ -65,13 +65,13 @@ module HttpLog
     def log_request(method, uri)
       return unless config.log_request
 
-      log("Sending: #{method.to_s.upcase} #{filter_out(uri)}")
+      log("Sending: #{method.to_s.upcase} #{masked_data(uri)}")
     end
 
     def log_headers(headers = {})
       return unless config.log_headers
 
-      filter_out(headers).each do |key, value|
+      masked_data(headers).each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
@@ -96,15 +96,15 @@ module HttpLog
 
       if config.prefix_response_lines
         log('Response:')
-        log_data_lines(filter_out(data))
+        log_data_lines(masked_data(data))
       else
-        log("Response:\n#{filter_out(data)}")
+        log("Response:\n#{masked_data(data)}")
       end
     rescue BodyParsingError => e
       log("Response: #{e.message}")
     end
 
-    def filter_out(msg)
+    def masked_data(msg)
       case msg
       when String, HTTP::URI, Addressable::URI
         config.filtered_keywords.reduce(msg) do |acc, keyword|
@@ -155,9 +155,9 @@ module HttpLog
 
       if config.prefix_data_lines
         log('Data:')
-        log_data_lines(filter_out(data))
+        log_data_lines(masked_data(data))
       else
-        log("Data: #{filter_out(data)}")
+        log("Data: #{masked_data(data)}")
       end
     end
 
@@ -181,19 +181,19 @@ module HttpLog
       if config.compact_log
         log({
           method: data[:method].to_s.upcase,
-          url: filter_out(data[:url]),
+          url: masked_data(data[:url]),
           response_code: data[:response_code].to_i,
           benchmark: data[:benchmark]
         }.to_json)
       else
         log({
           method: data[:method].to_s.upcase,
-          url: filter_out(data[:url]),
-          request_body: filter_out(data[:request_body]),
-          request_headers: filter_out(data[:request_headers].to_h),
+          url: masked_data(data[:url]),
+          request_body: masked_data(data[:request_body]),
+          request_headers: masked_data(data[:request_headers].to_h),
           response_code: data[:response_code].to_i,
-          response_body: filter_out(parsed_body),
-          response_headers: filter_out(data[:response_headers].to_h),
+          response_body: masked_data(parsed_body),
+          response_headers: masked_data(data[:response_headers].to_h),
           benchmark: data[:benchmark]
         }.to_json)
       end
