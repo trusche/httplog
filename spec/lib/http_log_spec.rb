@@ -342,6 +342,26 @@ describe HttpLog do
             end
           end
         end
+
+        context 'with JSON body' do
+          [
+            { foo: :bar, secret: :key_1, password: :key_2 },
+            { foo: { secret: :key_1, password: :key_2 } },
+            { foo: [{ secret: :key_1 }, { password: :key_2 } ] },
+            { a: { b: {c: { d: { secret: :key_1, password: :key_2 } } } } },
+            { a: [ b: { c: [ d: { secret: :key_1, password: :key_2 } ] } ] },
+            [ { foo: :bar }, { secret: :key_1 }, { password: :key_2 } ]
+          ].each_with_index do |body, i|
+            context "example #{i}" do
+              let(:data) { body.to_json }
+
+              if adapter_class.method_defined? :send_post_request
+                before { adapter.send_post_request }
+                it_behaves_like 'filters out keywords'
+              end
+            end
+          end
+        end
       end
     end
   end

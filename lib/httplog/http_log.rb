@@ -107,19 +107,27 @@ module HttpLog
     def masked_data(msg)
       case msg
       when String, HTTP::URI, Addressable::URI
-        config.filtered_keywords.reduce(msg) do |acc, keyword|
-          if msg.to_s.include? keyword
-            acc.gsub(/#{keyword}=\w+/, "#{keyword}=#{FILTER_VALUE}")
-          else
-            acc
+        begin
+          masked_data(JSON.parse(msg))
+        rescue JSON::ParserError
+          config.filtered_keywords.reduce(msg.to_s) do |acc, keyword|
+            if msg.to_s.include? keyword
+              acc.gsub(/#{keyword}=\w+/, "#{keyword}=#{FILTER_VALUE}")
+            else
+              acc
+            end
           end
         end
       when Hash, Enumerator, HTTP::Headers
-        hash = msg.to_h
-        hash.keys
-            .select{ |k, _| config.filtered_keywords.include?(k.downcase) }
-            .each{ |k| hash[k] = FILTER_VALUE }
-        hash
+        msg.to_h.map do |k, v|
+          if config.filtered_keywords.include?(k.downcase)
+            [k, FILTER_VALUE]
+          else
+            [k, masked_data(v)]
+          end
+        end.to_h
+      when Array
+        msg.map{ |element| masked_data(element)}
       else
         msg
       end
