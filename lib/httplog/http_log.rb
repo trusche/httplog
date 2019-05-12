@@ -105,6 +105,8 @@ module HttpLog
     end
 
     def masked_data(msg)
+      return msg if config.filtered_keywords.nil? || config.filtered_keywords.empty?
+
       case msg
       when String, HTTP::URI, Addressable::URI
         begin
