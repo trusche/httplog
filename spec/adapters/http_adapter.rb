@@ -3,7 +3,7 @@
 require 'http'
 class HTTPAdapter < HTTPBaseAdapter
   def send_get_request
-    client.get(parse_uri.to_s)
+    client.get(parse_uri(true).to_s)
   end
 
   def send_head_request

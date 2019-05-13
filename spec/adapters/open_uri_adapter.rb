@@ -2,7 +2,7 @@
 
 class OpenUriAdapter < HTTPBaseAdapter
   def send_get_request
-    open(parse_uri) # rubocop:disable Security/Open
+    open(parse_uri(true)) # rubocop:disable Security/Open
   end
 
   def expected_response_body

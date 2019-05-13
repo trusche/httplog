@@ -5,12 +5,13 @@ require 'spec_helper'
 describe HttpLog do
   subject { log } # see spec_helper
 
+  let(:secret)  { 'my secret' }
   let(:host)    { 'localhost' }
   let(:port)    { 9292 }
   let(:path)    { '/index.html' }
-  let(:headers) { { 'accept' => '*/*', 'foo' => 'bar' } }
-  let(:data)    { 'foo=bar&bar=foo' }
-  let(:params)  { { 'foo' => 'bar:form-data', 'bar' => 'foo' } }
+  let(:headers) { { 'accept' => '*/*', 'foo' => secret } }
+  let(:data)    { "foo=#{secret}&bar=foo" }
+  let(:params)  { { 'foo' => secret, 'bar' => 'foo:form-data' } }
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
@@ -135,7 +136,7 @@ describe HttpLog do
 
             it_behaves_like 'logs request', 'POST'
             it_behaves_like 'logs expected response'
-            it_behaves_like 'logs data', 'foo=bar&bar=foo'
+            it_behaves_like 'logs data'
             it_behaves_like 'logs status', 200
             it_behaves_like 'logs benchmark'
 

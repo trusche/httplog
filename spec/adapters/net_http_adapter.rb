@@ -2,7 +2,9 @@
 
 class NetHTTPAdapter < HTTPBaseAdapter
   def send_get_request
-    Net::HTTP.get_response(@host, [@path, @data].compact.join('?'), @port)
+    path = @path
+    path = [@path, URI::encode(@data)].join('?') if @data
+    Net::HTTP.get_response(@host, path, @port)
   end
 
   def send_head_request
