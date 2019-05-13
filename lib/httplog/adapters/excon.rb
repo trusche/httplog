@@ -4,7 +4,7 @@ if defined?(Excon)
   module Excon
     module HttpLogHelper
       def httplog_url(datum)
-        @httplog_url ||= "#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}#{datum[:query]}"
+        @httplog_url ||= ["#{datum[:scheme]}://#{datum[:host]}:#{datum[:port]}#{datum[:path]}", datum[:query]].compact.join('?')
       end
     end
 

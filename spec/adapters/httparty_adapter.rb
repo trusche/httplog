@@ -3,7 +3,7 @@
 require 'httparty'
 class HTTPartyAdapter < HTTPBaseAdapter
   def send_get_request
-    HTTParty.get(parse_uri.to_s, headers: @headers)
+    HTTParty.get(parse_uri(true).to_s, headers: @headers)
   end
 
   def send_head_request

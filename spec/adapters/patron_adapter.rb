@@ -4,7 +4,7 @@ require 'patron'
 class PatronAdapter < HTTPBaseAdapter
   def send_get_request
     session = Patron::Session.new
-    session.get(parse_uri.to_s, @headers)
+    session.get(parse_uri(true).to_s, @headers)
   end
 
   def send_head_request

@@ -12,8 +12,15 @@ RSpec.shared_examples 'logs expected response' do
   it { is_expected.to include("Response:#{adapter.expected_response_body}") }
 end
 
-RSpec.shared_examples 'logs data' do |data|
-  it { is_expected.to include(["Data:", data].compact.join(' ')) }
+RSpec.shared_examples 'logs data' do
+  # Some adapters (YOU, Faraday!) re-order the keys for no bloody
+  # reason whatsover. So we need to check them individually. And some
+  # (guess who?) use non-standard URL encoding for spaces...
+  it do
+    data.split('&').each do |param|
+      is_expected.to match(Regexp.new(param.gsub(' ', '( |%20|\\\+)')))
+    end
+  end
 end
 
 RSpec.shared_examples 'logs status' do |status|

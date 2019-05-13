@@ -4,7 +4,7 @@ require 'faraday'
 class FaradayAdapter < HTTPBaseAdapter
   def send_get_request
     connection.get do |req|
-      req.url parse_uri.to_s
+      req.url parse_uri(true).to_s
       req.headers = @headers
     end
   end

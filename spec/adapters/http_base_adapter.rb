@@ -15,8 +15,10 @@ class HTTPBaseAdapter
     true
   end
 
-  def parse_uri
-    URI.parse("#{@protocol}://#{@host}:#{@port}#{@path}")
+  def parse_uri(query=false)
+    uri = "#{@protocol}://#{@host}:#{@port}#{@path}"
+    uri = [uri, URI::encode(@data)].join('?') if query && @data
+    URI.parse(uri)
   end
 
   def expected_response_body

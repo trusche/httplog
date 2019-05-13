@@ -4,7 +4,7 @@ require 'ethon'
 class EthonAdapter < HTTPBaseAdapter
   def send_get_request
     easy = Ethon::Easy.new
-    easy.http_request(parse_uri.to_s, :get, headers: @headers)
+    easy.http_request(parse_uri(true).to_s, :get, headers: @headers)
     easy.perform
   end
 
