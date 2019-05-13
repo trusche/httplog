@@ -131,7 +131,7 @@ module HttpLog
     def log_data(data)
       return unless config.log_data
 
-      data = utf_encoded(masked(data.dup).to_s)
+      data = utf_encoded(masked(data.dup).to_s) unless data.nil?
 
       if config.prefix_data_lines
         log('Data:')
