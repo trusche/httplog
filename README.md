@@ -81,6 +81,9 @@ HttpLog.configure do |config|
   # Limit logging based on URL patterns
   config.url_whitelist_pattern = nil
   config.url_blacklist_pattern = nil
+
+  # Mask the values of sensitive requestparameters
+  config.filter_parameters = %w[password]
 end
 ```
 
@@ -121,12 +124,18 @@ If the log is too noisy for you, but you don't want to completely disable it eit
 
 If you want to log HTTP requests in a JSON format, set the `json_log` option to `true`. You can combine this with `compact_log` to only log the basic request metrics without headers and bodies.
 
+### Parameter filtering
+
+Just like in Rails, you can filter the values of sensitive parameters by setting the `filter_parameters` to an array of (lower case) keys. The value for "password" is filtered by default.
+
+**Please note** that this will **only filter the request data** with well-formed parameters (in the URL, the headers, and the request data) but **not the response**. It does not currently filter JSON request data either, just standard "key=value" pairs in the request body.
+
 ### Example
 
 With the default configuration, the log output might look like this:
 
     D, [2012-11-21T15:09:03.532970 #6857] DEBUG -- : [httplog] Connecting: localhost:80
-    D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
+    D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html?password=oops
     D, [2012-11-21T15:09:03.534499 #6857] DEBUG -- : [httplog] Status: 200
     D, [2012-11-21T15:09:03.534544 #6857] DEBUG -- : [httplog] Benchmark: 0.00057 seconds
     D, [2012-11-21T15:09:03.534578 #6857] DEBUG -- : [httplog] Response:
@@ -138,6 +147,24 @@ With the default configuration, the log output might look like this:
         <h1>This is the test page.</h1>
       </body>
     </html>
+
+With `filter_parameters = %w(password)` and `log_headers = true`:
+
+D, [2012-11-21T15:09:03.532970 #6857] DEBUG -- : [httplog] Connecting: localhost:80
+D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html?password=[FILTERED]
+D, [2012-11-21T15:09:03.533879 #6857] DEBUG -- : [httplog] Header: accept: *.*
+D, [2012-11-21T15:09:03.533885 #6857] DEBUG -- : [httplog] Header: password=[FILTERED]
+D, [2012-11-21T15:09:03.534499 #6857] DEBUG -- : [httplog] Status: 200
+D, [2012-11-21T15:09:03.534544 #6857] DEBUG -- : [httplog] Benchmark: 0.00057 seconds
+D, [2012-11-21T15:09:03.534578 #6857] DEBUG -- : [httplog] Response:
+<html>
+  <head>
+    <title>Test Page</title>
+  </head>
+  <body>
+    <h1>This is the test page.</h1>
+  </body>
+</html>
 
 With `compact_log` enabled, the same request might look like this:
 

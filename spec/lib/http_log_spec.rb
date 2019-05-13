@@ -300,6 +300,7 @@ describe HttpLog do
           it { expect(json['response_code']).to eq(200) }
           it { expect(json['response_body']).to eq(html) }
           it { expect(json['benchmark']).to be_a(Numeric) }
+          it_behaves_like 'filtered parameters'
 
           context 'and compact config' do
             let(:compact_log) { true }
