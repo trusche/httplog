@@ -223,11 +223,22 @@ module HttpLog
     end
 
     def string_classes
-      [String, HTTP::Response::Body, HTTP::URI, URI::HTTP, HTTP::FormData::Urlencoded]
+      @string_classes ||= begin
+        string_classes = [String]
+        string_classes << HTTP::Response::Body if defined?(HTTP::Response::Body)
+        string_classes << HTTP::URI if defined?(HTTP::URI)
+        string_classes << URI::HTTP if defined?(URI::HTTP)
+        string_classes << HTTP::FormData::Urlencoded if defined?(HTTP::FormData::Urlencoded)
+        string_classes
+      end
     end
 
     def hash_classes
-      [Hash, Enumerator, HTTP::Headers]
+      @hash_classes ||= begin
+        hash_classes = [Hash, Enumerator]
+        hash_classes << HTTP::Headers if defined?(HTTP::Headers)
+        hash_classes
+      end
     end
 
     def utf_encoded(data, content_type = nil)
