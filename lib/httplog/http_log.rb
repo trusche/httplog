@@ -92,7 +92,7 @@ module HttpLog
     def log_body(body, encoding = nil, content_type = nil)
       return unless config.log_response
 
-      data = parse_body(masked(body), encoding, content_type)
+      data = parse_body(body, encoding, content_type)
 
       if config.prefix_response_lines
         log('Response:')
