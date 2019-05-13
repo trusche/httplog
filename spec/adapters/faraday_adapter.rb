@@ -42,6 +42,10 @@ class FaradayAdapter < HTTPBaseAdapter
     end
   end
 
+  def logs_form_data?
+    false
+  end
+
   private
 
   def connection

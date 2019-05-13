@@ -68,3 +68,12 @@ RSpec.shared_examples 'with connection logging disabled' do
   let(:log_connect) { false }
   it { is_expected.to_not include('Connecting:') }
 end
+
+RSpec.shared_examples 'filtered parameters' do
+  let(:filter_parameters) { %w(foo) }
+
+  it 'masks the filtered value' do
+    # is_expected.to include('foo=[FILTERED]&').or exclude('foo')
+    is_expected.to_not include('secret')
+  end
+end

@@ -24,4 +24,8 @@ class HTTPClientAdapter < HTTPBaseAdapter
   def self.response_should_be
     HTTP::Message
   end
+
+  def logs_form_data?
+    false
+  end
 end

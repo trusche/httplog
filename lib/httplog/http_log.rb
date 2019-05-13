@@ -52,7 +52,7 @@ module HttpLog
     def log(msg)
       return unless config.enabled
 
-      config.logger.log(config.severity, colorize(prefix + msg))
+      config.logger.log(config.severity, colorize(prefix + masked(msg)))
     end
 
     def log_connection(host, port = nil)
@@ -196,6 +196,18 @@ module HttpLog
     end
 
     private
+
+    def masked(msg)
+      config.filter_parameters.reduce(msg) do |m,key|
+        m.gsub(/(#{key})=[^&]+/i, "#{key}=[FILTERED]")
+          .gsub(/("#{key}"=>)[^,}]+/i, "\\1[FILTERED]")
+          .gsub(/(#{key}: ).+$/i, "\\1[FILTERED]")
+      end
+    end
+
+    def hash_classes
+      [Hash, Enumerator]
+    end
 
     def utf_encoded(data, content_type = nil)
       charset = content_type.to_s.scan(/; charset=(\S+)/).flatten.first || 'UTF-8'
