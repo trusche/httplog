@@ -5,7 +5,7 @@
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
-Requires ruby >= 2.3.
+Requires ruby >= 2.4.
 
 This gem works with the following ruby modules and libraries:
 
