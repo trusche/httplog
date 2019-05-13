@@ -15,6 +15,10 @@ class HTTPBaseAdapter
     true
   end
 
+  def logs_form_data?
+    true
+  end
+
   def parse_uri(query=false)
     uri = "#{@protocol}://#{@host}:#{@port}#{@path}"
     uri = [uri, URI::encode(@data)].join('?') if query && @data

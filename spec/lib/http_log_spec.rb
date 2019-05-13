@@ -15,7 +15,7 @@ describe HttpLog do
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
 
-  # Configuration
+  # Default configuration
   let(:enabled)               { HttpLog.configuration.enabled }
   let(:severity)              { HttpLog.configuration.severity }
   let(:log_headers)           { HttpLog.configuration.log_headers }
@@ -32,6 +32,7 @@ describe HttpLog do
   let(:compact_log)           { HttpLog.configuration.compact_log }
   let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
   let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
+  let(:filter_parameters)     { HttpLog.configuration.filter_parameters }
 
   def configure
     HttpLog.configure do |c|
@@ -51,6 +52,7 @@ describe HttpLog do
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
+      c.filter_parameters     = filter_parameters
     end
   end
 
@@ -175,6 +177,7 @@ describe HttpLog do
             let(:log_headers) { true }
             it { is_expected.to match(%r{Header: accept: */*}i) } # request
             it { is_expected.to match(/Header: Server: thin/i) } # response
+            it_behaves_like 'filtered parameters'
           end
 
           context 'with blacklist hit' do
@@ -207,6 +210,7 @@ describe HttpLog do
           it_behaves_like 'data logging disabled'
           it_behaves_like 'response logging disabled'
           it_behaves_like 'benchmark logging disabled'
+          it_behaves_like 'filtered parameters'
 
           context 'with single color' do
             let(:color) { :red }
@@ -249,6 +253,7 @@ describe HttpLog do
             it_behaves_like 'benchmark logging disabled'
             it_behaves_like 'with prefix response lines'
             it_behaves_like 'with line numbers'
+            it_behaves_like 'filtered parameters'
           end
         end
 
@@ -261,12 +266,13 @@ describe HttpLog do
             it_behaves_like 'benchmark logging disabled'
             it_behaves_like 'with prefix response lines'
             it_behaves_like 'with line numbers'
+            it_behaves_like 'filtered parameters'
           end
         end
 
         context 'POST multi-part requests (file upload)' do
           let(:upload) { Tempfile.new('http-log') }
-          let(:params) { { 'foo' => 'bar', 'file' => upload } }
+          let(:params) { { 'foo' => secret, 'file' => upload } }
 
           if adapter_class.method_defined? :send_multipart_post_request
             before { adapter.send_multipart_post_request }
@@ -276,6 +282,7 @@ describe HttpLog do
             it_behaves_like 'benchmark logging disabled'
             it_behaves_like 'with prefix response lines'
             it_behaves_like 'with line numbers'
+            it_behaves_like 'filtered parameters'
           end
         end
       end

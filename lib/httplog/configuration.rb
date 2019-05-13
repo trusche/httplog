@@ -20,7 +20,8 @@ module HttpLog
                   :color,
                   :prefix_data_lines,
                   :prefix_response_lines,
-                  :prefix_line_numbers
+                  :prefix_line_numbers,
+                  :filter_parameters
 
     def initialize
       @enabled               = true
@@ -42,12 +43,7 @@ module HttpLog
       @prefix_data_lines     = false
       @prefix_response_lines = false
       @prefix_line_numbers   = false
-    end
-
-    # TODO: remove in 1.0.0
-    def []=(key, value)
-      warn 'DEPRECATION WARNING: Assignment to HttpLog.options will be removed in version 1.0.0. Please use HttpLog.configure block instead as described here: https://github.com/trusche/httplog#configuration'
-      send("#{key}=", value)
+      @filter_parameters     = []
     end
   end
 end
