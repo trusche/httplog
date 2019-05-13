@@ -8,6 +8,8 @@ require 'rack'
 
 module HttpLog
   LOG_PREFIX = '[httplog] '.freeze
+  PARAM_MASK = '[FILTERED]'
+
   class BodyParsingError < StandardError; end
 
   class << self
@@ -17,7 +19,6 @@ module HttpLog
       @configuration ||= Configuration.new
     end
     alias config configuration
-    alias options configuration # TODO: remove with 1.0.0
 
     def reset!
       @configuration = nil
@@ -52,7 +53,7 @@ module HttpLog
     def log(msg)
       return unless config.enabled
 
-      config.logger.log(config.severity, colorize(prefix + masked(msg)))
+      config.logger.log(config.severity, colorize(prefix + msg))
     end
 
     def log_connection(host, port = nil)
@@ -64,13 +65,13 @@ module HttpLog
     def log_request(method, uri)
       return unless config.log_request
 
-      log("Sending: #{method.to_s.upcase} #{uri}")
+      log("Sending: #{method.to_s.upcase} #{masked(uri)}")
     end
 
     def log_headers(headers = {})
       return unless config.log_headers
 
-      headers.each do |key, value|
+      masked(headers).each do |key, value|
         log("Header: #{key}: #{value}")
       end
     end
@@ -91,7 +92,7 @@ module HttpLog
     def log_body(body, encoding = nil, content_type = nil)
       return unless config.log_response
 
-      data = parse_body(body, encoding, content_type)
+      data = parse_body(masked(body), encoding, content_type)
 
       if config.prefix_response_lines
         log('Response:')
@@ -129,7 +130,8 @@ module HttpLog
 
     def log_data(data)
       return unless config.log_data
-      data = utf_encoded(data.to_s.dup)
+
+      data = utf_encoded(masked(data.dup).to_s)
 
       if config.prefix_data_lines
         log('Data:')
@@ -142,7 +144,7 @@ module HttpLog
     def log_compact(method, uri, status, seconds)
       return unless config.compact_log
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
-      log("#{method.to_s.upcase} #{uri} completed with status code #{status} in #{seconds.to_f.round(6)} seconds")
+      log("#{method.to_s.upcase} #{masked(uri)} completed with status code #{status} in #{seconds.to_f.round(6)} seconds")
     end
 
     def log_json(data = {})
@@ -159,16 +161,16 @@ module HttpLog
       if config.compact_log
         log({
           method: data[:method].to_s.upcase,
-          url: data[:url],
+          url: masked(data[:url]),
           response_code: data[:response_code].to_i,
           benchmark: data[:benchmark]
         }.to_json)
       else
         log({
           method: data[:method].to_s.upcase,
-          url: data[:url],
-          request_body: data[:request_body],
-          request_headers: data[:request_headers].to_h,
+          url: masked(data[:url]),
+          request_body: masked(data[:request_body]),
+          request_headers: masked(data[:request_headers].to_h),
           response_code: data[:response_code].to_i,
           response_body: parsed_body,
           response_headers: data[:response_headers].to_h,
@@ -197,16 +199,35 @@ module HttpLog
 
     private
 
-    def masked(msg)
-      config.filter_parameters.reduce(msg) do |m,key|
-        m.gsub(/(#{key})=[^&]+/i, "#{key}=[FILTERED]")
-          .gsub(/("#{key}"=>)[^,}]+/i, "\\1[FILTERED]")
-          .gsub(/(#{key}: ).+$/i, "\\1[FILTERED]")
+    def masked(msg, key=nil)
+      return msg if config.filter_parameters.empty?
+      return msg if msg.nil?
+
+      # If a key is given, msg is just the value and can be replaced
+      # in its entirety.
+      return (config.filter_parameters.include?(key.downcase) ? PARAM_MASK : msg) if key
+
+      # Otherwise, we'll parse Strings for key=valye pairs...
+      case msg
+      when *string_classes
+        config.filter_parameters.reduce(msg) do |m,key|
+          m.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+        end
+      # ...and recurse over hashes
+      when *hash_classes
+        Hash[msg.map {|k,v| [k, masked(v, k)]}]
+      else
+        log "*** FILTERING NOT APPLIED BECAUSE #{msg.class} IS UNEXPECTED ***"
+        msg
       end
     end
 
+    def string_classes
+      [String, HTTP::Response::Body, HTTP::URI, URI::HTTP, HTTP::FormData::Urlencoded]
+    end
+
     def hash_classes
-      [Hash, Enumerator]
+      [Hash, Enumerator, HTTP::Headers]
     end
 
     def utf_encoded(data, content_type = nil)
