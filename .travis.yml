@@ -6,6 +6,7 @@ rvm:
 gemfile:
   - gemfiles/http3.gemfile
   - gemfiles/http4.gemfile
+  - gemfiles/http5.gemfile
   - gemfiles/rack1.gemfile
   - gemfiles/rack2.gemfile
 
