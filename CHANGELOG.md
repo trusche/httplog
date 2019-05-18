@@ -1,3 +1,9 @@
+## 1.3.0 - 2019-05-18
+
+* [#74](https://github.com/trusche/httplog/pull/74) Added ability to filter sensitive parameter values in the request (based on [#73](https://github.com/trusche/httplog/pull/73)). Default masking of `password` parameter
+* Removed explicit support and tests for ruby 2.3 and http gem v2
+* [#71](https://github.com/trusche/httplog/pull/71) Rounding benchmark in compact mode
+
 ## 1.2.2 - 2019-03-15
 
 * [#70](https://github.com/trusche/httplog/pull/70) Fixed a bug where blacklisting caused requests to not be sent with HTTP adapter

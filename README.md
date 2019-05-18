@@ -134,11 +134,11 @@ Just like in Rails, you can filter the values of sensitive parameters by setting
 
 With the default configuration, the log output might look like this:
 
-    D, [2012-11-21T15:09:03.532970 #6857] DEBUG -- : [httplog] Connecting: localhost:80
-    D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html?password=oops
-    D, [2012-11-21T15:09:03.534499 #6857] DEBUG -- : [httplog] Status: 200
-    D, [2012-11-21T15:09:03.534544 #6857] DEBUG -- : [httplog] Benchmark: 0.00057 seconds
-    D, [2012-11-21T15:09:03.534578 #6857] DEBUG -- : [httplog] Response:
+    [httplog] Connecting: localhost:80
+    [httplog] Sending: GET http://localhost:9292/index.html
+    [httplog] Status: 200
+    [httplog] Benchmark: 0.00057 seconds
+    [httplog] Response:
     <html>
       <head>
         <title>Test Page</title>
@@ -148,23 +148,24 @@ With the default configuration, the log output might look like this:
       </body>
     </html>
 
-With `filter_parameters = %w(password)` and `log_headers = true`:
+With `log_headers = true` and a parameter 'password' in the request query and headers:
 
-D, [2012-11-21T15:09:03.532970 #6857] DEBUG -- : [httplog] Connecting: localhost:80
-D, [2012-11-21T15:09:03.533877 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html?password=[FILTERED]
-D, [2012-11-21T15:09:03.533879 #6857] DEBUG -- : [httplog] Header: accept: *.*
-D, [2012-11-21T15:09:03.533885 #6857] DEBUG -- : [httplog] Header: password=[FILTERED]
-D, [2012-11-21T15:09:03.534499 #6857] DEBUG -- : [httplog] Status: 200
-D, [2012-11-21T15:09:03.534544 #6857] DEBUG -- : [httplog] Benchmark: 0.00057 seconds
-D, [2012-11-21T15:09:03.534578 #6857] DEBUG -- : [httplog] Response:
-<html>
-  <head>
-    <title>Test Page</title>
-  </head>
-  <body>
-    <h1>This is the test page.</h1>
-  </body>
-</html>
+
+    [httplog] Connecting: localhost:80
+    [httplog] Sending: GET http://localhost:9292/index.html?password=[FILTERED]
+    [httplog] Header: accept: *.*
+    [httplog] Header: password=[FILTERED]
+    [httplog] Status: 200
+    [httplog] Benchmark: 0.00057 seconds
+    [httplog] Response:
+    <html>
+      <head>
+        <title>Test Page</title>
+      </head>
+      <body>
+        <h1>This is the test page.</h1>
+      </body>
+    </html>
 
 With `compact_log` enabled, the same request might look like this:
 
@@ -190,21 +191,21 @@ a suggestion for a fix, please open an issue or, even better, submit a pull requ
 * When using OpenURI, the reading of the HTTP response body is deferred,
   so it is not available for logging. This will be noted in the logging statement:
 
-        D, [2012-11-21T15:09:03.547005 #6857] DEBUG -- : [httplog] Connecting: localhost:80
-        D, [2012-11-21T15:09:03.547938 #6857] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
-        D, [2012-11-21T15:09:03.548615 #6857] DEBUG -- : [httplog] Status: 200
-        D, [2012-11-21T15:09:03.548662 #6857] DEBUG -- : [httplog] Benchmark: 0.000617 seconds
-        D, [2012-11-21T15:09:03.548695 #6857] DEBUG -- : [httplog] Response: (not available yet)
+        [httplog] Connecting: localhost:80
+        [httplog] Sending: GET http://localhost:9292/index.html
+        [httplog] Status: 200
+        [httplog] Benchmark: 0.000617 seconds
+        [httplog] Response: (not available yet)
 
 *  When using HTTPClient, the TCP connection establishment will be logged
    *after* the HTTP request and headers, due to the way HTTPClient is organized.
 
-        D, [2012-11-22T18:39:46.031698 #12800] DEBUG -- : [httplog] Sending: GET http://localhost:9292/index.html
-        D, [2012-11-22T18:39:46.031756 #12800] DEBUG -- : [httplog] Header: accept: */*
-        D, [2012-11-22T18:39:46.031788 #12800] DEBUG -- : [httplog] Header: foo: bar
-        D, [2012-11-22T18:39:46.031942 #12800] DEBUG -- : [httplog] Connecting: localhost:9292
-        D, [2012-11-22T18:39:46.033409 #12800] DEBUG -- : [httplog] Status: 200
-        D, [2012-11-22T18:39:46.033483 #12800] DEBUG -- : [httplog] Benchmark: 0.001562 seconds
+        [httplog] Sending: GET http://localhost:9292/index.html
+        [httplog] Header: accept: */*
+        [httplog] Header: foo: bar
+        [httplog] Connecting: localhost:9292
+        [httplog] Status: 200
+        [httplog] Benchmark: 0.001562 seconds
 
 * Also when using HTTPClient, make sure you include `httplog` **after** `httpclient` in your `Gemfile`.
 

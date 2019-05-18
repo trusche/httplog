@@ -2,6 +2,6 @@
 
 source 'https://rubygems.org'
 
-gem 'http', github: 'httprb/http'
+gem 'http', '~> 4.0'
 
 gemspec path: '..'
