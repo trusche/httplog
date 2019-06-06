@@ -54,8 +54,9 @@ HttpLog.configure do |config|
   # Enable or disable all logging
   config.enabled = true
 
-  # You can assign a different logger
+  # You can assign a different logger or method to call on that logger
   config.logger = Logger.new($stdout)
+  config.logger_method = :log
 
   # I really wouldn't change this...
   config.severity = Logger::Severity::DEBUG
@@ -96,6 +97,9 @@ HttpLog.configure do |config|
   config.logger = Rails.logger
 end
 ```
+
+If you're running a (hopefully patched) legacy Rails 3 app, you may need to set
+`config.logger_method = :add` due to its somewhat unusual logger.
 
 You can colorize the output to make it stand out in your logfile, either with a single color
 for the text:
