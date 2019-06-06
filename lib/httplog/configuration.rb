@@ -6,6 +6,7 @@ module HttpLog
                   :compact_log,
                   :json_log,
                   :logger,
+                  :logger_method,
                   :severity,
                   :prefix,
                   :log_connect,
@@ -28,6 +29,7 @@ module HttpLog
       @compact_log           = false
       @json_log              = false
       @logger                = Logger.new($stdout)
+      @logger_method         = :log
       @severity              = Logger::Severity::DEBUG
       @prefix                = LOG_PREFIX
       @log_connect           = true
