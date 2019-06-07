@@ -1,3 +1,7 @@
+## 1.3.1 - 2019-06-07
+
+* [#76](https://github.com/trusche/httplog/pull/76) Added configurable logger method
+
 ## 1.3.0 - 2019-05-18
 
 * [#74](https://github.com/trusche/httplog/pull/74) Added ability to filter sensitive parameter values in the request (based on [#73](https://github.com/trusche/httplog/pull/73)). Default masking of `password` parameter
