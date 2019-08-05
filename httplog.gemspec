@@ -28,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'excon', ['~> 0.60']
   gem.add_development_dependency 'faraday', ['~> 0.14']
   gem.add_development_dependency 'guard-rspec', ['~> 4.7']
-  gem.add_development_dependency 'http', ['~> 3.0']
+  gem.add_development_dependency 'http', ['~> 4.0']
   gem.add_development_dependency 'httparty', ['~> 0.16']
   gem.add_development_dependency 'httpclient', ['~> 2.8']
   gem.add_development_dependency 'listen', ['~> 3.0']
