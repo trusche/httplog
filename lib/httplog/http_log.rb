@@ -261,12 +261,14 @@ module HttpLog
       # in its entirety.
       return (config.filter_parameters.include?(key.downcase) ? PARAM_MASK : msg) if key
 
-      # Otherwise, we'll parse Strings for key=valye pairs...
+      # Otherwise, we'll parse Strings for key=value pairs,
+      # for name="key"\n value...
       case msg
       when *string_classes
         config.filter_parameters.reduce(msg) do |m,key|
           scrubbed = m.to_s.encode('UTF-8', invalid: :replace, undef: :replace)
-          scrubbed.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+          scrubbed.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+            .gsub(/name="#{key}"\s+\K[\s\w]+/, "#{PARAM_MASK}\r\n") # multi-part Faraday
         end
       # ...and recurse over hashes
       when *hash_classes
