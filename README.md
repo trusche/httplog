@@ -218,9 +218,6 @@ a suggestion for a fix, please open an issue or, even better, submit a pull requ
 
 * Benchmarking only covers the time between starting the HTTP request and receiving the response. It does *not* cover the time it takes to establish the TCP connection.
 
-* When using [REST Client](https://github.com/rest-client/rest-client), POST requests might be missing the requests
-  data. See #54 for details.
-
 ### Running the specs
 
 Make sure you have the necessary dependencies installed by running `bundle install`.

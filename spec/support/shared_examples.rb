@@ -73,7 +73,7 @@ RSpec.shared_examples 'filtered parameters' do
   let(:filter_parameters) { %w(foo) }
 
   it 'masks the filtered value' do
-    # is_expected.to include('foo=[FILTERED]&').or exclude('foo')
-    is_expected.to_not include('secret')
+    # is_expected.to match(/foo(:?=|\"=>\"\[FILTERED\])/)
+    is_expected.to_not include('my secret')
   end
 end

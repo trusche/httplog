@@ -8,6 +8,7 @@ require 'excon'
 # require 'typhoeus'
 require 'ethon'
 require 'patron'
+require 'restclient'
 require 'http'
 require 'simplecov'
 
