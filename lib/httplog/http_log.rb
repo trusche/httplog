@@ -5,6 +5,7 @@ require 'logger'
 require 'benchmark'
 require 'rainbow'
 require 'rack'
+require 'active_support/core_ext/hash'
 
 module HttpLog
   LOG_PREFIX = '[httplog] '.freeze
@@ -125,7 +126,7 @@ module HttpLog
         end
       end
 
-      utf_encoded(body.to_s, content_type)
+      masked(utf_encoded(body.to_s, content_type))
     end
 
     def log_data(data)
@@ -205,20 +206,23 @@ module HttpLog
 
       # If a key is given, msg is just the value and can be replaced
       # in its entirety.
-      return (config.filter_parameters.include?(key.downcase) ? PARAM_MASK : msg) if key
+      return PARAM_MASK if key && config.filter_parameters.include?(key.downcase)
 
-      # Otherwise, we'll parse Strings for key=valye pairs...
-      case msg
-      when *string_classes
-        config.filter_parameters.reduce(msg) do |m,key|
-          m.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+      # We attempt to transform XML Strings into hashes
+      xml_wrapper(msg) do |msg|
+        # Otherwise, we'll parse Strings for key=valye pairs...
+        case msg
+        when *string_classes
+          config.filter_parameters.reduce(msg) do |m,key|
+            m.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+          end
+        # ...and recurse over hashes
+        when *hash_classes
+          Hash[msg.map {|k,v| [k, masked(v, k)]}]
+        else
+          log "*** FILTERING NOT APPLIED BECAUSE #{msg.class} IS UNEXPECTED ***"
+          msg
         end
-      # ...and recurse over hashes
-      when *hash_classes
-        Hash[msg.map {|k,v| [k, masked(v, k)]}]
-      else
-        log "*** FILTERING NOT APPLIED BECAUSE #{msg.class} IS UNEXPECTED ***"
-        msg
       end
     end
 
@@ -239,6 +243,15 @@ module HttpLog
         hash_classes << HTTP::Headers if defined?(HTTP::Headers)
         hash_classes
       end
+    end
+
+    def xml_wrapper(msg)
+      return yield(msg) unless string_classes.member?(msg.class)
+      return yield(msg) unless msg.to_s.start_with?('<')
+
+      yield(Hash.from_xml(msg.to_s)).to_xml
+    rescue
+      yield(msg)
     end
 
     def utf_encoded(data, content_type = nil)
