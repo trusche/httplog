@@ -40,4 +40,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'rack', ['>= 1.0']
   gem.add_dependency 'rainbow', ['>= 2.0.0']
+  gem.add_dependency 'activesupport'
+  gem.add_dependency 'builder'
 end
