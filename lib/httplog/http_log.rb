@@ -31,6 +31,8 @@ module HttpLog
     def call(options = {})
       if config.json_log
         log_json(options)
+      elsif config.graylog
+        log_graylog(options)
       elsif config.compact_log
         log_compact(options[:method], options[:url], options[:response_code], options[:benchmark])
       else
@@ -111,7 +113,7 @@ module HttpLog
 
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
-        # the content, so the reponse body is not available here.
+        # the content, so the response body is not available here.
         raise BodyParsingError, '(not available yet)'
       end
 
@@ -147,38 +149,6 @@ module HttpLog
       log("#{method.to_s.upcase} #{masked(uri)} completed with status code #{status} in #{seconds.to_f.round(6)} seconds")
     end
 
-    def log_json(data = {})
-      return unless config.json_log
-
-      data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
-
-      parsed_body = begin
-        parse_body(data[:response_body], data[:encoding], data[:content_type])
-      rescue BodyParsingError => e
-        e.message
-      end
-
-      if config.compact_log
-        log({
-          method: data[:method].to_s.upcase,
-          url: masked(data[:url]),
-          response_code: data[:response_code].to_i,
-          benchmark: data[:benchmark]
-        }.to_json)
-      else
-        log({
-          method: data[:method].to_s.upcase,
-          url: masked(data[:url]),
-          request_body: masked(data[:request_body]),
-          request_headers: masked(data[:request_headers].to_h),
-          response_code: data[:response_code].to_i,
-          response_body: parsed_body,
-          response_headers: data[:response_headers].to_h,
-          benchmark: data[:benchmark]
-        }.to_json)
-      end
-    end
-
     def transform_response_code(response_code_name)
       Rack::Utils::HTTP_STATUS_CODES.detect { |_k, v| v.to_s.casecmp(response_code_name.to_s).zero? }.first
     end
@@ -198,6 +168,50 @@ module HttpLog
     end
 
     private
+
+    def log_json(data = {})
+      return unless config.json_log
+
+      log(json_payload(data).to_json)
+    end
+
+    def log_graylog(data = {})
+      result = json_payload(data)
+
+      result[:rounded_benchmark] = data[:benchmark].round
+      result[:short_message]     = result.delete(:url)
+      config.logger.public_send(config.logger_method, config.severity, result)
+    end
+
+    def json_payload(data = {})
+      data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
+
+      parsed_body = begin
+                      parse_body(data[:response_body], data[:encoding], data[:content_type])
+                    rescue BodyParsingError => e
+                      e.message
+                    end
+
+      if config.compact_log
+        {
+          method:        data[:method].to_s.upcase,
+          url:           masked(data[:url]),
+          response_code: data[:response_code].to_i,
+          benchmark:     data[:benchmark]
+        }
+      else
+        {
+          method:           data[:method].to_s.upcase,
+          url:              masked(data[:url]),
+          request_body:     masked(data[:request_body]),
+          request_headers:  masked(data[:request_headers].to_h),
+          response_code:    data[:response_code].to_i,
+          response_body:    parsed_body,
+          response_headers: data[:response_headers].to_h,
+          benchmark:        data[:benchmark]
+        }
+      end
+    end
 
     def masked(msg, key=nil)
       return msg if config.filter_parameters.empty?

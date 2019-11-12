@@ -76,6 +76,9 @@ HttpLog.configure do |config|
   # You can also log in JSON format
   config.json_log = false
 
+  # For Graylog you can set this to `true`
+  config.graylog = false
+
   # Prettify the output - see below
   config.color = false
 
@@ -115,6 +118,18 @@ Or with a color hash for text and background:
 ```ruby
 HttpLog.configure do |config|
   config.color = {color: :black, background: :yellow}
+end
+```
+
+If you use Graylog and want to use its search features such as "rounded_benchmark:>1 AND method:PUT",
+you can use this configuration:
+
+```ruby
+HttpLog.configure do |config|
+  config.logger        = <your GELF::Logger>
+  config.logger_method = :add
+  config.severity      = GELF::Levels::DEBUG
+  config.graylog       = true
 end
 ```
 
