@@ -11,7 +11,7 @@ class NetHTTPAdapter < HTTPBaseAdapter
   end
 
   def send_post_request
-    Net::HTTP.new(@host, @port).post(@path, @data)
+    Net::HTTP.new(@host, @port).post(@path, @data, @headers)
   end
 
   def send_post_form_request

@@ -23,6 +23,7 @@ module Httplog
           headers['Content-Type'] = 'application/octet-stream' if File.extname(file) == '.bin'
           headers['Content-Type'] = 'application/pdf' if File.extname(file) == '.pdf'
           headers['Content-Type'] = 'text/html; charset=UTF-8' if path =~ /utf8/
+          headers['Content-Type'] = 'application/json' if path =~ /json/
           headers['Content-Encoding'] = 'gzip' if File.extname(file) == '.gz'
           [200, headers, File.binread(file)]
         else

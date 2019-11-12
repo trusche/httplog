@@ -45,7 +45,8 @@ if defined?(Excon)
           response_headers: headers,
           benchmark: bm,
           encoding: headers['Content-Encoding'],
-          content_type: headers['Content-Type']
+          content_type: headers['Content-Type'],
+          mask_body: HttpLog.masked_body_url?(url)
         )
         result
       end

@@ -17,25 +17,27 @@ describe HttpLog do
   let(:gray_log) { JSON.parse("{#{log.match(/{(.*)/).captures.first}") }
 
   # Default configuration
-  let(:logger)                { Logger.new @log }
-  let(:enabled)               { HttpLog.configuration.enabled }
-  let(:severity)              { HttpLog.configuration.severity }
-  let(:log_headers)           { HttpLog.configuration.log_headers }
-  let(:log_request)           { HttpLog.configuration.log_request }
-  let(:log_response)          { HttpLog.configuration.log_response }
-  let(:log_data)              { HttpLog.configuration.log_data }
-  let(:log_connect)           { HttpLog.configuration.log_connect }
-  let(:log_benchmark)         { HttpLog.configuration.log_benchmark }
-  let(:color)                 { HttpLog.configuration.color }
-  let(:prefix)                { HttpLog.configuration.prefix }
-  let(:prefix_response_lines) { HttpLog.configuration.prefix_response_lines }
-  let(:prefix_line_numbers)   { HttpLog.configuration.prefix_line_numbers }
-  let(:json_log)              { HttpLog.configuration.json_log }
-  let(:graylog)               { HttpLog.configuration.graylog }
-  let(:compact_log)           { HttpLog.configuration.compact_log }
-  let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
-  let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
-  let(:filter_parameters)     { HttpLog.configuration.filter_parameters }
+  let(:logger)                  { Logger.new @log }
+  let(:enabled)                 { HttpLog.configuration.enabled }
+  let(:severity)                { HttpLog.configuration.severity }
+  let(:log_headers)             { HttpLog.configuration.log_headers }
+  let(:log_request)             { HttpLog.configuration.log_request }
+  let(:log_response)            { HttpLog.configuration.log_response }
+  let(:log_data)                { HttpLog.configuration.log_data }
+  let(:log_connect)             { HttpLog.configuration.log_connect }
+  let(:log_benchmark)           { HttpLog.configuration.log_benchmark }
+  let(:color)                   { HttpLog.configuration.color }
+  let(:prefix)                  { HttpLog.configuration.prefix }
+  let(:prefix_response_lines)   { HttpLog.configuration.prefix_response_lines }
+  let(:prefix_line_numbers)     { HttpLog.configuration.prefix_line_numbers }
+  let(:json_log)                { HttpLog.configuration.json_log }
+  let(:graylog)                 { HttpLog.configuration.graylog }
+  let(:compact_log)             { HttpLog.configuration.compact_log }
+  let(:url_blacklist_pattern)   { HttpLog.configuration.url_blacklist_pattern }
+  let(:url_whitelist_pattern)   { HttpLog.configuration.url_whitelist_pattern }
+  let(:json_parser)             { HttpLog.configuration.json_parser }
+  let(:filter_parameters)       { HttpLog.configuration.filter_parameters }
+  let(:url_masked_body_pattern) { HttpLog.configuration.url_masked_body_pattern }
 
   def configure
     HttpLog.configure do |c|
@@ -57,7 +59,9 @@ describe HttpLog do
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
+      c.json_parser           = json_parser
       c.filter_parameters     = filter_parameters
+      c.url_masked_body_pattern = url_masked_body_pattern
     end
   end
 
@@ -299,6 +303,88 @@ describe HttpLog do
         let(:logger) { GelfMock.new @log }
 
         it_behaves_like 'logs JSON', adapter_class, true
+      end
+
+      context 'with custom JSON parser' do
+        let(:json_log) { true }
+        let(:json_parser) { Oj }
+
+        it_behaves_like 'logs JSON', adapter_class, false
+      end
+
+      context 'with masked JSON and not JSON data' do
+        let(:url_masked_body_pattern) { /.*/ }
+        let(:params) { { 'foo' => secret } }
+
+        # It shouldn't crash functionality with not JSON data
+        it_behaves_like 'filtered parameters'
+      end
+
+      context 'with default JSON parser' do
+        let(:url_masked_body_pattern) { /.*/ }
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context 'pattern for masking JSON body' do
+        let(:url_masked_body_pattern) { /index/ }
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context ' URL not matches pattern for masking JSON body' do
+        let(:url_masked_body_pattern) { /not_matches/ }
+        let(:json_log)  { true }
+        let(:path)      { '/index.json' }
+        let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+        let(:filter_parameters) { %w[foo] }
+        before { adapter.send_post_request }
+
+        if adapter_class.method_defined? :send_post_request
+          it { expect(json['response_body'].to_s).to include(secret) }
+        end
+      end
+
+      context 'with custom JSON parser' do
+        let(:url_masked_body_pattern) { /.*/ }
+        let(:json_parser) { Oj }
+
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context 'masked with invalid JSON request' do
+        let(:json_log)  { true }
+        let(:path)      { '/index.json' }
+        let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+        let(:url_masked_body_pattern) { /.*/ }
+        let(:data) do
+          '{foo:"my secret","bar":"baz","array":[{"foo":"my secret","bar":"baz"},{"hash":{"foo":"my secret","bar":"baz"}}]}'
+        end
+        let(:filter_parameters) { %w[foo] }
+        before { adapter.send_post_request }
+
+        if adapter_class.method_defined? :send_post_request
+          it { expect(json['request_headers'].to_s).not_to include(secret) }
+          it { expect(json['request_body'].to_s).to include(secret) }
+          it { expect(json['response_body'].to_s).not_to include(secret) }
+        end
+      end
+
+      describe 'Non UTF-8 with JSON log' do
+        if adapter_class.method_defined? :send_post_request
+          let!(:res) { adapter.send_post_request }
+          let(:json_log) { true }
+
+          it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
+
+          context 'with non-UTF request data' do
+            let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
+            it { is_expected.to include("request_body") } # == doesn't throw exception
+          end
+
+          context 'with URI encoded non-UTF data' do
+            let(:data) { 'a UTF-8 striñg with a URI encoded 8BIT-ASCII character: %c3' }
+            it { is_expected.to include("request_body") } # == doesn't throw exception
+          end
+        end
       end
     end
   end

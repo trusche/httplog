@@ -12,7 +12,8 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
           @response = send(orig_request_method, req, options)
         end
 
-        if HttpLog.url_approved?(req.uri)
+        uri = req.uri
+        if HttpLog.url_approved?(uri)
           body = if defined?(::HTTP::Request::Body)
                    req.body.respond_to?(:source) ? req.body.source : req.body.instance_variable_get(:@body)
                  else
@@ -21,7 +22,7 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
 
           HttpLog.call(
             method: req.verb,
-            url: req.uri,
+            url: uri,
             request_body: body,
             request_headers: req.headers,
             response_code: @response.code,
@@ -29,7 +30,8 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
             response_headers: @response.headers,
             benchmark: bm,
             encoding: @response.headers['Content-Encoding'],
-            content_type: @response.headers['Content-Type']
+            content_type: @response.headers['Content-Type'],
+            mask_body: HttpLog.masked_body_url?(uri)
           )
 
           body.rewind if body.respond_to?(:rewind)
