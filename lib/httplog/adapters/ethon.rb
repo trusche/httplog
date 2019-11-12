@@ -39,7 +39,8 @@ if defined?(Ethon)
             response_headers: headers.map { |header| header.split(/:\s/) }.to_h,
             benchmark: bm,
             encoding: encoding,
-            content_type: content_type
+            content_type: content_type,
+            mask_body: HttpLog.masked_body_url?(url)
           )
           return_code
         end

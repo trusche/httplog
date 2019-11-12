@@ -91,7 +91,6 @@ RSpec.shared_examples 'logs JSON' do |adapter_class, gray|
     it { expect(result['response_body']).to eq(html) }
     it { expect(result['benchmark']).to be_a(Numeric) }
     if gray
-      it { expect(result['rounded_benchmark']).to be_a(Integer) }
       it { expect(result['short_message']).to be_a(String) }
     end
     it_behaves_like 'filtered parameters'
@@ -107,5 +106,27 @@ RSpec.shared_examples 'logs JSON' do |adapter_class, gray|
       it { expect(result['response_body']).to be_nil }
       it { expect(result['benchmark']).to be_a(Numeric) }
     end
+  end
+end
+
+RSpec.shared_examples 'with masked JSON' do |adapter_class|
+  if adapter_class.method_defined? :send_post_request
+    let(:json_log)  { true }
+    let(:path)      { '/index.json' }
+    let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+    let(:data) do
+      '{"foo":"my secret","bar":"baz","array":[{"foo":"my secret","bar":"baz"},{"hash":{"foo":"my secret","bar":"baz"}}]}'
+    end
+    let(:filter_parameters) { %w[foo] }
+    before { adapter.send_post_request }
+
+    it { expect(json['request_headers'].to_s).not_to include(secret) }
+    it { expect(json['request_body'].to_s).to include('hash') }
+    it { expect(json['request_body'].to_s).to include('[FILTERED]') }
+    it { expect(json['request_body'].to_s).not_to include(secret) }
+
+    it { expect(json['response_body'].to_s).to include('hash') }
+    it { expect(json['response_body'].to_s).to include('[FILTERED]') }
+    it { expect(json['response_body'].to_s).not_to include(secret) }
   end
 end
