@@ -35,7 +35,10 @@ describe HttpLog do
   let(:compact_log)           { HttpLog.configuration.compact_log }
   let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
   let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
+  let(:mask_json)             { HttpLog.configuration.mask_json }
+  let(:json_parser)           { HttpLog.configuration.json_parser }
   let(:filter_parameters)     { HttpLog.configuration.filter_parameters }
+  let(:url_masked_body_pattern) { HttpLog.configuration.url_masked_body_pattern }
 
   def configure
     HttpLog.configure do |c|
@@ -57,7 +60,10 @@ describe HttpLog do
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
+      c.mask_json             = mask_json
+      c.json_parser           = json_parser
       c.filter_parameters     = filter_parameters
+      c.url_masked_body_pattern = url_masked_body_pattern
     end
   end
 
@@ -303,6 +309,69 @@ describe HttpLog do
         let(:logger) { GelfMock.new @log }
 
         it_behaves_like 'logs JSON', adapter_class, true
+      end
+
+      context 'with custom JSON parser' do
+        let(:json_log) { true }
+        let(:json_parser) { Oj }
+
+        it_behaves_like 'logs JSON', adapter_class, false
+      end
+
+      context 'with masked JSON and not JSON data' do
+        let(:mask_json) { true }
+        let(:params) { { 'foo' => secret } }
+
+        # It shouldn't crash functionality with not JSON data
+        it_behaves_like 'filtered parameters'
+      end
+
+      context 'with default JSON parser' do
+        let(:mask_json) { true }
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context 'pattern for masking JSON body' do
+        let(:url_masked_body_pattern) { /index/ }
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context ' URL not matches pattern for masking JSON body' do
+        let(:url_masked_body_pattern) { /not_matches/ }
+        let(:json_log)  { true }
+        let(:path)      { '/index.json' }
+        let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+        let(:filter_parameters) { %w[foo] }
+        before { adapter.send_post_request }
+
+        if adapter_class.method_defined? :send_post_request
+          it { expect(json['response_body'].to_s).to include(secret) }
+        end
+      end
+
+      context 'with custom JSON parser' do
+        let(:mask_json) { true }
+        let(:json_parser) { Oj }
+
+        it_behaves_like 'with masked JSON', adapter_class
+      end
+
+      context 'masked with invalid JSON request' do
+        let(:json_log)  { true }
+        let(:path)      { '/index.json' }
+        let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+        let(:mask_json) { true }
+        let(:data) do
+          '{foo:"my secret","bar":"baz","array":[{"foo":"my secret","bar":"baz"},{"hash":{"foo":"my secret","bar":"baz"}}]}'
+        end
+        let(:filter_parameters) { %w[foo] }
+        before { adapter.send_post_request }
+
+        if adapter_class.method_defined? :send_post_request
+          it { expect(json['request_headers'].to_s).not_to include(secret) }
+          it { expect(json['request_body'].to_s).to include(secret) }
+          it { expect(json['response_body'].to_s).not_to include(secret) }
+        end
       end
     end
   end

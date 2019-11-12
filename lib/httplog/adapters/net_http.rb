@@ -23,7 +23,8 @@ module Net
           response_headers: @response.each_header.collect,
           benchmark: bm,
           encoding: @response['Content-Encoding'],
-          content_type: @response['Content-Type']
+          content_type: @response['Content-Type'],
+          mask_body: HttpLog.masked_body_url?(url)
         )
       end
 

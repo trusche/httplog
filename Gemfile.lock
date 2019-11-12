@@ -67,6 +67,7 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    oj (3.9.2)
     patron (0.13.3)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -120,6 +121,7 @@ DEPENDENCIES
   httpclient (~> 2.8)
   httplog!
   listen (~> 3.0)
+  oj (>= 3.9.2)
   patron (~> 0.12)
   rake (~> 12.3)
   rspec (~> 3.7)

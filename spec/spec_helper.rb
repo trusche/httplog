@@ -10,6 +10,7 @@ require 'ethon'
 require 'patron'
 require 'http'
 require 'simplecov'
+require 'oj'
 
 SimpleCov.start
 
@@ -27,6 +28,8 @@ end
 sleep(3) # wait a moment for the server to be booted
 
 RSpec.configure do |config|
+  Oj.default_options = {mode: :compat}
+
   config.before(:each) do
     require 'stringio'
 

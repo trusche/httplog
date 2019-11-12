@@ -109,3 +109,25 @@ RSpec.shared_examples 'logs JSON' do |adapter_class, gray|
     end
   end
 end
+
+RSpec.shared_examples 'with masked JSON' do |adapter_class|
+  if adapter_class.method_defined? :send_post_request
+    let(:json_log)  { true }
+    let(:path)      { '/index.json' }
+    let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
+    let(:data) do
+      '{"foo":"my secret","bar":"baz","array":[{"foo":"my secret","bar":"baz"},{"hash":{"foo":"my secret","bar":"baz"}}]}'
+    end
+    let(:filter_parameters) { %w[foo] }
+    before { adapter.send_post_request }
+
+    it { expect(json['request_headers'].to_s).not_to include(secret) }
+    it { expect(json['request_body'].to_s).to include('hash') }
+    it { expect(json['request_body'].to_s).to include('[FILTERED]') }
+    it { expect(json['request_body'].to_s).not_to include(secret) }
+
+    it { expect(json['response_body'].to_s).to include('hash') }
+    it { expect(json['response_body'].to_s).to include('[FILTERED]') }
+    it { expect(json['response_body'].to_s).not_to include(secret) }
+  end
+end

@@ -20,7 +20,8 @@ if defined?(Patron)
             response_headers: @response.headers,
             benchmark: bm,
             encoding: @response.headers['Content-Encoding'],
-            content_type: @response.headers['Content-Type']
+            content_type: @response.headers['Content-Type'],
+            mask_body: HttpLog.masked_body_url?(url)
           )
         end
 

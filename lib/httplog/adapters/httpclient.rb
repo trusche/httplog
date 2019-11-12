@@ -16,12 +16,13 @@ if defined?(::HTTPClient)
         end
       end
 
-      if HttpLog.url_approved?(req.header.request_uri)
+      request_uri = req.header.request_uri
+      if HttpLog.url_approved?(request_uri)
         res = conn.pop
 
         HttpLog.call(
           method: req.header.request_method,
-          url: req.header.request_uri,
+          url: request_uri,
           request_body: req.body,
           request_headers: req.headers,
           response_code: res.status_code,
@@ -29,7 +30,8 @@ if defined?(::HTTPClient)
           response_headers: res.headers,
           benchmark: bm,
           encoding: res.headers['Content-Encoding'],
-          content_type: res.headers['Content-Type']
+          content_type: res.headers['Content-Type'],
+          mask_body: HttpLog.masked_body_url?(request_uri)
         )
         conn.push(res)
       end

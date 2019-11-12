@@ -86,7 +86,16 @@ HttpLog.configure do |config|
   config.url_whitelist_pattern = nil
   config.url_blacklist_pattern = nil
 
-  # Mask the values of sensitive requestparameters
+  # Mask sensitive information in request and response JSON data
+  # To parse all requests: 
+  config.mask_json = false
+  # Pattern to parse only selected URLs
+  config.url_masked_body_pattern = nil
+
+  # You can specify any custom JSON serializer that implements `load` and `dump` class methods
+  config.json_parser = JSON
+
+  # Mask the values of sensitive request parameters
   config.filter_parameters = %w[password]
 end
 ```
