@@ -77,3 +77,35 @@ RSpec.shared_examples 'filtered parameters' do
     is_expected.to_not include('secret')
   end
 end
+
+RSpec.shared_examples 'logs JSON' do |adapter_class, gray|
+  if adapter_class.method_defined? :send_post_request
+    before { adapter.send_post_request }
+    let(:result) { gray ? gray_log : json }
+
+    it { expect(result['method']).to eq('POST') }
+    it { expect(result['request_body']).to eq(data) }
+    it { expect(result['request_headers']).to be_a(Hash) }
+    it { expect(result['response_headers']).to be_a(Hash) }
+    it { expect(result['response_code']).to eq(200) }
+    it { expect(result['response_body']).to eq(html) }
+    it { expect(result['benchmark']).to be_a(Numeric) }
+    if gray
+      it { expect(result['rounded_benchmark']).to be_a(Integer) }
+      it { expect(result['short_message']).to be_a(String) }
+    end
+    it_behaves_like 'filtered parameters'
+
+    context 'and compact config' do
+      let(:compact_log) { true }
+
+      it { expect(result['method']).to eq('POST') }
+      it { expect(result['request_body']).to be_nil }
+      it { expect(result['request_headers']).to be_nil }
+      it { expect(result['response_headers']).to be_nil }
+      it { expect(result['response_code']).to eq(200) }
+      it { expect(result['response_body']).to be_nil }
+      it { expect(result['benchmark']).to be_a(Numeric) }
+    end
+  end
+end

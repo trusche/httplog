@@ -14,8 +14,10 @@ describe HttpLog do
   let(:params)  { { 'foo' => secret, 'bar' => 'foo:form-data' } }
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
+  let(:gray_log) { JSON.parse("{#{log.match(/{(.*)/).captures.first}") }
 
   # Default configuration
+  let(:logger)                { Logger.new @log }
   let(:enabled)               { HttpLog.configuration.enabled }
   let(:severity)              { HttpLog.configuration.severity }
   let(:log_headers)           { HttpLog.configuration.log_headers }
@@ -29,6 +31,7 @@ describe HttpLog do
   let(:prefix_response_lines) { HttpLog.configuration.prefix_response_lines }
   let(:prefix_line_numbers)   { HttpLog.configuration.prefix_line_numbers }
   let(:json_log)              { HttpLog.configuration.json_log }
+  let(:graylog)               { HttpLog.configuration.graylog }
   let(:compact_log)           { HttpLog.configuration.compact_log }
   let(:url_blacklist_pattern) { HttpLog.configuration.url_blacklist_pattern }
   let(:url_whitelist_pattern) { HttpLog.configuration.url_whitelist_pattern }
@@ -36,6 +39,7 @@ describe HttpLog do
 
   def configure
     HttpLog.configure do |c|
+      c.logger                = logger
       c.enabled               = enabled
       c.severity              = severity
       c.log_headers           = log_headers
@@ -49,6 +53,7 @@ describe HttpLog do
       c.prefix_response_lines = prefix_response_lines
       c.prefix_line_numbers   = prefix_line_numbers
       c.json_log              = json_log
+      c.graylog               = graylog
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
@@ -290,30 +295,14 @@ describe HttpLog do
       context 'with JSON config' do
         let(:json_log) { true }
 
-        if adapter_class.method_defined? :send_post_request
-          before { adapter.send_post_request }
+        it_behaves_like 'logs JSON', adapter_class, false
+      end
 
-          it { expect(json['method']).to eq('POST') }
-          it { expect(json['request_body']).to eq(data) }
-          it { expect(json['request_headers']).to be_a(Hash) }
-          it { expect(json['response_headers']).to be_a(Hash) }
-          it { expect(json['response_code']).to eq(200) }
-          it { expect(json['response_body']).to eq(html) }
-          it { expect(json['benchmark']).to be_a(Numeric) }
-          it_behaves_like 'filtered parameters'
+      context 'with Graylog config' do
+        let(:graylog) { true }
+        let(:logger) { GelfMock.new @log }
 
-          context 'and compact config' do
-            let(:compact_log) { true }
-
-            it { expect(json['method']).to eq('POST') }
-            it { expect(json['request_body']).to be_nil }
-            it { expect(json['request_headers']).to be_nil }
-            it { expect(json['response_headers']).to be_nil }
-            it { expect(json['response_code']).to eq(200) }
-            it { expect(json['response_body']).to be_nil }
-            it { expect(json['benchmark']).to be_a(Numeric) }
-          end
-        end
+        it_behaves_like 'logs JSON', adapter_class, true
       end
     end
   end
