@@ -1,3 +1,7 @@
+## 1.3.3 - 2019-11-14
+
+* [#83](https://github.com/trusche/httplog/pull/83) Support for graylog
+
 ## 1.3.1 - 2019-06-07
 
 * [#76](https://github.com/trusche/httplog/pull/76) Added configurable logger method
