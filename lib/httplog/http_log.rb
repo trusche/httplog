@@ -106,6 +106,30 @@ module HttpLog
       log("Response: #{e.message}")
     end
 
+    def is_json?(body, content_type)
+      if body.is_a?(HTTP::Response::Body)
+        response_body = body.to_s
+      elsif body.is_a?(String)
+        response_body = body
+      else
+        return false
+      end
+
+      content_type.split(":").include?('application/json;') ||
+      response_body.start_with?("{") ||
+      response_body.start_with?("[")
+    end
+
+    def parse_body_json(body, encoding, content_type)
+      if is_json?(body, content_type)
+        begin
+          return JSON.parse(body)
+        rescue StandardError
+        end
+      end
+      parse_body(body, encoding, content_type)
+    end
+
     def parse_body(body, encoding, content_type)
       unless text_based?(content_type)
         raise BodyParsingError, "(not showing binary data)"
@@ -187,7 +211,7 @@ module HttpLog
       data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
 
       parsed_body = begin
-                      parse_body(data[:response_body], data[:encoding], data[:content_type])
+                      parse_body_json(data[:response_body], data[:encoding], data[:content_type])
                     rescue BodyParsingError => e
                       e.message
                     end

@@ -13,6 +13,7 @@ describe HttpLog do
   let(:data)    { "foo=#{secret}&bar=foo" }
   let(:params)  { { 'foo' => secret, 'bar' => 'foo:form-data' } }
   let(:html)    { File.read('./spec/support/index.html') }
+  let(:json_data)    { File.read('./spec/support/index.json') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
   let(:gray_log) { JSON.parse("{#{log.match(/{(.*)/).captures.first}") }
 
@@ -296,6 +297,14 @@ describe HttpLog do
         let(:json_log) { true }
 
         it_behaves_like 'logs JSON', adapter_class, false
+      end
+
+      context 'with JSON config and response body in json' do
+        let(:json_log) { true }
+        let(:logger) { GelfMock.new @log }
+        let(:path)   { '/index.json' }
+
+        it_behaves_like 'logs JSON with response body json', adapter_class, true
       end
 
       context 'with Graylog config' do
