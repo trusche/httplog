@@ -41,7 +41,7 @@ if defined?(::HTTPClient)
       alias orig_create_socket create_socket
 
       # up to version 2.6, the method signature is `create_socket(site)`; after that,
-      # it's `create_socket(hort, port)`
+      # it's `create_socket(host, port)`
       if instance_method(:create_socket).arity == 1
         def create_socket(site)
           if HttpLog.url_approved?("#{site.host}:#{site.port}")
