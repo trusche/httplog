@@ -21,7 +21,7 @@ class HTTPBaseAdapter
 
   def parse_uri(query=false)
     uri = "#{@protocol}://#{@host}:#{@port}#{@path}"
-    uri = [uri, URI::encode(@data)].join('?') if query && @data
+    uri = [uri, safe_query_string(@data)].compact.join('?') if query
     URI.parse(uri)
   end
 
@@ -35,5 +35,15 @@ class HTTPBaseAdapter
 
   def self.should_log_headers?
     true
+  end
+
+  def safe_query_string(data)
+    return nil unless data
+
+    data.to_s.split('&').map do |pair|
+      pair.split('=', 2).map do |token|
+        CGI.escape(token.to_s)
+      end.join('=')
+    end.join('&')
   end
 end
