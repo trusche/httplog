@@ -17,8 +17,8 @@ require 'httplog'
 
 require 'loggers/gelf_mock'
 require 'adapters/http_base_adapter'
-Dir[File.dirname(__FILE__) + '/adapters/*.rb'].each { |f| require f }
-Dir['./spec/support/**/*.rb'].each { |f| require f }
+Dir[File.dirname(__FILE__) + '/adapters/*.rb'].sort.each { |f| require f }
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 # Start a local rack server to serve up test pages.
 @server_thread = Thread.new do

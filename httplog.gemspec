@@ -18,11 +18,11 @@ Gem::Specification.new do |gem|
                      of third party gems that don't provide their own log output."
 
   gem.files         = Dir['lib/**/*.rb'] +
-                        %w(httplog.gemspec README.md CHANGELOG.md)
+                      %w[httplog.gemspec README.md CHANGELOG.md]
   gem.test_files    = `git ls-files -- test/*`.split("\n")
   gem.require_paths = ['lib']
 
-  gem.required_ruby_version = '>= 2.2'
+  gem.required_ruby_version = '>= 2.4'
 
   gem.add_development_dependency 'ethon', ['~> 0.11']
   gem.add_development_dependency 'excon', ['~> 0.60']

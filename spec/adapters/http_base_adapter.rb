@@ -19,7 +19,7 @@ class HTTPBaseAdapter
     true
   end
 
-  def parse_uri(query=false)
+  def parse_uri(query = false)
     uri = "#{@protocol}://#{@host}:#{@port}#{@path}"
     uri = [uri, safe_query_string(@data)].compact.join('?') if query
     URI.parse(uri)

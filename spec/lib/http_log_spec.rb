@@ -91,9 +91,7 @@ describe HttpLog do
           it { is_expected.to_not include('Header:') }
           it { is_expected.to_not include("\e[0") }
 
-          unless adapter_class.is_libcurl?
-            it { is_expected.to include("Connecting: #{host}:#{port}") }
-          end
+          it { is_expected.to include("Connecting: #{host}:#{port}") } unless adapter_class.is_libcurl?
 
           it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
 
@@ -137,9 +135,7 @@ describe HttpLog do
           if adapter_class.method_defined? :send_post_request
             let!(:res) { adapter.send_post_request }
 
-            unless adapter_class.is_libcurl?
-              it { is_expected.to include("Connecting: #{host}:#{port}") }
-            end
+            it { is_expected.to include("Connecting: #{host}:#{port}") } unless adapter_class.is_libcurl?
 
             it_behaves_like 'logs request', 'POST'
             it_behaves_like 'logs expected response'

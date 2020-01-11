@@ -7,7 +7,7 @@ require 'rainbow'
 require 'rack'
 
 module HttpLog
-  LOG_PREFIX = '[httplog] '.freeze
+  LOG_PREFIX = '[httplog] '
   PARAM_MASK = '[FILTERED]'
 
   class BodyParsingError < StandardError; end
@@ -107,9 +107,7 @@ module HttpLog
     end
 
     def parse_body(body, encoding, content_type)
-      unless text_based?(content_type)
-        raise BodyParsingError, "(not showing binary data)"
-      end
+      raise BodyParsingError, "(not showing binary data)" unless text_based?(content_type)
 
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
@@ -145,6 +143,7 @@ module HttpLog
 
     def log_compact(method, uri, status, seconds)
       return unless config.compact_log
+
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{masked(uri)} completed with status code #{status} in #{seconds.to_f.round(6)} seconds")
     end
@@ -155,6 +154,7 @@ module HttpLog
 
     def colorize(msg)
       return msg unless config.color
+
       if config.color.is_a?(Hash)
         msg = Rainbow(msg).color(config.color[:color]) if config.color[:color]
         msg = Rainbow(msg).bg(config.color[:background]) if config.color[:background]
@@ -194,26 +194,26 @@ module HttpLog
 
       if config.compact_log
         {
-          method:        data[:method].to_s.upcase,
-          url:           masked(data[:url]),
+          method: data[:method].to_s.upcase,
+          url: masked(data[:url]),
           response_code: data[:response_code].to_i,
-          benchmark:     data[:benchmark]
+          benchmark: data[:benchmark]
         }
       else
         {
-          method:           data[:method].to_s.upcase,
-          url:              masked(data[:url]),
-          request_body:     masked(data[:request_body]),
-          request_headers:  masked(data[:request_headers].to_h),
-          response_code:    data[:response_code].to_i,
-          response_body:    parsed_body,
+          method: data[:method].to_s.upcase,
+          url: masked(data[:url]),
+          request_body: masked(data[:request_body]),
+          request_headers: masked(data[:request_headers].to_h),
+          response_code: data[:response_code].to_i,
+          response_body: parsed_body,
           response_headers: data[:response_headers].to_h,
-          benchmark:        data[:benchmark]
+          benchmark: data[:benchmark]
         }
       end
     end
 
-    def masked(msg, key=nil)
+    def masked(msg, key = nil)
       return msg if config.filter_parameters.empty?
       return msg if msg.nil?
 
@@ -221,15 +221,15 @@ module HttpLog
       # in its entirety.
       return (config.filter_parameters.include?(key.downcase) ? PARAM_MASK : msg) if key
 
-      # Otherwise, we'll parse Strings for key=valye pairs...
+      # Otherwise, we'll parse Strings for key=value pairs...
       case msg
       when *string_classes
-        config.filter_parameters.reduce(msg) do |m,key|
-          m.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+        config.filter_parameters.reduce(msg) do |m, k|
+          m.to_s.gsub(/(#{k})=[^&]+/i, "#{k}=#{PARAM_MASK}")
         end
       # ...and recurse over hashes
       when *hash_classes
-        Hash[msg.map {|k,v| [k, masked(v, k)]}]
+        Hash[msg.map { |k, v| [k, masked(v, k)] }]
       else
         log "*** FILTERING NOT APPLIED BECAUSE #{msg.class} IS UNEXPECTED ***"
         msg

@@ -2,7 +2,6 @@
 
 class NetHTTPAdapter < HTTPBaseAdapter
   def send_get_request
-    path = @path
     path = [@path, safe_query_string(@data)].compact.join('?')
     Net::HTTP.get_response(@host, path, @port)
   end
