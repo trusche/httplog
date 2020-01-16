@@ -31,7 +31,7 @@ describe HttpLog do
   let(:prefix_response_lines)   { HttpLog.configuration.prefix_response_lines }
   let(:prefix_line_numbers)     { HttpLog.configuration.prefix_line_numbers }
   let(:json_log)                { HttpLog.configuration.json_log }
-  let(:graylog)                 { HttpLog.configuration.graylog }
+  let(:graylog_formatter)       { HttpLog.configuration.graylog_formatter }
   let(:compact_log)             { HttpLog.configuration.compact_log }
   let(:url_blacklist_pattern)   { HttpLog.configuration.url_blacklist_pattern }
   let(:url_whitelist_pattern)   { HttpLog.configuration.url_whitelist_pattern }
@@ -55,7 +55,7 @@ describe HttpLog do
       c.prefix_response_lines = prefix_response_lines
       c.prefix_line_numbers   = prefix_line_numbers
       c.json_log              = json_log
-      c.graylog               = graylog
+      c.graylog_formatter     = graylog_formatter
       c.compact_log           = compact_log
       c.url_blacklist_pattern = url_blacklist_pattern
       c.url_whitelist_pattern = url_whitelist_pattern
@@ -313,7 +313,7 @@ describe HttpLog do
       end
 
       context 'with Graylog config' do
-        let(:graylog) { true }
+        let(:graylog_formatter) { Formatter.new }
         let(:logger) { GelfMock.new @log }
 
         it_behaves_like 'logs JSON', adapter_class, true

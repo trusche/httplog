@@ -16,6 +16,7 @@ SimpleCov.start
 
 require 'httplog'
 
+require 'loggers/formatter'
 require 'loggers/gelf_mock'
 require 'adapters/http_base_adapter'
 Dir[File.dirname(__FILE__) + '/adapters/*.rb'].each { |f| require f }

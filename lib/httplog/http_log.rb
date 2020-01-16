@@ -32,7 +32,7 @@ module HttpLog
       parse_request(options)
       if config.json_log
         log_json(options)
-      elsif config.graylog
+      elsif config.graylog_formatter
         log_graylog(options)
       elsif config.compact_log
         log_compact(options[:method], options[:url], options[:response_code], options[:benchmark])
@@ -207,8 +207,6 @@ module HttpLog
 
     def log_graylog(data)
       result = json_payload(data)
-
-      result[:short_message] = result.delete(:url)
       begin
         send_to_graylog result
       rescue
@@ -219,7 +217,8 @@ module HttpLog
     end
 
     def send_to_graylog data
-      config.logger.public_send(config.logger_method, config.severity, data)
+      data.compact!
+      config.logger.public_send(config.logger_method, config.severity, config.graylog_formatter.call(data))
     end
 
     def json_payload(data = {})
