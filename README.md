@@ -91,6 +91,7 @@ HttpLog.configure do |config|
   config.url_masked_body_pattern = nil
 
   # You can specify any custom JSON serializer that implements `load` and `dump` class methods
+  # to parse JSON responses
   config.json_parser = JSON
 
   # Mask the values of sensitive request parameters

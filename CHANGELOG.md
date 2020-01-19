@@ -1,3 +1,7 @@
+## 1.4.0 - 2020-01-19
+
+* [#85](https://github.com/trusche/httplog/pull/85) Parse JSON response and apply deep masking
+
 ## 1.3.3 - 2019-11-14
 
 * [#83](https://github.com/trusche/httplog/pull/83) Support for graylog
