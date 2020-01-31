@@ -104,8 +104,21 @@ If you want to use this in a Rails app, I'd suggest configuring this specificall
 ```ruby
 # config/environments/development.rb
 
+# For quick, pretty console logging during dev, without using Rails.logger
 HttpLog.configure do |config|
-  config.logger = Rails.logger
+  config.compact_log = true
+  config.color = :yellow
+end
+
+# To use Rails.logger with HttpLog, configure HttpLog in the .after_initialize callback
+Rails.application.configure do
+  # ...
+
+  config.after_initialize do
+    HttpLog.configure do |config|
+      config.logger = Rails.logger
+    end
+  end
 end
 ```
 
