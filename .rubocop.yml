@@ -1,4 +1,4 @@
-inherit_from: ./.rubocop_todo.yml
+inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.2
@@ -28,7 +28,7 @@ Layout/EmptyLinesAroundClassBody:
 Layout/EmptyLinesAroundModuleBody:
   EnforcedStyle: no_empty_lines
 
-Layout/IndentArray:
+Layout/IndentFirstArrayElement:
   EnforcedStyle: consistent
 
 Style/Documentation:

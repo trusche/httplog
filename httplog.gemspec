@@ -32,12 +32,14 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'httparty', ['~> 0.16']
   gem.add_development_dependency 'httpclient', ['~> 2.8']
   gem.add_development_dependency 'listen', ['~> 3.0']
+  gem.add_development_dependency 'oj', ['>= 3.9.2']
   gem.add_development_dependency 'patron', ['~> 0.12']
   gem.add_development_dependency 'rake', ['~> 12.3']
   gem.add_development_dependency 'rspec', ['~> 3.7']
+  gem.add_development_dependency 'rubocop', ['~> 0.68.0'] # last version for 2.2-compatible analysis
+  gem.add_development_dependency 'rubocop-performance', ['~> 1.3.0']
   gem.add_development_dependency 'simplecov', ['~> 0.15']
   gem.add_development_dependency 'thin', ['~> 1.7']
-  gem.add_development_dependency 'oj', ['>= 3.9.2']
 
   gem.add_dependency 'rack', ['>= 1.0']
   gem.add_dependency 'rainbow', ['>= 2.0.0']
