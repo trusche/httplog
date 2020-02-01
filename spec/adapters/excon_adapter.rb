@@ -13,4 +13,8 @@ class ExconAdapter < HTTPBaseAdapter
   def send_post_request
     Excon.post(parse_uri.to_s, body: @data, headers: @headers)
   end
+
+  def self.response_string_for(response)
+    response.body
+  end
 end

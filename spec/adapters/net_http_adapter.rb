@@ -18,4 +18,8 @@ class NetHTTPAdapter < HTTPBaseAdapter
   def send_post_form_request
     Net::HTTP.post_form(parse_uri, @params)
   end
+
+  def self.response_string_for(response)
+    response.body
+  end
 end

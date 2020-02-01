@@ -99,7 +99,7 @@ module HttpLog
     def log_body(body, mask_body, encoding = nil, content_type = nil)
       return unless config.log_response
 
-      data = parse_body(body.dup, mask_body, encoding, content_type)
+      data = parse_body(body, mask_body, encoding, content_type)
 
       if config.prefix_response_lines
         log('Response:')
@@ -114,11 +114,15 @@ module HttpLog
     def parse_body(body, mask_body, encoding, content_type)
       raise BodyParsingError, "(not showing binary data)" unless text_based?(content_type)
 
+
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the response body is not available here.
         raise BodyParsingError, '(not available yet)'
       end
+
+      body = body.to_s if body.is_a?(HTTP::Response::Body)
+      body = body.dup
 
       if encoding =~ /gzip/ && body && !body.empty?
         begin
@@ -222,7 +226,7 @@ module HttpLog
       data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
 
       parsed_body = begin
-                      parse_body(data[:response_body].dup, data[:mask_body], data[:encoding], data[:content_type])
+                      parse_body(data[:response_body], data[:mask_body], data[:encoding], data[:content_type])
                     rescue BodyParsingError => e
                       e.message
                     end

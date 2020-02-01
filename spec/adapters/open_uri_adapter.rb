@@ -16,4 +16,8 @@ class OpenUriAdapter < HTTPBaseAdapter
   def logs_data?
     false
   end
+
+  def self.response_string_for(response)
+    response.string
+  end
 end
