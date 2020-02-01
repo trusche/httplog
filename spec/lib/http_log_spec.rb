@@ -14,7 +14,7 @@ describe HttpLog do
   let(:params)  { { 'foo' => secret, 'bar' => 'foo:form-data' } }
   let(:html)    { File.read('./spec/support/index.html') }
   let(:json)    { JSON.parse(log.match(/\[httplog\]\s(.*)/).captures.first) }
-  let(:gray_log) { JSON.parse("{#{log.match(/{(.*)/).captures.first}") }
+  let(:gray_log) { JSON.parse("{#{log.match(/\{(.*)/).captures.first}") }
 
   # Default configuration
   let(:logger)                  { Logger.new @log }
@@ -101,6 +101,11 @@ describe HttpLog do
 
           it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
 
+          it "does not alter adapter response" do
+            response_string = adapter.class.response_string_for(res)
+            expect(response_string).to eq(adapter.expected_full_response_body)
+          end
+
           context 'with gzip encoding' do
             let(:path) { '/index.html.gz' }
             let(:data) { nil }
@@ -154,6 +159,11 @@ describe HttpLog do
             it { is_expected.to_not include('Header:') }
 
             it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
+
+            it "does not alter adapter response" do
+              response_string = adapter.class.response_string_for(res)
+              expect(response_string).to eq(adapter.expected_full_response_body)
+            end
 
             context 'with non-UTF request data' do
               let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }
@@ -378,6 +388,11 @@ describe HttpLog do
           let(:json_log) { true }
 
           it { expect(res).to be_a adapter.response if adapter.respond_to? :response }
+
+          it "does not alter adapter response" do
+            response_string = adapter.class.response_string_for(res)
+            expect(response_string).to eq(adapter.expected_full_response_body)
+          end
 
           context 'with non-UTF request data' do
             let(:data) { "a UTF-8 striñg with an 8BIT-ASCII character: \xC3" }

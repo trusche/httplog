@@ -28,4 +28,8 @@ class HTTPClientAdapter < HTTPBaseAdapter
   def logs_form_data?
     false
   end
+
+  def self.response_string_for(response)
+    response.body
+  end
 end

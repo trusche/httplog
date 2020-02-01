@@ -33,4 +33,8 @@ class PatronAdapter < HTTPBaseAdapter
   def self.is_libcurl?
     true
   end
+
+  def self.response_string_for(response)
+    response.body
+  end
 end

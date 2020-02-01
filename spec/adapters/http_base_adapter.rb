@@ -29,11 +29,28 @@ class HTTPBaseAdapter
     "\n<html>"
   end
 
+  def expected_full_response_body
+    <<-HTML.gsub(/^      /, "").strip
+      <html>
+        <head>
+          <title>Test Page</title>
+        </head>
+        <body>
+          <h1>This is the test page.</h1>
+        </body>
+      </html>
+    HTML
+  end
+
   def self.is_libcurl?
     false
   end
 
   def self.should_log_headers?
     true
+  end
+
+  def self.response_string_for(response)
+    response.to_s
   end
 end
