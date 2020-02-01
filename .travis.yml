@@ -11,7 +11,9 @@ gemfile:
   - gemfiles/rack2.gemfile
 
 # uncomment this line if your project needs to run something other than `rake`:
-script: bundle exec rspec spec
+script:
+  - bundle exec rspec spec
+  - bundle exec rubocop
 # workaround for https://github.com/travis-ci/travis-ci/issues/5239:
 before_install:
   - gem install bundler
