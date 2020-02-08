@@ -1,4 +1,8 @@
-## 1.4.0 - 2020-01-19
+## 1.4.1 - 2020-02-08 - YANKED
+
+* [#91](https://github.com/trusche/httplog/pull/91) Fixed bug returning empty response with HTTP gem
+
+## 1.4.0 - 2020-01-19 - YANKED
 
 * [#85](https://github.com/trusche/httplog/pull/85) Parse JSON response and apply deep masking
 
