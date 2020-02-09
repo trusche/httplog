@@ -121,7 +121,7 @@ module HttpLog
         raise BodyParsingError, '(not available yet)'
       end
 
-      body = body.to_s if body.is_a?(HTTP::Response::Body)
+      body = body.to_s if defined?(HTTP::Response::Body) && body.is_a?(HTTP::Response::Body)
       body = body.dup
 
       if encoding =~ /gzip/ && body && !body.empty?
