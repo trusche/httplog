@@ -78,9 +78,6 @@ HttpLog.configure do |config|
   # You can also log in JSON format
   config.json_log = false
 
-  # For Graylog you can set this to `true`
-  config.graylog = false
-
   # Prettify the output - see below
   config.color = false
 
@@ -95,6 +92,9 @@ HttpLog.configure do |config|
   # You can specify any custom JSON serializer that implements `load` and `dump` class methods
   # to parse JSON responses
   config.json_parser = JSON
+
+  # When using graylog, you can supply a formatter here - see below for details
+  config.graylog_formatter = nil
 
   # Mask the values of sensitive request parameters
   config.filter_parameters = %w[password]
