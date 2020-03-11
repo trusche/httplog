@@ -263,7 +263,8 @@ module HttpLog
       case msg
       when *string_classes
         config.filter_parameters.reduce(msg) do |m,key|
-          m.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
+          scrubbed = m.to_s.encode('UTF-8', invalid: :replace, undef: :replace)
+          scrubbed.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
         end
       # ...and recurse over hashes
       when *hash_classes

@@ -51,7 +51,7 @@ module HttpLog
       @prefix_response_lines   = false
       @prefix_line_numbers     = false
       @json_parser             = JSON
-      @filter_parameters       = []
+      @filter_parameters       = %w[password]
     end
   end
 end

@@ -5,7 +5,7 @@ require 'spec_helper'
 describe HttpLog do
   subject { log } # see spec_helper
 
-  let(:secret)  { 'my secret' }
+  let(:secret)  { 'mysecret' }
   let(:host)    { 'localhost' }
   let(:port)    { 9292 }
   let(:path)    { '/index.html' }
@@ -91,6 +91,7 @@ describe HttpLog do
           it_behaves_like 'logs expected response'
           it_behaves_like 'logs status', 200
           it_behaves_like 'logs benchmark'
+          it_behaves_like 'filters password'
 
           it { is_expected.to_not include('Header:') }
           it { is_expected.to_not include("\e[0") }
@@ -370,7 +371,7 @@ describe HttpLog do
         let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
         let(:url_masked_body_pattern) { /.*/ }
         let(:data) do
-          '{foo:"my secret","bar":"baz","array":[{"foo":"my secret","bar":"baz"},{"hash":{"foo":"my secret","bar":"baz"}}]}'
+          '{foo:"mysecret","bar":"baz","array":[{"foo":"mysecret","bar":"baz"},{"hash":{"foo":"mysecret","bar":"baz"}}]}'
         end
         let(:filter_parameters) { %w[foo] }
         before { adapter.send_post_request }
