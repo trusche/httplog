@@ -98,6 +98,9 @@ HttpLog.configure do |config|
 
   # Mask the values of sensitive request parameters
   config.filter_parameters = %w[password]
+  
+  # Customize the prefix with a proc or lambda
+  confix.prefix = ->{ "[httplog] #{Time.now} " }
 end
 ```
 
