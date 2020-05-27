@@ -4,6 +4,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/httplog.svg)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.org/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.svg)](https://codeclimate.com/github/trusche/httplog)
 [![Release Version](https://img.shields.io/github/release/trusche/httplog.svg)](https://img.shields.io/github/release/trusche/httplog.svg)
+<a href="https://www.bearer.sh?ref=httplog"><img src="/sponsoredby-min@2x.png" height="24px"/></a>
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
@@ -30,6 +31,10 @@ In theory, it should also work with any library built on top of these. But the d
 This is very much a development and debugging tool; it is **not recommended** to
 use this in a production environment as it is monkey-patching the respective HTTP implementations.
 You have been warned - use at your own risk.
+
+Httplog is kindly sponsored by <a href="https://www.bearer.sh?ref=httplog">Bearer.sh</a> - go check them out please!
+
+<a href="https://www.bearer.sh?ref=httplog"><img src="/BigBadgeSponsoredByBearer@2x.png" height="72px" /></a>
 
 ### Installation
 
