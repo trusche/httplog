@@ -1,3 +1,11 @@
+## 1.4.3 - 2020-06-10
+
+* Masking `password` parameter by default... doh.
+
+## 1.4.2 - 2020-02-09
+
+* Rollback of the previous two releases due to bugs introduced there.
+
 ## 1.4.1 - 2020-02-08 - YANKED
 
 * [#91](https://github.com/trusche/httplog/pull/91) Fixed bug returning empty response with HTTP gem
