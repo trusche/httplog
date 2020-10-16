@@ -18,7 +18,10 @@ module Httplog
 
         if params['redirect']
           [301, { 'Location' => '/index.html' }, '']
-
+        elsif env[Rack::REQUEST_METHOD] == Rack::HEAD
+          [
+            200, headers, Rack::BodyProxy.new([])
+          ]
         elsif File.exist?(file)
           headers['Content-Type'] = 'application/octet-stream' if File.extname(file) == '.bin'
           headers['Content-Type'] = 'application/pdf' if File.extname(file) == '.pdf'
