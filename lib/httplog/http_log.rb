@@ -122,9 +122,11 @@ module HttpLog
       end
 
       body = body.to_s if defined?(HTTP::Response::Body) && body.is_a?(HTTP::Response::Body)
+      return nil if body.nil? || body.empty?
+
       body = body.dup
 
-      if encoding =~ /gzip/ && body && !body.empty?
+      if encoding =~ /gzip/
         begin
           sio = StringIO.new(body.to_s)
           gz = Zlib::GzipReader.new(sio)
@@ -136,7 +138,7 @@ module HttpLog
 
       result = utf_encoded(body.to_s, content_type)
 
-      if mask_body && body && !body.empty?
+      if mask_body
         if content_type =~ /json/
           result = begin
                      masked_data config.json_parser.load(result)

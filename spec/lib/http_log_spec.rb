@@ -115,6 +115,7 @@ describe HttpLog do
 
             if adapter_class.method_defined? :send_head_request
               it "doesn't try to decompress body for HEAD requests" do
+                adapter.send_head_request
                 expect(log).to include('Response:')
               end
             end
