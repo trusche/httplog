@@ -121,22 +121,22 @@ module HttpLog
         raise BodyParsingError, '(not available yet)'
       end
 
-      body = body.to_s if defined?(HTTP::Response::Body) && body.is_a?(HTTP::Response::Body)
-      return nil if body.nil? || body.empty?
+      body_copy = body.dup
+      body_copy = body.to_s if defined?(HTTP::Response::Body) && body.is_a?(HTTP::Response::Body)
+      return nil if body_copy.nil? || body_copy.empty?
 
-      body = body.dup
 
       if encoding =~ /gzip/
         begin
-          sio = StringIO.new(body.to_s)
+          sio = StringIO.new(body_copy.to_s)
           gz = Zlib::GzipReader.new(sio)
-          body = gz.read
+          body_copy = gz.read
         rescue Zlib::GzipFile::Error
           log("(gzip decompression failed)")
         end
       end
 
-      result = utf_encoded(body.to_s, content_type)
+      result = utf_encoded(body_copy.to_s, content_type)
 
       if mask_body
         if content_type =~ /json/
