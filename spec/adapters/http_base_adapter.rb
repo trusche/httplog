@@ -19,9 +19,13 @@ class HTTPBaseAdapter
     true
   end
 
+  def encoded_uri(uri, data) 
+    [uri, URI.encode_www_form(@data.split("&").map{|pair| pair.split("=") })].join('?') 
+  end
+
   def parse_uri(query=false)
     uri = "#{@protocol}://#{@host}:#{@port}#{@path}"
-    uri = [uri, URI::encode(@data)].join('?') if query && @data
+    uri = encoded_uri(uri, @data) if query && @data
     URI.parse(uri)
   end
 
