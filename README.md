@@ -10,7 +10,7 @@ Requires ruby >= 2.5
 
 This gem works with the following ruby modules and libraries:
 
-* [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html)
+* [Net::HTTP](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/net/http/rdoc/index.html) v4+
 * [Ethon](https://github.com/typhoeus/ethon)
 * [Excon](https://github.com/geemus/excon)
 * [OpenURI](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/open-uri/rdoc/index.html)
