@@ -1,7 +1,5 @@
 ## httplog
 
-**VERSION 1.4.0 and 1.4.1 HAVE BEEN YANKED** from rubygems.org due to [this issue](https://github.com/trusche/httplog/issues/89), please update to version 1.4.2 or higher. Sorry about that...
-
 [![Gem Version](https://badge.fury.io/rb/httplog.svg)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.org/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.svg)](https://codeclimate.com/github/trusche/httplog)
 [![Release Version](https://img.shields.io/github/release/trusche/httplog.svg)](https://img.shields.io/github/release/trusche/httplog.svg)
 <a href="https://www.bearer.sh?ref=httplog"><img src="/bearer-badge.png" height="20px"/></a>
