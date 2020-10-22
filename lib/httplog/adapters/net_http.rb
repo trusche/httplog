@@ -11,10 +11,11 @@ module Net
       bm = Benchmark.realtime do
         @response = orig_request(req, body, &block)
       end
-      request_body = if req.body_stream
-                       req.body_stream.to_s # read and rewind for RestClient::Payload::Base
-                       req.body_stream.rewind rescue NoMethodError # RestClient::Payload::Base has no method rewind
-                       req.body_stream.read
+      body_stream  = req.body_stream
+      request_body = if body_stream
+                       body_stream.to_s # read and rewind for RestClient::Payload::Base
+                       body_stream.rewind if body_stream.respond_to?(:rewind) # RestClient::Payload::Base has no method rewind
+                       body_stream.read
                      elsif req.body.nil? || req.body.empty?
                        body
                      else
