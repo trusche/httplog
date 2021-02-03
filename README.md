@@ -103,7 +103,7 @@ HttpLog.configure do |config|
   config.filter_parameters = %w[password]
   
   # Customize the prefix with a proc or lambda
-  confix.prefix = ->{ "[httplog] #{Time.now} " }
+  config.prefix = ->{ "[httplog] #{Time.now} " }
 end
 ```
 
