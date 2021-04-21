@@ -26,6 +26,7 @@ module HttpLog
 
     def configure
       yield(configuration)
+      configuration.json_parser ||= ::JSON if configuration.json_log || configuration.url_masked_body_pattern
     end
 
     def call(options = {})
