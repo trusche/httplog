@@ -1,3 +1,11 @@
+## 1.5.0 - 2021-05-20
+
+* Support for Ruby 2.7 and frozen strings
+* Development dependency updates
+* Dropped support for net/http v3
+* Performance tweaks
+* Fix for RestClient body read issue (WARNING: this may be reverted, see [#105](https://github.com/trusche/httplog/issues/105))
+
 ## 1.4.3 - 2020-06-10
 
 * Masking `password` parameter by default... doh.
