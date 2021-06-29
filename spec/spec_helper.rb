@@ -24,11 +24,11 @@ Dir[File.dirname(__FILE__) + '/adapters/*.rb'].each { |f| require f }
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 # Start a local rack server to serve up test pages.
-@server_thread = Thread.new do
+Thread.new do
   Rack::Handler::Thin.run Httplog::Test::Server.new, Port: 9292
 end
 
-# wait for the server to be booted
+# Wait for the server to be booted.
 loop do
   TCPSocket.new('127.0.0.1', 9292).close
   break
