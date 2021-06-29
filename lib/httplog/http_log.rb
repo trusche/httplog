@@ -350,7 +350,7 @@ module HttpLog
     end
 
     def log_data_lines(data)
-      data.each_line.with_index do |line, row|
+      data.to_s.each_line.with_index do |line, row|
         if config.prefix_line_numbers
           log("#{row + 1}: #{line.chomp}")
         else
