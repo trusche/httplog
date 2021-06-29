@@ -27,7 +27,15 @@ Dir['./spec/support/**/*.rb'].each { |f| require f }
 @server_thread = Thread.new do
   Rack::Handler::Thin.run Httplog::Test::Server.new, Port: 9292
 end
-sleep(3) # wait a moment for the server to be booted
+
+# wait for the server to be booted
+loop do
+  TCPSocket.new('127.0.0.1', 9292).close
+  break
+rescue Errno::ECONNREFUSED
+  sleep 0.1
+  retry
+end
 
 RSpec.configure do |config|
   Oj.default_options = {mode: :compat}

@@ -28,6 +28,7 @@ describe HttpLog do
   let(:log_benchmark)           { HttpLog.configuration.log_benchmark }
   let(:color)                   { HttpLog.configuration.color }
   let(:prefix)                  { HttpLog.configuration.prefix }
+  let(:prefix_data_lines)       { HttpLog.configuration.prefix_data_lines }
   let(:prefix_response_lines)   { HttpLog.configuration.prefix_response_lines }
   let(:prefix_line_numbers)     { HttpLog.configuration.prefix_line_numbers }
   let(:json_log)                { HttpLog.configuration.json_log }
@@ -52,6 +53,7 @@ describe HttpLog do
       c.log_benchmark         = log_benchmark
       c.color                 = color
       c.prefix                = prefix
+      c.prefix_data_lines     = prefix_data_lines
       c.prefix_response_lines = prefix_response_lines
       c.prefix_line_numbers   = prefix_line_numbers
       c.json_log              = json_log
@@ -254,6 +256,22 @@ describe HttpLog do
             let(:prefix) { -> { '[custom prefix]' } }
             it { is_expected.to include('[custom prefix]') }
             it { is_expected.to_not include(HttpLog::LOG_PREFIX) }
+          end
+
+          context 'with prefix_data_lines enabled' do
+            let(:prefix_data_lines) { true }
+            it { is_expected.to include("[httplog] Data:\n") }
+          end
+
+          context 'with prefix_response_lines enabled' do
+            let(:prefix_response_lines) { true }
+            it { is_expected.to include('[httplog] <head>') }
+            it { is_expected.to include('[httplog] <title>Test Page</title>') }
+
+            context 'and blank response' do
+              let(:path) { '/empty.txt' }
+              it { is_expected.to include("[httplog] Response:\n") }
+            end
           end
 
           context 'with compact config' do
