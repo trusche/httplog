@@ -263,14 +263,17 @@ describe HttpLog do
             it { is_expected.to include("[httplog] Data:\n") }
           end
 
-          context 'with prefix_response_lines enabled' do
-            let(:prefix_response_lines) { true }
-            it { is_expected.to include('[httplog] <head>') }
-            it { is_expected.to include('[httplog] <title>Test Page</title>') }
+          unless adapter_class == OpenUriAdapter # Doesn't support response logging
+            context 'with prefix_response_lines enabled' do
+              let(:prefix_response_lines) { true }
 
-            context 'and blank response' do
-              let(:path) { '/empty.txt' }
-              it { is_expected.to include("[httplog] Response:\n") }
+              it { is_expected.to include('[httplog] <head>') }
+              it { is_expected.to include('[httplog] <title>Test Page</title>') }
+
+              context 'and blank response' do
+                let(:path) { '/empty.txt' }
+                it { is_expected.to include("[httplog] Response:\n") }
+              end
             end
           end
 
