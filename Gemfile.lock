@@ -3,6 +3,7 @@ PATH
   specs:
     httplog (1.4.3)
       rack (>= 1.0)
+      rainbow (>= 2.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -135,7 +136,6 @@ DEPENDENCIES
   listen (~> 3.0)
   oj (>= 3.9.2)
   patron (~> 0.12)
-  rainbow (>= 2.0.0)
   rake (~> 13.0)
   rest-client (~> 2.0)
   rspec (~> 3.7)
@@ -143,4 +143,4 @@ DEPENDENCIES
   thin (~> 1.7)
 
 BUNDLED WITH
-   2.1.4
+   2.2.21
