@@ -3,8 +3,12 @@
 require 'net/http'
 require 'logger'
 require 'benchmark'
-require 'rainbow'
 require 'rack'
+begin
+  require 'rainbow'
+rescue LoadError
+  # Ignored
+end
 
 module HttpLog
   LOG_PREFIX = '[httplog] '.freeze
