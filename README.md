@@ -1,11 +1,11 @@
 ## httplog
 
-[![Gem Version](https://badge.fury.io/rb/httplog.svg)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.org/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.svg)](https://codeclimate.com/github/trusche/httplog)
+[![Gem Version](https://badge.fury.io/rb/httplog.svg)](http://badge.fury.io/rb/httplog) [![Build Status](https://travis-ci.com/trusche/httplog.svg?branch=master)](https://travis-ci.org/trusche/httplog) [![Code Climate](https://codeclimate.com/github/trusche/httplog.svg)](https://codeclimate.com/github/trusche/httplog)
 [![Release Version](https://img.shields.io/github/release/trusche/httplog.svg)](https://img.shields.io/github/release/trusche/httplog.svg)
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
 
-Requires ruby >= 2.5
+Requires ruby >= 2.6
 
 This gem works with the following ruby modules and libraries:
 
