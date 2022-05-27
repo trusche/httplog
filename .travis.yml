@@ -1,12 +1,12 @@
 language: ruby
 rvm:
-  - "2.6.9"
+  - "2.6.10"
   - "2.7.5"
-  - "3.0.3"
+  - "3.0.4"
+  - "3.1.2"
 gemfile:
   - gemfiles/http4.gemfile
   - gemfiles/http5.gemfile
-  - gemfiles/rack1.gemfile
   - gemfiles/rack2.gemfile
 
 # uncomment this line if your project needs to run something other than `rake`:

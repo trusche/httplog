@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- test/*`.split("\n")
   gem.require_paths = ['lib']
 
-  gem.required_ruby_version = '>= 2.2'
+  gem.required_ruby_version = '>= 2.6'
 
   gem.add_development_dependency 'ethon', ['~> 0.11']
   gem.add_development_dependency 'excon', ['~> 0.60']
@@ -40,6 +40,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'thin', ['~> 1.7']
   gem.add_development_dependency 'oj', ['>= 3.9.2']
 
-  gem.add_dependency 'rack', ['>= 1.0']
+  gem.add_dependency 'rack', ['>= 2.0']
   gem.add_dependency 'rainbow', ['>= 2.0.0']
 end
