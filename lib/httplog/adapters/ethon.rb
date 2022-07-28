@@ -8,7 +8,7 @@ if defined?(Ethon)
       module Http
         alias orig_http_request http_request
         def http_request(url, action_name, options = {})
-          @http_log = options.merge(method: action_name) # remember this for compact logging
+          @http_log = options.merge(method: action_name, url: url) # remember this for compact logging
           orig_http_request(url, action_name, options)
         end
       end
@@ -31,7 +31,7 @@ if defined?(Ethon)
 
           HttpLog.call(
             method: @http_log[:method],
-            url: @url,
+            url: @http_log[:url],
             request_body: @http_log[:body],
             request_headers: @http_log[:headers],
             response_code: @return_code,
