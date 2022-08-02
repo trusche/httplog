@@ -77,7 +77,8 @@ describe HttpLog do
     EthonAdapter,
     PatronAdapter,
     HTTPAdapter,
-    RestClientAdapter
+    RestClientAdapter,
+    TyphoeusAdapter
   ].freeze
 
   ADAPTERS.each do |adapter_class|
