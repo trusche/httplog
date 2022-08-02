@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'httpclient'
 require 'excon'
-# require 'typhoeus'
+require 'typhoeus'
 require 'ethon'
 require 'patron'
 require 'restclient'
@@ -25,7 +25,7 @@ Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 # Start a local rack server to serve up test pages.
 Thread.new do
-  Rack::Handler::Thin.run Httplog::Test::Server.new, Port: 9292
+  Rack::Handler::Thin.run Httplog::Test::Server.new, Host: '127.0.0.1', Port: 9292
 end
 
 # Wait for the server to be booted.
