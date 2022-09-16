@@ -22,9 +22,12 @@ if defined?(Ethon)
 
           bm = Benchmark.realtime { orig_perform }
 
+          url = @http_log[:url]
+          url = "#{url}?#{@http_log[:params]}" if @http_log[:params]
+
           HttpLog.call(
             method: @http_log[:method],
-            url: @http_log[:url],
+            url: url,
             request_body: @http_log[:body],
             request_headers: @http_log[:headers],
             response_code: @return_code,
