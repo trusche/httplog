@@ -1,3 +1,16 @@
+## 1.6.2 - 2022-11-19
+
+* Added rubygems.org metadata
+* Gem dependency updates
+
+## 1.6.0 - 2022-09-17
+
+* Gem upgrades
+* [#110](https://github.com/trusche/httplog/pull/110) Fix for empty body response
+* [#111](https://github.com/trusche/httplog/pull/111) Removed runtime dependencies
+* Dependency updates 
+* Fix the missing Ethon log info #124
+
 ## 1.5.0 - 2021-05-20
 
 * Support for Ruby 2.7 and frozen strings
