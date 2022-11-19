@@ -17,6 +17,12 @@ Gem::Specification.new do |gem|
   gem.description = "Log outgoing HTTP requests made from your application. Helpful for tracking API calls
                      of third party gems that don't provide their own log output."
 
+  gem.metadata = {
+    "bug_tracker_uri"   => "https://github.com/trusche/httplog/issues",
+    "changelog_uri"     => "https://github.com/trusche/httplog/CHANGELOG.md",
+    "source_code_uri"   => "https://github.com/trusche/httplog"
+  }
+
   gem.files         = Dir['lib/**/*.rb'] +
                         %w(httplog.gemspec README.md CHANGELOG.md)
   gem.test_files    = `git ls-files -- test/*`.split("\n")
