@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.metadata = {
     "bug_tracker_uri"   => "https://github.com/trusche/httplog/issues",
-    "changelog_uri"     => "https://github.com/trusche/httplog/CHANGELOG.md",
+    "changelog_uri"     => "https://github.com/trusche/httplog/blob/master/CHANGELOG.md",
     "source_code_uri"   => "https://github.com/trusche/httplog"
   }
 
