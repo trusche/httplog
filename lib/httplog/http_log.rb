@@ -319,6 +319,8 @@ module HttpLog
         string_classes << HTTP::URI if defined?(HTTP::URI)
         string_classes << URI::HTTP if defined?(URI::HTTP)
         string_classes << HTTP::FormData::Urlencoded if defined?(HTTP::FormData::Urlencoded)
+        string_classes << Addressable::URI if defined?(Addressable::URI)
+        string_classes << HTTPClient::Util::AddressableURI if defined?(HTTPClient::Util::AddressableURI)
         string_classes
       end
     end
