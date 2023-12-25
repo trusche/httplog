@@ -1,3 +1,8 @@
+## 1.6.3 - 2023-02-25
+
+* Dependecy updates
+* [#137](https://github.com/trusche/httplog/pull/137) Fix case sensitivity on response headers
+
 ## 1.6.2 - 2022-11-19
 
 * Added rubygems.org metadata
