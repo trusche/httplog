@@ -47,8 +47,8 @@ if defined?(Ethon)
           @on_complete.unshift -> (*) do
             # Not sure where the actual status code is stored - so let's
             # extract it from the response header.
-            encoding = response_headers.scan(/Content-Encoding: (\S+)/).flatten.first
-            content_type = response_headers.scan(/Content-Type: (\S+(; charset=\S+)?)/).flatten.first
+            encoding = response_headers.scan(/Content-Encoding: (\S+)/i).flatten.first
+            content_type = response_headers.scan(/Content-Type: (\S+(; charset=\S+)?)/i).flatten.first
 
             # Hard to believe that Ethon wouldn't parse out the headers into
             # an array; probably overlooked it. Anyway, let's do it ourselves:
