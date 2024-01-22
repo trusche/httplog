@@ -19,7 +19,7 @@ if defined?(::HTTPClient)
       request_uri = req.header.request_uri
       if HttpLog.url_approved?(request_uri)
         res = conn.pop
-        headers = res.headers.transform_keys { |key| key.downcase }
+        headers = res.headers.transform_keys(&:downcase)
 
         HttpLog.call(
           method: req.header.request_method,
