@@ -28,6 +28,9 @@ module Httplog
           headers['Content-Type'] = 'text/html; charset=UTF-8' if path =~ /utf8/
           headers['Content-Type'] = 'application/json' if path =~ /json/
           headers['Content-Encoding'] = 'gzip' if File.extname(file) == '.gz'
+
+          headers.transform_keys! { |key| key.downcase } if params['downcase']
+
           [200, headers, File.binread(file)]
         else
           [404, { 'Content-Type' => 'text/plain' }, 'file not found']
