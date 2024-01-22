@@ -10,7 +10,7 @@ if defined?(Patron)
         end
 
         if HttpLog.url_approved?(url)
-          normalized_headers = @response.headers.transform_keys { |key| key.downcase }
+          normalized_headers = @response.headers.transform_keys(&:downcase)
 
           HttpLog.call(
             method: action_name,

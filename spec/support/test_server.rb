@@ -29,7 +29,7 @@ module Httplog
           headers['Content-Type'] = 'application/json' if path =~ /json/
           headers['Content-Encoding'] = 'gzip' if File.extname(file) == '.gz'
 
-          headers.transform_keys! { |key| key.downcase } if params['downcase']
+          headers = headers.transform_keys(&:downcase) if params['downcase']
 
           [200, headers, File.binread(file)]
         else
