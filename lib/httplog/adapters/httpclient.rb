@@ -19,6 +19,7 @@ if defined?(::HTTPClient)
       request_uri = req.header.request_uri
       if HttpLog.url_approved?(request_uri)
         res = conn.pop
+        headers = res.headers.transform_keys { |key| key.downcase }
 
         HttpLog.call(
           method: req.header.request_method,
@@ -27,10 +28,10 @@ if defined?(::HTTPClient)
           request_headers: req.headers,
           response_code: res.status_code,
           response_body: res.body,
-          response_headers: res.headers,
+          response_headers: headers,
           benchmark: bm,
-          encoding: res.headers['Content-Encoding'],
-          content_type: res.headers['Content-Type'],
+          encoding: headers['content-encoding'],
+          content_type: headers['content-type'],
           mask_body: HttpLog.masked_body_url?(request_uri)
         )
         conn.push(res)

@@ -111,6 +111,13 @@ describe HttpLog do
             expect(response_string).to eq(adapter.expected_full_response_body)
           end
 
+          context 'with lowercase headers' do
+            let(:path) { '/index.html' }
+            let(:data) { 'downcase=true' }
+
+            it_behaves_like 'logs expected response'
+          end
+
           context 'with gzip encoding' do
             let(:path) { '/index.html.gz' }
             let(:data) { nil }

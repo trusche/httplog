@@ -10,6 +10,8 @@ if defined?(Patron)
         end
 
         if HttpLog.url_approved?(url)
+          normalized_headers = @response.headers.transform_keys { |key| key.downcase }
+
           HttpLog.call(
             method: action_name,
             url: url,
@@ -17,10 +19,10 @@ if defined?(Patron)
             request_headers: headers,
             response_code: @response.status,
             response_body: @response.body,
-            response_headers: @response.headers,
+            response_headers: normalized_headers,
             benchmark: bm,
-            encoding: @response.headers['Content-Encoding'],
-            content_type: @response.headers['Content-Type'],
+            encoding: normalized_headers['content-encoding'],
+            content_type: normalized_headers['content-type'],
             mask_body: HttpLog.masked_body_url?(url)
           )
         end
