@@ -1,4 +1,8 @@
-## 1.6.3 - 2023-02-25
+## 1.7.0 - 2024-06-08
+
+* [#138](https://github.com/trusche/httplog/pull/138) Support for Faraday v2
+
+## 1.6.3 - 2024-02-25
 
 * Dependecy updates
 * [#137](https://github.com/trusche/httplog/pull/137) Fix case sensitivity on response headers
