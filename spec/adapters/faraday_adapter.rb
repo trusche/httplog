@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'faraday'
+require 'faraday/multipart'
+
 class FaradayAdapter < HTTPBaseAdapter
   def send_get_request
     connection.get do |req|
@@ -33,7 +35,7 @@ class FaradayAdapter < HTTPBaseAdapter
   end
 
   def send_multipart_post_request
-    file_upload = Faraday::UploadIO.new(@params['file'], 'text/plain')
+    file_upload = Faraday::Multipart::FilePart.new(@params['file'], 'text/plain')
 
     connection.post do |req|
       req.url parse_uri.to_s
@@ -54,7 +56,7 @@ class FaradayAdapter < HTTPBaseAdapter
 
   def connection
     Faraday.new(url: "#{@protocol}://#{@host}:#{@port}") do |faraday|
-      faraday.request :multipart
+      # faraday.request :multipart
       faraday.request :url_encoded
 
       faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
