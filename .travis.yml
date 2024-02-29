@@ -1,9 +1,11 @@
 language: ruby
 rvm:
   - "2.6.10"
-  - "2.7.5"
-  - "3.0.4"
-  - "3.1.2"
+  - "2.7.8"
+  - "3.0.6"
+  - "3.1.4"
+  - "3.2.2"
+  - "3.3.0"
 gemfile:
   - gemfiles/http4.gemfile
   - gemfiles/http5.gemfile
@@ -13,4 +15,4 @@ gemfile:
 script: bundle exec rspec spec
 # workaround for https://github.com/travis-ci/travis-ci/issues/5239:
 before_install:
-  - gem install bundler
+  - gem install bundler -v 2.4.22
