@@ -32,7 +32,8 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'ethon', ['~> 0.11']
   gem.add_development_dependency 'excon', ['~> 0.60']
-  gem.add_development_dependency 'faraday', ['~> 1.3']
+  gem.add_development_dependency 'faraday', ['>= 1.3']
+  gem.add_development_dependency 'faraday-multipart', ['>= 1.0']
   gem.add_development_dependency 'guard-rspec', ['~> 4.7']
   gem.add_development_dependency 'http', ['>= 4.0']
   gem.add_development_dependency 'httparty', ['~> 0.16']
