@@ -38,6 +38,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'http', ['>= 4.0']
   gem.add_development_dependency 'httparty', ['~> 0.16']
   gem.add_development_dependency 'httpclient', ['~> 2.8']
+  gem.add_development_dependency 'httpx', ['>= 1.2']
   gem.add_development_dependency 'rest-client', ['~> 2.0']
   gem.add_development_dependency 'typhoeus', ['~> 1.4']
   gem.add_development_dependency 'listen', ['~> 3.0']

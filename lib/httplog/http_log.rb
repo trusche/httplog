@@ -31,6 +31,7 @@ module HttpLog
 
     def call(options = {})
       parse_request(options)
+
       if config.json_log
         log_json(options)
       elsif config.graylog_formatter
