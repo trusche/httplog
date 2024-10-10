@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
 if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
-  module ::HTTP # rubocop:disable Style/ClassAndModuleChildren
-    class Client
-      request_method = respond_to?('make_request') ? 'make_request' : 'perform'
-      orig_request_method = "orig_#{request_method}"
-      alias_method(orig_request_method, request_method) unless method_defined?(orig_request_method)
-
+  module HTTPClientInstrumentation
+    %w[make_request perform].each do |request_method|
       define_method request_method do |req, options|
         bm = Benchmark.realtime do
-          @response = send(orig_request_method, req, options)
+          @response = super(req, options)
         end
 
         uri = req.uri
@@ -41,13 +37,14 @@ if defined?(::HTTP::Client) && defined?(::HTTP::Connection)
       end
     end
 
-    class Connection
-      alias orig_initialize initialize unless method_defined?(:orig_initialize)
-
+    module HTTPConnectionInstrumentation
       def initialize(req, options)
         HttpLog.log_connection(req.uri.host, req.uri.port) if HttpLog.url_approved?(req.uri)
-        orig_initialize(req, options)
+        super
       end
     end
+
+    ::HTTP::Client.prepend(HTTPClientInstrumentation)
+    ::HTTP::Connection.prepend(HTTPConnectionInstrumentation)
   end
 end
