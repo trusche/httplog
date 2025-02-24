@@ -59,7 +59,8 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.8.3)
+    httpclient (2.9.0)
+      mutex_m
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -74,6 +75,7 @@ GEM
     mini_mime (1.1.5)
     multi_xml (0.6.0)
     multipart-post (2.4.0)
+    mutex_m (0.3.0)
     nenv (0.3.0)
     net-http (0.4.1)
       uri
