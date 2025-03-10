@@ -85,7 +85,7 @@ GEM
       shellany (~> 0.0)
     oj (3.16.3)
       bigdecimal (>= 3.0)
-    patron (0.13.3)
+    patron (0.13.4)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
