@@ -40,7 +40,7 @@ describe HttpLog do
   let(:filter_parameters)       { HttpLog.configuration.filter_parameters }
   let(:url_masked_body_pattern) { HttpLog.configuration.url_masked_body_pattern }
 
-  def configure
+  def configure_for(patch)
     HttpLog.configure do |c|
       c.logger                = logger
       c.enabled               = enabled
@@ -64,27 +64,28 @@ describe HttpLog do
       c.json_parser           = json_parser
       c.filter_parameters     = filter_parameters
       c.url_masked_body_pattern = url_masked_body_pattern
+      c.enabled_patches       = [patch] if patch
     end
   end
 
-  ADAPTERS = [
-    NetHTTPAdapter,
-    OpenUriAdapter,
-    HTTPClientAdapter,
-    HTTPartyAdapter,
-    FaradayAdapter,
-    ExconAdapter,
-    EthonAdapter,
-    PatronAdapter,
-    HTTPAdapter,
-    RestClientAdapter,
-    TyphoeusAdapter
-  ].freeze
+  ADAPTERS_TO_PATCH_MAPPING = {
+    NetHTTPAdapter => :net_http,
+    OpenUriAdapter => nil,
+    HTTPClientAdapter => :httpclient,
+    HTTPartyAdapter => :httpclient,
+    FaradayAdapter => :net_http,
+    ExconAdapter => :excon,
+    EthonAdapter => :ethon,
+    PatronAdapter => :patron,
+    HTTPAdapter => :http_client,
+    RestClientAdapter => nil,
+    TyphoeusAdapter => nil
+  }.freeze
 
-  ADAPTERS.each do |adapter_class|
+  ADAPTERS_TO_PATCH_MAPPING.each do |adapter_class, patch_key|
     context adapter_class, adapter: adapter_class.to_s do
       let(:adapter) { adapter_class.new(host: host, port: port, path: path, headers: headers, data: data, params: params) }
-      before { configure }
+      before { configure_for(patch_key) }
 
       context 'with default configuration' do
         describe 'GET requests' do

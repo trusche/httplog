@@ -24,8 +24,9 @@ module HttpLog
       @configuration = nil
     end
 
-    def configure
-      yield(configuration)
+    def configure(&block)
+      block.call(configuration) if block_given?
+      Utils::MonkeyPatcher.apply(configuration)
       configuration.json_parser ||= ::JSON if configuration.json_log || configuration.url_masked_body_pattern
     end
 
@@ -116,7 +117,7 @@ module HttpLog
       raise BodyParsingError, "(not showing binary data)" unless text_based?(content_type)
 
 
-      if body.is_a?(Net::ReadAdapter)
+      if body.is_a?(::Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the response body is not available here.
         raise BodyParsingError, '(not available yet)'
@@ -186,6 +187,10 @@ module HttpLog
     rescue StandardError
       warn "HTTPLOG CONFIGURATION ERROR: #{config.color} is not a valid color"
       msg
+    end
+
+    def registered_patches
+      Utils::MonkeyPatcher.registered_patches
     end
 
     private
