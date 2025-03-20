@@ -37,8 +37,16 @@ You have been warned - use at your own risk.
 
 ### Usage
 
-    require 'httplog' # require this *after* your HTTP gem of choice
+```ruby
+require 'httplog'
 
+HttpLog.configure do |c|
+    # Enable your client's patching
+    c.enabled_patches = [] # available values [:patron, :excon, :ethon, :httpclient, :httpclient_old, :http_client, :net_http]
+end
+```
+
+Now it is required to call `HttpLog.configure` to enable logging  
 By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
 ### Notes on content types
