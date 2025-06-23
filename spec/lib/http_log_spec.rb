@@ -34,8 +34,8 @@ describe HttpLog do
   let(:json_log)                { HttpLog.configuration.json_log }
   let(:graylog_formatter)       { HttpLog.configuration.graylog_formatter }
   let(:compact_log)             { HttpLog.configuration.compact_log }
-  let(:url_blacklist_pattern)   { HttpLog.configuration.url_blacklist_pattern }
-  let(:url_whitelist_pattern)   { HttpLog.configuration.url_whitelist_pattern }
+  let(:url_denylist_pattern)   { HttpLog.configuration.url_denylist_pattern }
+  let(:url_allowlist_pattern)   { HttpLog.configuration.url_allowlist_pattern }
   let(:json_parser)             { HttpLog.configuration.json_parser }
   let(:filter_parameters)       { HttpLog.configuration.filter_parameters }
   let(:url_masked_body_pattern) { HttpLog.configuration.url_masked_body_pattern }
@@ -59,8 +59,8 @@ describe HttpLog do
       c.json_log              = json_log
       c.graylog_formatter     = graylog_formatter
       c.compact_log           = compact_log
-      c.url_blacklist_pattern = url_blacklist_pattern
-      c.url_whitelist_pattern = url_whitelist_pattern
+      c.url_denylist_pattern = url_denylist_pattern
+      c.url_allowlist_pattern = url_allowlist_pattern
       c.json_parser           = json_parser
       c.filter_parameters     = filter_parameters
       c.url_masked_body_pattern = url_masked_body_pattern
@@ -213,27 +213,27 @@ describe HttpLog do
           end
 
           context 'with blacklist hit' do
-            let(:url_blacklist_pattern) { /#{host}:#{port}/ }
+            let(:url_denylist_pattern) { /#{host}:#{port}/ }
             it_behaves_like 'logs nothing'
           end
 
           context 'with blacklist miss' do
-            let(:url_blacklist_pattern) { /example.com/ }
+            let(:url_denylist_pattern) { /example.com/ }
             it_behaves_like 'logs request', 'GET'
           end
 
           context 'with whitelist hit' do
-            let(:url_whitelist_pattern) { /#{host}:#{port}/ }
+            let(:url_allowlist_pattern) { /#{host}:#{port}/ }
             it_behaves_like 'logs request', 'GET'
 
             context 'and blacklist hit' do
-              let(:url_blacklist_pattern) { /#{host}:#{port}/ }
+              let(:url_denylist_pattern) { /#{host}:#{port}/ }
               it_behaves_like 'logs nothing'
             end
           end
 
           context 'with whitelist miss' do
-            let(:url_whitelist_pattern) { /example.com/ }
+            let(:url_allowlist_pattern) { /example.com/ }
             it_behaves_like 'logs nothing'
           end
 

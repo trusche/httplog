@@ -17,8 +17,8 @@ module HttpLog
                   :log_status,
                   :log_response,
                   :log_benchmark,
-                  :url_whitelist_pattern,
-                  :url_blacklist_pattern,
+                  :url_allowlist_pattern,
+                  :url_denylist_pattern,
                   :url_masked_body_pattern,
                   :color,
                   :prefix_data_lines,
@@ -43,8 +43,8 @@ module HttpLog
       @log_status              = true
       @log_response            = true
       @log_benchmark           = true
-      @url_whitelist_pattern   = nil
-      @url_blacklist_pattern   = nil
+      @url_allowlist_pattern   = nil
+      @url_denylist_pattern   = nil
       @url_masked_body_pattern = nil
       @color                   = false
       @prefix_data_lines       = false
