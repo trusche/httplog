@@ -104,13 +104,17 @@ HttpLog.configure do |config|
 end
 ```
 
-If you want to use this in a Rails app, I'd suggest configuring this specifically for each environment. A global initializer is not a good idea since `HttpLog` will be undefined in production. Because you're **not using this in production**, right? :)
+If you want to use this in a Rails app, it is recommended to configure `HttpLog` in an initializer, as suggested by the official Rails documentation. This approach ensures that your configuration is loaded properly and only in the desired environments.
+
+For example, you can create a file at `config/initializers/httplog.rb` with the following content:
 
 ```ruby
-# config/environments/development.rb
+# config/initializers/httplog.rb
 
-HttpLog.configure do |config|
-  config.logger = Rails.logger
+if Rails.env.development?
+  HttpLog.configure do |config|
+    config.logger = Rails.logger
+  end
 end
 ```
 
