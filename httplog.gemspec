@@ -45,7 +45,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', ['~> 13.0']
   gem.add_development_dependency 'rspec', ['~> 3.7']
   gem.add_development_dependency 'simplecov', ['~> 0.15']
-  gem.add_development_dependency 'thin', ['~> 1.7']
+  gem.add_development_dependency 'thin', '~> 2.0'
   gem.add_development_dependency 'oj', ['>= 3.9.2']
 
   gem.add_dependency 'rack', ['>= 2.0']
