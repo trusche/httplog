@@ -4,7 +4,12 @@ require 'spec_helper'
 
 describe HTTPClient do
   let(:client) { HTTPClient.new }
-  before { HttpLog.configure { |c| c.logger = Logger.new @log } }
+  before do
+    HttpLog.configure do |c|
+      c.logger = Logger.new @log
+      c.enabled_patches = [:httpclient]
+    end
+  end
 
   it 'works with transparent_gzip_decompression' do
     client.transparent_gzip_decompression = true

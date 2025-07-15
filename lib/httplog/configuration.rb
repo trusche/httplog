@@ -2,6 +2,10 @@
 
 module HttpLog
   class Configuration
+    PatchesError = Class.new(StandardError)
+
+    DEFAULT_PATCHES = %i[net_http].freeze
+
     attr_accessor :enabled,
                   :compact_log,
                   :json_log,
@@ -25,7 +29,8 @@ module HttpLog
                   :prefix_response_lines,
                   :prefix_line_numbers,
                   :json_parser,
-                  :filter_parameters
+                  :filter_parameters,
+                  :enabled_patches
 
     def initialize
       @enabled                 = true
@@ -52,6 +57,13 @@ module HttpLog
       @prefix_line_numbers     = false
       @json_parser             = nil
       @filter_parameters       = %w[password]
+      @enabled_patches         = DEFAULT_PATCHES.dup
+    end
+
+    def enabled_patches=(patches)
+      Utils::MonkeyPatcher.validate!(patches)
+
+      @enabled_patches = patches
     end
   end
 end
