@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Setup curl
-        uses: kordlib/setup-curl@v1.0.0
+        uses: kordlib/setup-curl@v1.0.2
 
       - name: Checkout code
         uses: actions/checkout@v4
