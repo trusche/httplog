@@ -5,7 +5,9 @@ rvm:
   - "3.4.4"
 gemfile:
   - gemfiles/http4.gemfile
+  - gemfiles/http5.gemfile
   - gemfiles/rack2.gemfile
+  - gemfiles/rack3.gemfile
 
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
