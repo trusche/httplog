@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    httplog (1.7.0)
+    httplog (1.7.1)
       rack (>= 2.0)
       rainbow (>= 2.0.0)
 
