@@ -279,3 +279,4 @@ This will launch a simple rack server on port 9292 and run all tests locally aga
 If you have any issues with or feature requests for httplog,
 please [open an issue](https://github.com/trusche/httplog/issues) on GitHub
 or fork the project and send a pull request. **Please include passing specs with all pull requests.**
+
