@@ -25,7 +25,9 @@ Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 # Start a local rack server to serve up test pages.
 Thread.new do
-  Rack::Handler::Thin.run Httplog::Test::Server.new, Host: '127.0.0.1', Port: 9292
+  require 'thin'
+  server = Thin::Server.new('127.0.0.1', 9292, Httplog::Test::Server.new)
+  server.start
 end
 
 # Wait for the server to be booted.

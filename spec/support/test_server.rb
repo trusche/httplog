@@ -20,7 +20,7 @@ module Httplog
           [301, { 'Location' => '/index.html' }, '']
         elsif env[Rack::REQUEST_METHOD] == Rack::HEAD
           [
-            200, headers, Rack::BodyProxy.new([])
+            200, headers, []
           ]
         elsif File.exist?(file)
           headers['Content-Type'] = 'application/octet-stream' if File.extname(file) == '.bin'
@@ -31,7 +31,7 @@ module Httplog
 
           headers = headers.transform_keys(&:downcase) if params['downcase']
 
-          [200, headers, File.binread(file)]
+          [200, headers, [File.binread(file)]]
         else
           [404, { 'Content-Type' => 'text/plain' }, 'file not found']
         end
