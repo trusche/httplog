@@ -138,6 +138,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  base64
   benchmark
   csv
   ethon (~> 0.11)

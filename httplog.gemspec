@@ -51,6 +51,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'logger'
   gem.add_development_dependency 'ostruct'
   gem.add_development_dependency 'benchmark'
+  gem.add_development_dependency 'base64'
 
   gem.add_dependency 'rack', ['>= 2.0']
   gem.add_dependency 'rainbow', ['>= 2.0.0']
