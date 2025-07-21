@@ -96,7 +96,7 @@ GEM
     oj (3.16.11)
       bigdecimal (>= 3.0)
       ostruct (>= 0.2)
-    ostruct (0.6.2)
+    ostruct (0.6.3)
     patron (0.13.4)
     pry (0.15.2)
       coderay (~> 1.1)
