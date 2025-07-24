@@ -1,3 +1,12 @@
+## 1.7.2 - 2024-07-24
+
+* [#160](https://github.com/trusche/httplog/pull/160) Rename blacklist/whitelist to allowlist/denylist. Backwards compatible.
+
+## 1.7.1 - 2024-07-21
+
+* Dependecy upgrades
+* Support for rack version 3
+
 ## 1.7.0 - 2024-06-08
 
 * [#138](https://github.com/trusche/httplog/pull/138) Support for Faraday v2
