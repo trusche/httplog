@@ -49,9 +49,9 @@ module HttpLog
     end
 
     def url_approved?(url)
-      return false if config.url_blacklist_pattern && url.to_s.match(config.url_blacklist_pattern)
+      return false if config.url_denylist_pattern && url.to_s.match(config.url_denylist_pattern)
 
-      !config.url_whitelist_pattern || url.to_s.match(config.url_whitelist_pattern)
+      !config.url_allowlist_pattern || url.to_s.match(config.url_allowlist_pattern)
     end
 
     def masked_body_url?(url)

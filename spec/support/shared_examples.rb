@@ -32,45 +32,44 @@ RSpec.shared_examples 'logs benchmark' do
 end
 
 RSpec.shared_examples 'data logging disabled' do
-  let(:log_data) { false }
+  let(:settings) { { log_data: false } }
   it { is_expected.to_not include('Data:') }
 end
 
 RSpec.shared_examples 'response logging disabled' do
-  let(:log_response) { false }
+  let(:settings) { { log_response: false } }
   it { is_expected.to_not include('Response:') }
 end
 
 RSpec.shared_examples 'benchmark logging disabled' do
-  let(:log_benchmark) { false }
+  let(:settings) { { log_benchmark: false } }
   it { is_expected.to_not include('Benchmark:') }
 end
 
 RSpec.shared_examples 'with prefix response lines' do
-  let(:prefix_response_lines) { true }
+  let(:settings) { { prefix_response_lines: true } }
   it { is_expected.to include('Response:') }
   it { is_expected.to include('<html>') }
 end
 
 RSpec.shared_examples 'with line numbers' do
-  let(:prefix_response_lines) { true }
-  let(:prefix_line_numbers) { true }
+  let(:settings) { { prefix_line_numbers: true, prefix_response_lines: true } }
   it { is_expected.to include('Response:') }
   it { is_expected.to include('1: <html>') }
 end
 
 RSpec.shared_examples 'with request logging disabled' do
-  let(:log_request) { false }
+  let(:settings) { { log_request: false } }
   it { is_expected.to_not include('Sending: GET') }
 end
 
 RSpec.shared_examples 'with connection logging disabled' do
-  let(:log_connect) { false }
+  let(:settings) { { log_connect: false } }
   it { is_expected.to_not include('Connecting:') }
 end
 
 RSpec.shared_examples 'filtered parameters' do
-  let(:filter_parameters) { %w(foo) }
+  let(:settings) { { filter_parameters: %w(foo) } }
 
   it 'masks the filtered value' do
     # is_expected.to match(/foo(:?=|\"=>\"\[FILTERED\])/)
@@ -105,7 +104,7 @@ RSpec.shared_examples 'logs JSON' do |adapter_class, gray|
     it_behaves_like 'filtered parameters'
 
     context 'and compact config' do
-      let(:compact_log) { true }
+      let(:settings) { { compact_log: true } }
 
       it { expect(result['method']).to eq('POST') }
       it { expect(result['request_body']).to be_nil }
@@ -120,13 +119,12 @@ end
 
 RSpec.shared_examples 'with masked JSON' do |adapter_class|
   if adapter_class.method_defined? :send_post_request
-    let(:json_log)  { true }
+    let(:settings) { { json_log: true, filter_parameters: %w[foo] } }
     let(:path)      { '/index.json' }
     let(:headers)   { { 'accept' => 'application/json', 'foo' => secret, 'content-type' => 'application/json' } }
     let(:data) do
       '{"foo":"mysecret","bar":"baz","array":[{"foo":"mysecret","bar":"baz"},{"hash":{"foo":"mysecret","bar":"baz"}}]}'
     end
-    let(:filter_parameters) { %w[foo] }
     before { adapter.send_post_request }
 
     it { expect(json['request_headers'].to_s).not_to include(secret) }
