@@ -81,8 +81,8 @@ HttpLog.configure do |config|
   config.color = false
 
   # Limit logging based on URL patterns
-  config.url_whitelist_pattern = nil
-  config.url_blacklist_pattern = nil
+  config.url_allowlist_pattern = nil
+  config.url_denylist_pattern = nil
 
   # Mask sensitive information in request and response JSON data.
   # Enable global JSON masking by setting the parameter to `/.*/`
