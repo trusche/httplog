@@ -32,7 +32,7 @@ if defined?(Ethon)
             request_headers: @http_log[:headers],
             response_code: @return_code,
             response_body: @http_log[:response_body],
-            response_headers: @http_log[:response_headers].map { |header| parts = header.split(/:\s*/, 2); [parts[0], parts[1] || "true"] }.to_h,
+            response_headers: @http_log[:response_headers].map { |header| header.split(/:\s*/, 2) }.to_h,
             benchmark: bm,
             encoding: @http_log[:encoding],
             content_type: @http_log[:content_type],

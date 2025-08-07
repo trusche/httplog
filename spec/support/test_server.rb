@@ -14,7 +14,7 @@ module Httplog
 
         params = Rack::Utils.parse_nested_query(env['QUERY_STRING'])
 
-        headers = { 'Content-Type' => 'text/html' }
+        headers = { 'Content-Type' => 'text/html', 'Empty' => ' ' }
 
         if params['redirect']
           [301, { 'Location' => '/index.html' }, '']

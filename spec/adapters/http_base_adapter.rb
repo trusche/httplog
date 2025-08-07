@@ -19,8 +19,8 @@ class HTTPBaseAdapter
     true
   end
 
-  def encoded_uri(uri, data) 
-    [uri, URI.encode_www_form(@data.split("&").map{|pair| pair.split("=") })].join('?') 
+  def encoded_uri(uri, data)
+    [uri, URI.encode_www_form(@data.split("&").map{|pair| pair.split("=") })].join('?')
   end
 
   def parse_uri(query=false)
@@ -48,10 +48,6 @@ class HTTPBaseAdapter
 
   def self.is_libcurl?
     false
-  end
-
-  def self.should_log_headers?
-    true
   end
 
   def self.response_string_for(response)

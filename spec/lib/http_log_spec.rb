@@ -171,6 +171,7 @@ describe HttpLog do
             let(:config) { { log_headers: true } }
             it { is_expected.to match(%r{Header: accept: */*}i) } # request
             it { is_expected.to match(/Header: Server: thin/i) } # response
+            it { is_expected.to match(/Header: Empty:/i) } # response
             it_behaves_like 'filtered parameters'
           end
 

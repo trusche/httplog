@@ -4,7 +4,7 @@ class NetHTTPAdapter < HTTPBaseAdapter
   def send_get_request
     path = @path
     path = encoded_uri(@path, @data) if @data
-    Net::HTTP.get_response(@host, path, @port)
+    Net::HTTP.new(@host, @port).get(path, @headers)
   end
 
   def send_head_request

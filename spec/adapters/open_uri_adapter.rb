@@ -2,15 +2,11 @@
 
 class OpenUriAdapter < HTTPBaseAdapter
   def send_get_request
-    URI.open(parse_uri(true))
+    URI.open(parse_uri(true), **@headers)
   end
 
   def expected_response_body
     ' (not available yet)'
-  end
-
-  def self.should_log_headers?
-    false
   end
 
   def logs_data?
