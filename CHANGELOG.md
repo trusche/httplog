@@ -1,3 +1,7 @@
+## 1.7.2 - 2024-08-07
+
+* [#173](https://github.com/trusche/httplog/pull/173) Bugfix: Parse empty response headers correctly
+
 ## 1.7.2 - 2024-07-24
 
 * [#160](https://github.com/trusche/httplog/pull/160) Rename blacklist/whitelist to allowlist/denylist. Backwards compatible.
