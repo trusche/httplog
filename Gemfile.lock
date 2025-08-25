@@ -19,7 +19,7 @@ GEM
     diff-lcs (1.6.2)
     docile (1.4.1)
     domain_name (0.6.20240107)
-    ethon (0.16.0)
+    ethon (0.17.0)
       ffi (>= 1.15.0)
     eventmachine (1.2.7)
     excon (0.112.0)
