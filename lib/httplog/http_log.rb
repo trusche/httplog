@@ -7,7 +7,7 @@ require 'rainbow'
 require 'rack'
 
 module HttpLog
-  LOG_PREFIX = '[httplog] '.freeze
+  LOG_PREFIX = '[httplog] '
   PARAM_MASK = '[FILTERED]'
 
   class BodyParsingError < StandardError; end
@@ -115,7 +115,6 @@ module HttpLog
     def parse_body(body, mask_body, encoding, content_type)
       raise BodyParsingError, "(not showing binary data)" unless text_based?(content_type)
 
-
       if body.is_a?(Net::ReadAdapter)
         # open-uri wraps the response in a Net::ReadAdapter that defers reading
         # the content, so the response body is not available here.
@@ -125,7 +124,6 @@ module HttpLog
       body_copy = body.dup
       body_copy = body.to_s if defined?(HTTP::Response::Body) && body.is_a?(HTTP::Response::Body)
       return nil if body_copy.nil? || body_copy.empty?
-
 
       if encoding =~ /gzip/
         begin
@@ -140,15 +138,15 @@ module HttpLog
       result = utf_encoded(body_copy.to_s, content_type)
 
       if mask_body
-        if content_type =~ /json/
-          result = begin
+        result = if content_type =~ /json/
+                   begin
                      masked_data config.json_parser.load(result)
-                   rescue => e
-                     'Failed to mask response body: ' + e.message
+                   rescue StandardError => e
+                     "Failed to mask response body: #{e.message}"
                    end
-        else
-          result = masked(result)
-        end
+                 else
+                   masked(result)
+                 end
       end
       result
     end
@@ -166,6 +164,7 @@ module HttpLog
 
     def log_compact(method, uri, status, seconds)
       return unless config.compact_log
+
       status = Rack::Utils.status_code(status) unless status == /\d{3}/
       log("#{method.to_s.upcase} #{masked(uri)} completed with status code #{status} in #{seconds.to_f.round(6)} seconds")
     end
@@ -176,6 +175,7 @@ module HttpLog
 
     def colorize(msg)
       return msg unless config.color
+
       if config.color.is_a?(Hash)
         msg = Rainbow(msg).color(config.color[:color]) if config.color[:color]
         msg = Rainbow(msg).bg(config.color[:background]) if config.color[:background]
@@ -196,7 +196,7 @@ module HttpLog
       log(
         begin
           dump_json(data)
-        rescue
+        rescue StandardError
           data[:response_body] = "#{config.json_parser} dump failed"
           data[:request_body]  = "#{config.json_parser} dump failed"
           dump_json(data)
@@ -212,14 +212,14 @@ module HttpLog
       result = json_payload(data)
       begin
         send_to_graylog result
-      rescue
+      rescue StandardError
         result[:response_body] = 'Graylog JSON dump failed'
         result[:request_body]  = 'Graylog JSON dump failed'
         send_to_graylog result
       end
     end
 
-    def send_to_graylog data
+    def send_to_graylog(data)
       data.compact!
       config.logger.public_send(config.logger_method, config.severity, config.graylog_formatter.call(data))
     end
@@ -228,33 +228,33 @@ module HttpLog
       data[:response_code] = transform_response_code(data[:response_code]) if data[:response_code].is_a?(Symbol)
 
       parsed_body = begin
-                      parse_body(data[:response_body], data[:mask_body], data[:encoding], data[:content_type])
-                    rescue BodyParsingError => e
-                      e.message
-                    end
+        parse_body(data[:response_body], data[:mask_body], data[:encoding], data[:content_type])
+      rescue BodyParsingError => e
+        e.message
+      end
 
       if config.compact_log
         {
-          method:        data[:method].to_s.upcase,
-          url:           masked(data[:url]),
+          method: data[:method].to_s.upcase,
+          url: masked(data[:url]),
           response_code: data[:response_code].to_i,
-          benchmark:     data[:benchmark]
+          benchmark: data[:benchmark]
         }
       else
         {
-          method:           data[:method].to_s.upcase,
-          url:              masked(data[:url]),
-          request_body:     data[:request_body],
-          request_headers:  masked(data[:request_headers].to_h),
-          response_code:    data[:response_code].to_i,
-          response_body:    parsed_body,
+          method: data[:method].to_s.upcase,
+          url: masked(data[:url]),
+          request_body: data[:request_body],
+          request_headers: masked(data[:request_headers].to_h),
+          response_code: data[:response_code].to_i,
+          response_body: parsed_body,
           response_headers: data[:response_headers].to_h,
-          benchmark:        data[:benchmark]
+          benchmark: data[:benchmark]
         }
       end
     end
 
-    def masked(msg, key=nil)
+    def masked(msg, key = nil)
       return msg if config.filter_parameters.empty?
       return msg if msg.nil?
 
@@ -266,14 +266,14 @@ module HttpLog
       # for name="key"\n value...
       case msg
       when *string_classes
-        config.filter_parameters.reduce(msg) do |m,key|
+        config.filter_parameters.reduce(msg) do |m, key|
           scrubbed = m.to_s.encode('UTF-8', invalid: :replace, undef: :replace)
           scrubbed.to_s.gsub(/(#{key})=[^&]+/i, "#{key}=#{PARAM_MASK}")
-            .gsub(/name="#{key}"\s+\K[\s\w]+/, "#{PARAM_MASK}\r\n") # multi-part Faraday
+                  .gsub(/name="#{key}"\s+\K[\s\w]+/, "#{PARAM_MASK}\r\n") # multi-part Faraday
         end
       # ...and recurse over hashes
       when *hash_classes
-        Hash[msg.map {|k,v| [k, masked(v, k)]}]
+        Hash[msg.map { |k, v| [k, masked(v, k)] }]
       else
         log "*** FILTERING NOT APPLIED BECAUSE #{msg.class} IS UNEXPECTED ***"
         msg
@@ -286,7 +286,7 @@ module HttpLog
       # Downcase content-type and content-encoding because ::HTTP returns "Content-Type" and "Content-Encoding"
       headers = options[:request_headers].find_all do |header, _|
         %w[content-type Content-Type content-encoding Content-Encoding].include? header
-      end.to_h.each_with_object({}) { |(k, v), h| h[k.downcase] = v }
+      end.to_h.transform_keys(&:downcase)
 
       copy = options[:request_body].dup
 
@@ -301,7 +301,7 @@ module HttpLog
                                end
     end
 
-    def masked_data msg
+    def masked_data(msg)
       case msg
       when Hash
         Hash[msg.map { |k, v| [k, config.filter_parameters.include?(k.downcase) ? PARAM_MASK : masked_data(v)] }]

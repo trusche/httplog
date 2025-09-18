@@ -44,7 +44,7 @@ if defined?(Ethon)
         def httplog_add_callback
           # Hack to perform this callback before the cleanup
           @on_complete ||= []
-          @on_complete.unshift -> (*) do
+          @on_complete.unshift ->(*) do
             # Not sure where the actual status code is stored - so let's
             # extract it from the response header.
             encoding = response_headers.scan(/Content-Encoding: (\S+)/i).flatten.first

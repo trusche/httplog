@@ -9,11 +9,9 @@ if defined?(::HTTPClient)
     def do_get_block(req, proxy, conn, &block)
       retryable_response = nil
       bm = Benchmark.realtime do
-        begin
-          orig_do_get_block(req, proxy, conn, &block)
-        rescue RetryableResponse => e
-          retryable_response = e
-        end
+        orig_do_get_block(req, proxy, conn, &block)
+      rescue RetryableResponse => e
+        retryable_response = e
       end
 
       request_uri = req.header.request_uri
@@ -47,17 +45,13 @@ if defined?(::HTTPClient)
       # it's `create_socket(host, port)`
       if instance_method(:create_socket).arity == 1
         def create_socket(site)
-          if HttpLog.url_approved?("#{site.host}:#{site.port}")
-            HttpLog.log_connection(site.host, site.port)
-          end
+          HttpLog.log_connection(site.host, site.port) if HttpLog.url_approved?("#{site.host}:#{site.port}")
           orig_create_socket(site)
         end
 
       else
         def create_socket(host, port)
-          if HttpLog.url_approved?("#{host}:#{port}")
-            HttpLog.log_connection(host, port)
-          end
+          HttpLog.log_connection(host, port) if HttpLog.url_approved?("#{host}:#{port}")
           orig_create_socket(host, port)
         end
       end

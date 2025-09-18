@@ -44,7 +44,7 @@ module HttpLog
       @log_response            = true
       @log_benchmark           = true
       @url_allowlist_pattern   = nil
-      @url_denylist_pattern   = nil
+      @url_denylist_pattern = nil
       @url_masked_body_pattern = nil
       @color                   = false
       @prefix_data_lines       = false
@@ -55,9 +55,9 @@ module HttpLog
     end
 
     # Backward compatibility aliases to version prior to 1.7.2
-    alias :url_blacklist_pattern :url_denylist_pattern
-    alias :url_blacklist_pattern= :url_denylist_pattern=
-    alias :url_whitelist_pattern :url_allowlist_pattern
-    alias :url_whitelist_pattern= :url_allowlist_pattern=
+    alias url_blacklist_pattern url_denylist_pattern
+    alias url_blacklist_pattern= url_denylist_pattern=
+    alias url_whitelist_pattern url_allowlist_pattern
+    alias url_whitelist_pattern= url_allowlist_pattern=
   end
 end
