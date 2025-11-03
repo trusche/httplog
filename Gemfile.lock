@@ -102,7 +102,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (6.0.2)
-    rack (3.2.3)
+    rack (3.2.4)
     rainbow (3.1.1)
     rake (13.3.0)
     rb-fsevent (0.11.2)
