@@ -1,8 +1,10 @@
 language: ruby
 rvm:
-  - "3.2.5"
-  - "3.3.8"
-  - "3.4.4"
+  - "3.2.9"
+  - "3.3.10"
+  - "3.4.8"
+  - "4.0.0"
+
 gemfile:
   - gemfiles/http4.gemfile
   - gemfiles/http5.gemfile
