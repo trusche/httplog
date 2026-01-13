@@ -1,6 +1,7 @@
 ## 1.8.0 - 2026-01-13
 
 * [#185](https://github.com/trusche/httplog/pull/185) Made benchmark a runtime dependency to support Ruby 3.5
+* Gem upgrades
 
 ## 1.7.3 - 2024-08-07
 
@@ -12,8 +13,8 @@
 
 ## 1.7.1 - 2024-07-21
 
-* Dependecy upgrades
 * Support for rack version 3
+* Gem upgrades
 
 ## 1.7.0 - 2024-06-08
 
@@ -21,21 +22,20 @@
 
 ## 1.6.3 - 2024-02-25
 
-* Dependecy updates
 * [#137](https://github.com/trusche/httplog/pull/137) Fix case sensitivity on response headers
+* Gem upgrades
 
 ## 1.6.2 - 2022-11-19
 
 * Added rubygems.org metadata
-* Gem dependency updates
+* Gem upgrades
 
 ## 1.6.0 - 2022-09-17
 
-* Gem upgrades
 * [#110](https://github.com/trusche/httplog/pull/110) Fix for empty body response
 * [#111](https://github.com/trusche/httplog/pull/111) Removed runtime dependencies
-* Dependency updates 
 * Fix the missing Ethon log info #124
+* Gem upgrades
 
 ## 1.5.0 - 2021-05-20
 

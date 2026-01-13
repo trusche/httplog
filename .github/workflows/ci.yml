@@ -8,6 +8,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '2.7.8'
+          - '3.0.7'
+          - '3.1.7'
+          - '3.2.9'
+          - '3.3.10'
+          - '3.4.8'
+          - '4.0.1'
     defaults:
       run:
         # How to fix ANSI color codes w/ GH actions:
@@ -21,10 +32,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
       
       - name: Run tests
