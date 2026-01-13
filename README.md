@@ -1,7 +1,7 @@
 ## httplog
 
 [![Gem Version](https://badge.fury.io/rb/httplog.svg)](http://badge.fury.io/rb/httplog) 
-[![Build Status](https://app.travis-ci.com/trusche/httplog.svg?token=puaZacCmspVoUFGP2EYr&branch=master)](https://app.travis-ci.com/trusche/httplog)
+[![CI](https://github.com/trusche/httplog/actions/workflows/ci.yml/badge.svg)](https://github.com/trusche/httplog/actions/workflows/ci.yml)
 [![Release Version](https://img.shields.io/github/release/trusche/httplog.svg)](https://img.shields.io/github/release/trusche/httplog.svg)
 
 Log outgoing HTTP requests made from your application. Helps with debugging pesky API error responses, or just generally understanding what's going on under the hood.
