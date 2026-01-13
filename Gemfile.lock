@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     httplog (1.7.2)
+      benchmark
       rack (>= 2.0)
       rainbow (>= 2.0.0)
 
@@ -148,7 +149,6 @@ PLATFORMS
 
 DEPENDENCIES
   base64
-  benchmark
   csv
   ethon (~> 0.11)
   excon (~> 0.60)
