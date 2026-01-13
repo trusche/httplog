@@ -1,4 +1,8 @@
-## 1.7.2 - 2024-08-07
+## 1.8.0 - 2026-01-13
+
+* [#185](https://github.com/trusche/httplog/pull/185) Made benchmark a runtime dependency to support Ruby 3.5
+
+## 1.7.3 - 2024-08-07
 
 * [#173](https://github.com/trusche/httplog/pull/173) Bugfix: Parse empty response headers correctly
 
