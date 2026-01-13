@@ -32,11 +32,15 @@ You have been warned - use at your own risk.
 
 ### Installation
 
-    gem install httplog
+```bash
+gem install httplog
+```
 
 ### Usage
 
-    require 'httplog' # require this *after* your HTTP gem of choice
+```ruby
+require 'httplog' # require this *after* your HTTP gem of choice
+```
 
 By default, this will log all outgoing HTTP requests and their responses to $stdout on DEBUG level.
 
