@@ -30,6 +30,11 @@ This is very much a development and debugging tool; it is **not recommended** to
 use this in a production environment as it is monkey-patching the respective HTTP implementations.
 You have been warned - use at your own risk.
 
+### Sponsors
+
+HttpLog is kindly sponsored by [SerpApi](https://serpapi.com). Scrape Google and other search engines from their fast, easy, and complete API. And use httplog to debug your implementation if you're using Ruby :)
+
+
 ### Installation
 
 ```bash
