@@ -6,7 +6,7 @@ module Net
     alias orig_connect connect unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
-      url = "http://#{@address}:#{@port}#{req.path}"
+      url = "#{protocol}://#{@address}:#{@port}#{req.path}"
 
       bm = Benchmark.realtime do
         @response = orig_request(req, body, &block)
@@ -45,6 +45,12 @@ module Net
       HttpLog.log_connection(@address, @port) if !started? && HttpLog.url_approved?("#{@address}:#{@port}")
 
       orig_connect
+    end
+
+    private
+
+    def protocol
+      use_ssl? ? 'https' : 'http'
     end
   end
 end
