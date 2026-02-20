@@ -32,8 +32,9 @@ You have been warned - use at your own risk.
 
 ### Sponsors
 
-HttpLog is kindly sponsored by [SerpApi](https://serpapi.com). Scrape Google and other search engines from their fast, easy, and complete API. And use httplog to debug your implementation if you're using Ruby :)
+HttpLog is kindly sponsored by [SerpApi](https://serpapi.com). Scrape Google and other search engines from their fast, easy, and complete API. And use httplog to debug your client if you're using Ruby 😉
 
+<a href="https://serpapi.com" target="_blank"><img width="300" height="86" alt="SerpApi Logo" src="https://github.com/user-attachments/assets/56108794-10cc-4cb5-b268-66ef28b17ada" /></a>
 
 ### Installation
 
