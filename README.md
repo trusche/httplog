@@ -32,7 +32,7 @@ You have been warned - use at your own risk.
 
 ### Sponsors
 
-HttpLog is kindly sponsored by [SerpApi](https://serpapi.com). Scrape Google and other search engines from their fast, easy, and complete API. And use httplog to debug your client if you're using Ruby 😉
+HttpLog is kindly sponsored by [SerpApi](https://serpapi.com). Scrape Google and other search engines from their fast, easy, and complete API. And use httplog to debug your client if you're using Ruby 😉 They're a Ruby on Rails shop and [always looking for good developers](https://serpapi.com/careers).
 
 <a href="https://serpapi.com"><img width="300" height="86" alt="SerpApi Logo" src="https://github.com/user-attachments/assets/56108794-10cc-4cb5-b268-66ef28b17ada" /></a>
 
