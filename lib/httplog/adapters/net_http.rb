@@ -6,7 +6,7 @@ module Net
     alias orig_connect connect unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
-      url = "#{protocol}://#{@address}:#{@port}#{req.path}"
+      url = "#{protocol}://#{@address}#{port_string}#{req.path}"
 
       bm = Benchmark.realtime do
         @response = orig_request(req, body, &block)
@@ -51,6 +51,17 @@ module Net
 
     def protocol
       use_ssl? ? 'https' : 'http'
+    end
+
+    def port_string
+      case
+      when @port == 80 && !use_ssl?
+        ''
+      when @port == 443 && use_ssl?
+        ''
+      else
+        ":#{@port}"
+      end
     end
   end
 end
